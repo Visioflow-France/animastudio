@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANIMA — Studio Créatif | Lausanne · Genève · Suisse</title>
+    <meta name="description" content="ANIMA Studio — Création de contenu & communication digitale pour les marques, les lieux et les événements. Là où votre image prend vie. Lausanne · Genève · Suisse.">
+    <meta name="theme-color" content="#131313">
+    <meta property="og:title" content="ANIMA — Studio Créatif">
+    <meta property="og:description" content="Création de contenu & communication digitale. Pour les marques, les lieux & les événements.">
+    <meta property="og:type" content="website">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts : Instrument Serif (wordmark), Inter (sans), IBM Plex Mono (labels) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ink: '#131313',
+                        tint: '#697485',
+                        star: '#FF4D00'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['"Instrument Serif"', 'serif'],
+                        mono: ['"IBM Plex Mono"', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            background-color: #131313;
+            color: #FFFFFF;
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+        }
+        ::selection { background: #FF4D00; color: #131313; }
+
+        /* Skip link (accessibilité, comme sur config.figma.com) */
+        .skip { position: absolute; left: -9999px; top: 0; z-index: 100; }
+        .skip:focus { left: 16px; top: 16px; padding: 8px 16px; background: #fff; color: #131313; font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: .15em; }
+
+        /* Header sticky : transparent puis fond flouté au scroll */
+        #site-header { border-bottom: 1px solid transparent; transition: background-color .35s ease, border-color .35s ease, backdrop-filter .35s ease; }
+        #site-header.is-scrolled { background: rgba(19,19,19,.88); backdrop-filter: blur(12px); border-bottom-color: rgba(255,255,255,.1); }
+
+        /* Wordmark hero : lettres révélées en cascade, astérisque en rotation lente (façon Rive) */
+        .wrap-l { display: inline-block; overflow: hidden; vertical-align: bottom; padding-bottom: .06em; }
+        .letter { display: inline-block; transform: translateY(115%); animation: rise 1s cubic-bezier(.16,1,.3,1) forwards; }
+        @keyframes rise { to { transform: translateY(0); } }
+        .star-spin { display: inline-block; transform-origin: 50% 54%; animation: spin 18s linear infinite; }
+        .wordmark:hover .star-spin { animation-duration: 4s; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .star-pop { display: inline-block; opacity: 0; animation: pop .6s ease .9s forwards; }
+        @keyframes pop { from { opacity: 0; transform: scale(.4); } to { opacity: 1; transform: scale(1); } }
+
+        /* Ruban photos défilant — animation signature de config.figma.com (100s infini) */
+        .strip { overflow: hidden; }
+        .strip-track { display: flex; width: max-content; animation: strip 100s linear infinite; }
+        .strip:hover .strip-track { animation-play-state: paused; }
+        .strip-half { display: flex; gap: 8px; padding-right: 8px; flex: none; }
+        .strip-half img { height: 340px; width: auto; object-fit: cover; pointer-events: none; user-select: none; }
+        @media (max-width: 640px) { .strip-half img { height: 220px; } }
+        @keyframes strip { to { transform: translateX(-50%); } }
+
+        /* Entrée du header au chargement */
+        #site-header { animation: headerIn .8s cubic-bezier(.16,1,.3,1) both; }
+        @keyframes headerIn { from { transform: translateY(-100%); } }
+
+        /* Flèches ↗ qui glissent au survol */
+        .arr { display: inline-block; transition: transform .3s ease; }
+        a:hover .arr, button:hover .arr { transform: translate(3px, -3px); }
+
+        /* Apparition au scroll */
+        .reveal { opacity: 0; transform: translateY(48px); transition: opacity .9s ease, transform .9s cubic-bezier(.16,1,.3,1); }
+        .reveal.visible { opacity: 1; transform: none; }
+
+        /* Accordéon FAQ (animation de hauteur fluide) */
+        .faq-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .45s cubic-bezier(.16,1,.3,1); }
+        .faq-item.open .faq-panel { grid-template-rows: 1fr; }
+        .faq-panel > div { overflow: hidden; min-height: 0; }
+        .faq-icon { transition: transform .3s ease; }
+        .faq-item.open .faq-icon { transform: rotate(45deg); }
+
+        /* Estimateur : checkbox carrée et slider custom, angles droits */
+        input[type="checkbox"].est-check {
+            appearance: none; width: 1rem; height: 1rem; margin: 0;
+            border: 1px solid rgba(255,255,255,.4); display: inline-grid; place-content: center;
+            cursor: pointer; flex: none; border-radius: 0;
+        }
+        input[type="checkbox"].est-check::before {
+            content: ""; width: .55rem; height: .55rem; background: #FF4D00;
+            transform: scale(0); transition: transform .15s ease;
+        }
+        input[type="checkbox"].est-check:checked { border-color: #fff; }
+        input[type="checkbox"].est-check:checked::before { transform: scale(1); }
+        input[type="range"] { accent-color: #ffffff; }
+        .speed-btn.is-active { background: #fff; color: #131313; border-color: #fff; }
+
+        /* Scrollbar fine sombre */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #131313; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.2); }
+
+        /* ═══ INTRO : zoom cinématique sur le point du logo, piloté au scroll ═══ */
+        #intro-spacer { height: 230vh; background: #131313; }
+        #intro {
+            position: fixed; inset: 0; z-index: 9999;
+            background: #ffffff; overflow: hidden; cursor: default;
+        }
+        #intro-img {
+            position: absolute; user-select: none; -webkit-user-drag: none;
+            pointer-events: none; will-change: transform;
+            transform: scale(1);
+            max-width: none;   /* neutralise le img{max-width:100%} du reset Tailwind :
+                                  sinon le bitmap est comprimé et décalé vs le cercle
+                                  overlay (la « bosse »), surtout à fort zoom */
+        }
+        /* Point : cercle PARFAIT affiché en permanence et dimensionné en layout
+           (jamais en transform) — bord net à n'importe quel zoom, forme strictement
+           constante (ratio 1:1 verrouillé), envahissement de l'écran symétrique */
+        #intro-dot {
+            position: absolute; left: 0; top: 0;
+            width: 0; height: 0;
+            border-radius: 50%; background: #000000;
+        }
+        #intro-hint {
+            position: absolute; left: 50%; bottom: 5vh; transform: translateX(-50%);
+            display: flex; flex-direction: column; align-items: center; gap: 14px;
+            font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+            letter-spacing: .25em; text-transform: uppercase; color: #131313;
+            will-change: opacity;
+        }
+        #intro-hint .bar {
+            width: 1px; height: 48px; position: relative; overflow: hidden;
+            background: rgba(19,19,19,.18);
+        }
+        #intro-hint .bar::after {
+            content: ""; position: absolute; left: 0; top: -14px; width: 1px; height: 14px;
+            background: #131313; animation: hintSlide 1.6s cubic-bezier(.65,0,.35,1) infinite;
+        }
+        @keyframes hintSlide { to { top: 48px; } }
+
+        /* Entrées du site mises en pause tant que l'intro n'est pas terminée :
+           le héros « démarre » au moment précis où le point noir a envahi l'écran */
+        body.intro-active #site-header,
+        body.intro-active .letter,
+        body.intro-active .star-pop { animation-play-state: paused; }
+
+        /* Respect du reduced-motion (comme config.figma.com) */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: .001s !important; animation-iteration-count: 1 !important; transition-duration: .001s !important; }
+            .reveal { opacity: 1; transform: none; }
+            .letter { transform: none; }
+            .star-pop { opacity: 1; }
+            #site-header { animation: none; }
+            .strip-track { animation: none; }
+            .arr { transition: none; }
+            #intro, #intro-spacer { display: none; }
+        }
+    </style>
+</head>
+<body class="bg-ink text-white antialiased min-h-screen flex flex-col">
+
+    <!-- ═══════════════ INTRO : le logo s'affiche, le scroll zoome sur le point noir,
+         le point envahit l'écran puis le site s'ouvre (fondu noir → #131313) ═══════════════ -->
+    <div id="intro-spacer" aria-hidden="true"></div>
+    <div id="intro" aria-hidden="true">
+        <img id="intro-img" src="logo_intro_4x.png" alt="" draggable="false" decoding="async">
+        <div id="intro-dot"></div>
+        <div id="intro-hint">
+            <span class="bar"></span>
+            <span>Scroll — entrez dans le studio</span>
+        </div>
+    </div>
+    <noscript><style>#intro, #intro-spacer { display: none !important; }</style></noscript>
+
+    <script>
+    (function () {
+        'use strict';
+        var intro   = document.getElementById('intro');
+        var spacer  = document.getElementById('intro-spacer');
+        var img     = document.getElementById('intro-img');
+        var dot     = document.getElementById('intro-dot');
+        var hint    = document.getElementById('intro-hint');
+
+        function killIntro() {
+            if (intro.parentNode)   intro.parentNode.removeChild(intro);
+            if (spacer.parentNode)  spacer.parentNode.removeChild(spacer);
+        }
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { killIntro(); return; }
+
+        /* logo_intro_4x.png : re-rendu net en 7680×4320 (binaire).
+           Point noir : centre (4466, 2353.5) ; le fichier le dessine légèrement ovale
+           (239 × 204.5 en 4x) — l'overlay est un cercle PARFAIT de rayon 239 qui
+           l'englobe totalement : parfaitement rond à tout instant, jamais de double
+           bord, et un envahissement de l'écran rigoureusement symétrique. */
+        var IMG_W = 7680, IMG_H = 4320;
+        var DOT_X = 4466, DOT_Y = 2353.5, DOT_R = 239;
+        var PAN_END = 0.25;   /* recentrage caméra : terminé à 25% du scroll — ensuite le
+                                 point est verrouillé au CENTRE de l'écran et la plongée
+                                 (envahissement symétrique) est un zoom pur autour de lui */
+
+        if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+        var html = document.documentElement;
+        html.style.scrollBehavior = 'auto';
+        window.scrollTo(0, 0);
+        document.body.classList.add('intro-active');
+
+        var vw = 0, vh = 0, px0 = 0, py0 = 0, rB = 1, sMax = 8, maxScroll = 1;
+
+        function measure() {
+            /* largeur CSS RÉELLE (hors barre de défilement) : innerWidth la compte,
+               ce qui décalerait le cadrage et désalignerait le bitmap du cercle */
+            vw = document.documentElement.clientWidth; vh = window.innerHeight;
+            var fit = Math.min(vw / IMG_W, vh / IMG_H);   // contain : logo entier, parfaitement centré
+            var w = IMG_W * fit, h = IMG_H * fit;
+            img.style.width  = w + 'px';
+            img.style.height = h + 'px';
+            img.style.left   = ((vw - w) / 2) + 'px';
+            img.style.top    = ((vh - h) / 2) + 'px';
+            var originX = DOT_X * fit, originY = DOT_Y * fit;
+            px0 = (vw - w) / 2 + originX;                 // position ÉCRAN naturelle du point
+            py0 = (vh - h) / 2 + originY;
+            img.style.transformOrigin = originX + 'px ' + originY + 'px';
+            rB = DOT_R * fit;                             // rayon écran du cercle à l'échelle 1
+            /* zoom final : le cercle est centré à l'écran — les 4 coins sont équidistants */
+            sMax = Math.hypot(vw / 2, vh / 2) / rB * 1.06;
+            maxScroll = Math.max(1, spacer.offsetHeight - vh);
+        }
+
+        var smooth = function (t) { return t * t * (3 - 2 * t); };
+        var target = 0, cur = 0, done = false, rafId = 0, lastT = 0;
+
+        function apply() {
+            var s  = Math.pow(sMax, smooth(cur));         // zoom géométrique (vitesse constante en log)
+            var ep = smooth(Math.min(cur / PAN_END, 1));  // 0→1 sur les 25 premiers % : recentrage caméra
+            var tx = (vw / 2 - px0) * ep;                 // le point glisse vers le centre…
+            var ty = (vh / 2 - py0) * ep;                 // …puis y reste VERROUILLÉ jusqu'au noir final
+            img.style.transform = 'translate3d(' + tx.toFixed(2) + 'px,' + ty.toFixed(2) + 'px,0) scale(' + s.toFixed(4) + ')';
+            var r  = rB * s * 1.01;                       // +1% : absorbe le halo anticrénelage du bitmap
+            var cx = px0 + tx, cy = py0 + ty;             // le cercle suit le point au pixel près
+            dot.style.width  = (2 * r).toFixed(1) + 'px'; // largeur = hauteur : cercle parfait,
+            dot.style.height = (2 * r).toFixed(1) + 'px'; // ratio 1:1 verrouillé à tout instant
+            dot.style.left   = (cx - r).toFixed(1) + 'px';
+            dot.style.top    = (cy - r).toFixed(1) + 'px';
+            hint.style.opacity = Math.max(0, 1 - cur * 7);        // l'indice disparaît dès les premiers px
+        }
+
+        function tick(t) {
+            if (done) return;
+            var dt = lastT ? Math.min(0.05, (t - lastT) / 1000) : 0.016;
+            lastT = t;
+            cur += (target - cur) * (1 - Math.exp(-9 * dt));      // lissage indépendant du framerate
+            if (target >= 1 && cur > 0.9985) { complete(); return; }
+            apply();
+            rafId = requestAnimationFrame(tick);
+        }
+
+        function readScroll() {
+            if (done) return;
+            target = Math.min(1, Math.max(0, (window.scrollY || 0) / maxScroll));
+        }
+
+        function complete() {
+            done = true;
+            cur = 1; apply();                                     // écran 100% noir : le point a tout envahi
+            cancelAnimationFrame(rafId);
+            window.removeEventListener('scroll', readScroll);
+            document.documentElement.style.overflow = 'hidden';   // on fige le temps de basculer
+            requestAnimationFrame(function () {
+                spacer.style.display = 'none';
+                window.scrollTo(0, 0);                            // saut invisible : l'écran est noir plein
+                document.body.classList.remove('intro-active');   // le héros du site démarre maintenant
+                intro.style.transition = 'opacity .9s cubic-bezier(.4,0,.2,1)';
+                intro.style.pointerEvents = 'none';
+                intro.style.opacity = '0';                        // fondu noir → site (#131313 ≈ noir du point)
+                document.dispatchEvent(new CustomEvent('anima:intro-done'));
+                setTimeout(function () {
+                    document.documentElement.style.overflow = '';
+                    document.documentElement.style.scrollBehavior = '';
+                    killIntro();
+                }, 950);
+            });
+        }
+
+        window.addEventListener('scroll', readScroll, { passive: true });
+        window.addEventListener('resize', function () { measure(); if (!done) apply(); });
+        measure(); readScroll(); apply();
+        rafId = requestAnimationFrame(tick);
+    })();
+    </script>
+
+    <a href="#main" class="skip">Aller au contenu principal</a>
+
+    <!-- ═══════════════ HEADER STICKY (logo à gauche, liens à droite — placement config.figma.com) ═══════════════ -->
+    <header id="site-header" class="sticky top-0 z-50 w-full">
+        <div class="max-w-[1400px] mx-auto flex items-center justify-between px-4 sm:px-8 h-16">
+            <a href="#top" class="font-serif italic text-2xl tracking-tight leading-none">
+                Anima<span class="star-spin text-star not-italic font-sans font-light ml-1 text-xl">✦</span>
+            </a>
+            <nav class="flex items-center gap-5 lg:gap-8" aria-label="Navigation principale">
+                <div class="hidden lg:flex items-center gap-6 font-mono text-[11px] uppercase tracking-[0.18em] text-tint">
+                    <a href="#studio" class="hover:text-white transition-colors">Studio</a>
+                    <a href="#services" class="hover:text-white transition-colors">Services</a>
+                    <a href="#projets" class="hover:text-white transition-colors">Projets</a>
+                    <a href="#estimateur" class="hover:text-white transition-colors">Estimateur</a>
+                    <a href="#faq" class="hover:text-white transition-colors">FAQ</a>
+                </div>
+                <button onclick="toggleDrawer()" class="font-mono text-[11px] uppercase tracking-[0.18em] border border-white/40 px-4 py-2 hover:bg-white hover:text-ink transition-colors rounded-none">
+                    Réserver
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main" class="flex-grow">
+
+        <!-- ═══════════════ HERO : wordmark plein cadre + ligne méta (structure config.figma.com) ═══════════════ -->
+        <section id="top" class="max-w-[1400px] mx-auto px-4 sm:px-8 pt-14 pb-16 md:pt-20 md:pb-24 scroll-mt-24">
+
+            <p class="font-mono text-[11px] sm:text-xs uppercase tracking-[0.25em] text-tint mb-6 md:mb-10 flex items-center gap-4">
+                <span class="inline-block w-10 h-px bg-white/25 flex-none"></span>
+                <span class="min-w-0">Création de contenu &amp; communication digitale</span>
+            </p>
+
+            <!-- Wordmark géant serif italique + astérisque accent (comme "Config✳") -->
+            <h1 class="wordmark font-serif italic font-normal leading-[0.85] tracking-[-0.02em] select-none text-[clamp(5.5rem,21vw,19rem)]">
+                <span class="wrap-l"><span class="letter" style="animation-delay:.05s">A</span></span><span class="wrap-l"><span class="letter" style="animation-delay:.12s">n</span></span><span class="wrap-l"><span class="letter" style="animation-delay:.19s">i</span></span><span class="wrap-l"><span class="letter" style="animation-delay:.26s">m</span></span><span class="wrap-l"><span class="letter" style="animation-delay:.33s">a</span></span><span class="star-pop text-star not-italic font-sans font-light align-top text-[0.35em] ml-[0.06em]"><span class="star-spin">✦</span></span>
+            </h1>
+
+            <!-- Ligne méta équivalente dates/lieu de Config -->
+            <div class="mt-8 md:mt-12 border-y border-white/10 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 font-mono text-[11px] sm:text-xs uppercase tracking-[0.2em] text-tint">
+                <span>Pour les marques, les lieux &amp; les événements</span>
+                <span>Lausanne — Genève — Suisse</span>
+            </div>
+
+            <!-- Ruban photos pleine largeur défilant en continu (animation signature de config.figma.com) -->
+            <div class="strip relative left-[calc(-50%+1rem)] sm:left-[calc(-50%+2rem)] w-screen mt-10 md:mt-14" aria-hidden="true">
+                <div class="strip-track">
+                    <div class="strip-half">
+                        <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=520&h=340&q=80" alt="" draggable="false">
+                        <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
+                        <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
+                        <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
+                        <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
+                        <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
+                        <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
+                        <img src="https://images.unsplash.com/photo-1529900748604-07564a03e7f6?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
+                    </div>
+                    <div class="strip-half">
+                        <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
+                        <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
+                        <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
+                        <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
+                        <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
+                        <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
+                        <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
+                        <img src="https://images.unsplash.com/photo-1529900748604-07564a03e7f6?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-10 md:mt-14 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-end">
+                <p class="lg:col-span-6 text-lg md:text-xl font-light leading-relaxed text-white/85 max-w-xl">
+                    Là où votre image prend vie<span class="text-star">.</span>
+                    Studio créatif suisse de production visuelle haut de gamme — photoshoots éditoriaux,
+                    direction artistique et stratégie sociale sur-mesure.
+                </p>
+                <div class="lg:col-span-6 flex flex-wrap items-center gap-6 lg:justify-end">
+                    <a href="#projets" class="font-mono text-[11px] uppercase tracking-[0.18em] border border-white/40 px-6 py-3.5 hover:bg-white hover:text-ink transition-colors rounded-none">
+                        Explorer les projets
+                    </a>
+                    <a href="#estimateur" class="inline-block py-3 font-mono text-[11px] uppercase tracking-[0.18em] text-white underline decoration-white/40 underline-offset-8 hover:decoration-star hover:text-star transition-colors">
+                        Simuler un devis <span class="arr">↗</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════ SECTION 01 — STUDIO (structure "Call for speakers" de Config) ═══════════════ -->
+        <section id="studio" class="border-t border-white/10 scroll-mt-24">
+            <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-16 md:py-24">
+                <p class="reveal font-mono text-[11px] sm:text-xs uppercase tracking-[0.25em] text-tint mb-6 md:mb-8">[ 01 — Le studio ]</p>
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                    <div class="lg:col-span-7 reveal">
+                        <h2 class="font-sans font-normal text-3xl sm:text-4xl md:text-5xl leading-[1.1] tracking-tight">
+                            Basé en Suisse,<br>tourné vers l'exceptionnel.
+                        </h2>
+                        <p class="mt-8 text-base md:text-lg font-light leading-relaxed text-white/70 max-w-2xl">
+                            <span class="text-white">ANIMA Studio</span> est né d'une volonté simple : sublimer l'identité
+                            visuelle des marques, des lieux d'exception et des événements d'envergure. À l'ère du contenu
+                            standardisé, nous croyons au pouvoir d'une direction artistique forte — nous ne produisons pas
+                            du contenu, nous bâtissons des univers désirables.
+                        </p>
+                        <p class="mt-6 font-mono text-[11px] uppercase tracking-[0.2em] text-tint">
+                            Réservations ouvertes — Q3 / Q4 2026 · Réponse sous 24h
+                        </p>
+                    </div>
+                    <div class="lg:col-span-5 reveal flex flex-col justify-end gap-5" style="transition-delay:.15s">
+                        <button onclick="toggleDrawer()" class="font-mono text-[11px] uppercase tracking-[0.18em] border border-white/40 px-6 py-4 hover:bg-white hover:text-ink transition-colors rounded-none w-full sm:w-auto sm:self-end">
+                            Réserver un shoot
+                        </button>
+                        <a href="mailto:contact@anima.studio.ch" class="font-mono text-[11px] uppercase tracking-[0.18em] text-white underline decoration-white/40 underline-offset-8 hover:decoration-star hover:text-star transition-colors sm:self-end">
+                            ou écrire au studio <span class="arr">↗</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════ SECTION 02 — EN UN COUP D'ŒIL (structure "At a glance" de Config) ═══════════════ -->
+        <section class="border-t border-white/10">
+            <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-16 md:py-24">
+                <p class="reveal font-mono text-[11px] sm:text-xs uppercase tracking-[0.25em] text-tint mb-10 md:mb-14">[ Anima en un coup d'œil ]</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 md:divide-x divide-white/10">
+                    <div class="reveal py-8 md:py-0 md:pr-10">
+                        <span data-count="100" data-suffix="%" class="block font-sans font-light text-6xl md:text-7xl tracking-tight">0%</span>
+                        <span class="block mt-4 font-mono text-[11px] uppercase tracking-[0.2em] text-tint">Sur-mesure — chaque projet</span>
+                    </div>
+                    <div class="reveal py-8 md:py-0 md:px-10" style="transition-delay:.1s">
+                        <span data-count="24" data-suffix="H" class="block font-sans font-light text-6xl md:text-7xl tracking-tight">0H</span>
+                        <span class="block mt-4 font-mono text-[11px] uppercase tracking-[0.2em] text-tint">Réponse garantie</span>
+                    </div>
+                    <div class="reveal py-8 md:py-0 md:pl-10" style="transition-delay:.2s">
+                        <span class="block font-sans font-light text-6xl md:text-7xl tracking-tight">CH·FR</span>
+                        <span class="block mt-4 font-mono text-[11px] uppercase tracking-[0.2em] text-tint">Couverture suisse</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════ SECTION 03 — SERVICES (structure "Why attend" : 3 colonnes séparées par filets) ═══════════════ -->
+        <section id="services" class="border-t border-white/10 scroll-mt-24">
+            <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-16 md:py-24">
+                <p class="reveal font-mono text-[11px] sm:text-xs uppercase tracking-[0.25em] text-tint mb-10 md:mb-14">[ 02 — Nos services ]</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 md:divide-x divide-white/10 md:gap-0 gap-12">
+
+                    <div class="reveal md:pr-10">
+                        <span class="font-mono text-[11px] text-tint">/ 01</span>
+                        <h3 class="mt-4 font-sans font-normal text-2xl md:text-3xl leading-snug tracking-tight">Photoshoots &amp; direction artistique</h3>
+                        <p class="mt-5 text-sm font-light leading-relaxed text-white/70">
+                            Shootings éditoriaux photo et vidéo, direction de mannequins, stylisme visuel et
+                            moodboards sur-mesure pour vos campagnes.
+                        </p>
+                        <ul class="mt-7 pt-6 border-t border-white/10 font-mono text-xs leading-loose text-white/80 space-y-1.5">
+                            <li>Campagnes lookbook &amp; mode</li>
+                            <li>Photographie de lieux &amp; architecture</li>
+                            <li>Retouche &amp; color grading</li>
+                        </ul>
+                        <button onclick="openServiceModal('Photoshoots & Direction Artistique')" class="mt-7 font-mono text-[11px] uppercase tracking-[0.18em] underline decoration-white/40 underline-offset-8 hover:decoration-star hover:text-star transition-colors">
+                            Détails de l'offre <span class="arr">↗</span>
+                        </button>
+                    </div>
+
+                    <div class="reveal md:px-10" style="transition-delay:.1s">
+                        <span class="font-mono text-[11px] text-tint">/ 02</span>
+                        <h3 class="mt-4 font-sans font-normal text-2xl md:text-3xl leading-snug tracking-tight">Gestion des réseaux sociaux</h3>
+                        <p class="mt-5 text-sm font-light leading-relaxed text-white/70">
+                            Gestion complète de votre présence Instagram &amp; TikTok — curation de feed,
+                            copywriting ciblé et calendrier éditorial stratégique.
+                        </p>
+                        <ul class="mt-7 pt-6 border-t border-white/10 font-mono text-xs leading-loose text-white/80 space-y-1.5">
+                            <li>Stratégie de contenu &amp; feed aesthetics</li>
+                            <li>Planification &amp; copywriting</li>
+                            <li>Analyse de performance &amp; reporting</li>
+                        </ul>
+                        <button onclick="openServiceModal('Gestion des Réseaux Sociaux')" class="mt-7 font-mono text-[11px] uppercase tracking-[0.18em] underline decoration-white/40 underline-offset-8 hover:decoration-star hover:text-star transition-colors">
+                            Détails de l'offre <span class="arr">↗</span>
+                        </button>
+                    </div>
+
+                    <div class="reveal md:pl-10" style="transition-delay:.2s">
+                        <span class="font-mono text-[11px] text-tint">/ 03</span>
+                        <h3 class="mt-4 font-sans font-normal text-2xl md:text-3xl leading-snug tracking-tight">Création de contenu &amp; événements</h3>
+                        <p class="mt-5 text-sm font-light leading-relaxed text-white/70">
+                            Captation d'événements exclusifs, Reels immersifs et snack-content haute
+                            fréquence pour maintenir votre audience en haleine.
+                        </p>
+                        <ul class="mt-7 pt-6 border-t border-white/10 font-mono text-xs leading-loose text-white/80 space-y-1.5">
+                            <li>Reels / TikTok shorts immersifs</li>
+                            <li>Couverture événementielle temps réel</li>
+                            <li>Brand assets &amp; motion snippets</li>
+                        </ul>
+                        <button onclick="openServiceModal('Création de Contenu & Événements')" class="mt-7 font-mono text-[11px] uppercase tracking-[0.18em] underline decoration-white/40 underline-offset-8 hover:decoration-star hover:text-star transition-colors">
+                            Détails de l'offre <span class="arr">↗</span>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════ SECTION 04 — PROJETS (structure "Memorable moments" : cartes à filet 1px, angles droits) ═══════════════ -->
+        <section id="projets" class="border-t border-white/10 scroll-mt-24">
+            <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-16 md:py-24">
+                <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10 md:mb-14">
+                    <div class="reveal">
+                        <p class="font-mono text-[11px] sm:text-xs uppercase tracking-[0.25em] text-tint mb-6 md:mb-8">[ 03 — Projets choisis ]</p>
+                        <h2 class="font-sans font-normal text-3xl sm:text-4xl md:text-5xl leading-[1.1] tracking-tight">Réalisations sélectionnées.</h2>
+                    </div>
+                    <a href="https://instagram.com/anima.studio.ch" target="_blank" rel="noopener noreferrer" class="reveal font-mono text-[11px] uppercase tracking-[0.18em] text-tint hover:text-white transition-colors">
+                        @anima.studio.ch <span class="arr">↗</span>
+                    </a>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <a href="https://instagram.com/anima.studio.ch" target="_blank" rel="noopener noreferrer" class="reveal group block border border-white/15 hover:border-white transition-colors rounded-none overflow-hidden">
+                        <div class="aspect-[4/5] overflow-hidden bg-[#1d1d1d]">
+                            <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1000&q=80" alt="Éditorial mode — lookbook" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                        </div>
+                        <div class="border-t border-white/15 p-4 flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.15em]">
+                            <span class="text-white">Lookbook éditorial — Genève</span>
+                            <span class="text-tint group-hover:text-star transition-colors">2026 <span class="arr">↗</span></span>
+                        </div>
+                    </a>
+                    <a href="https://instagram.com/anima.studio.ch" target="_blank" rel="noopener noreferrer" class="reveal group block border border-white/15 hover:border-white transition-colors rounded-none overflow-hidden" style="transition-delay:.1s">
+                        <div class="aspect-[4/5] overflow-hidden bg-[#1d1d1d]">
+                            <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1000&q=80" alt="Gastronomie — curation Instagram" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                        </div>
+                        <div class="border-t border-white/15 p-4 flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.15em]">
+                            <span class="text-white">Curation Instagram — Lausanne</span>
+                            <span class="text-tint group-hover:text-star transition-colors">2026 <span class="arr">↗</span></span>
+                        </div>
+                    </a>
+                    <a href="https://instagram.com/anima.studio.ch" target="_blank" rel="noopener noreferrer" class="reveal group block border border-white/15 hover:border-white transition-colors rounded-none overflow-hidden" style="transition-delay:.2s">
+                        <div class="aspect-[4/5] overflow-hidden bg-[#1d1d1d]">
+                            <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1000&q=80" alt="Gala privé — couverture événementielle" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                        </div>
+                        <div class="border-t border-white/15 p-4 flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.15em]">
+                            <span class="text-white">Gala privé — Zurich</span>
+                            <span class="text-tint group-hover:text-star transition-colors">2026 <span class="arr">↗</span></span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════ SECTION 05 — ESTIMATEUR (fonctionnalité ANIMA, habillage Config) ═══════════════ -->
+        <section id="estimateur" class="border-t border-white/10 scroll-mt-24">
+            <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-16 md:py-24">
+                <p class="reveal font-mono text-[11px] sm:text-xs uppercase tracking-[0.25em] text-tint mb-6 md:mb-8">[ 04 — Estimateur ]</p>
+                <h2 class="reveal font-sans font-normal text-3xl sm:text-4xl md:text-5xl leading-[1.1] tracking-tight mb-10 md:mb-14 max-w-2xl">Calculez votre devis en direct.</h2>
+
+                <div class="reveal border border-white/15 rounded-none p-6 sm:p-10">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+
+                        <!-- Contrôles -->
+                        <div class="lg:col-span-8 space-y-10">
+                            <div>
+                                <p class="font-mono text-[11px] uppercase tracking-[0.2em] text-white mb-4">1 — Sélectionnez vos prestations</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                    <label class="cursor-pointer border border-white/20 hover:border-white transition-colors rounded-none p-3.5 flex items-start gap-3 font-mono text-xs text-white/85">
+                                        <input type="checkbox" value="1500" onchange="calculateTotal()" class="est-check">
+                                        <span>Photoshoot éditorial — 1&#8239;500&#8239;CHF</span>
+                                    </label>
+                                    <label class="cursor-pointer border border-white/20 hover:border-white transition-colors rounded-none p-3.5 flex items-start gap-3 font-mono text-xs text-white/85">
+                                        <input type="checkbox" value="2200" onchange="calculateTotal()" class="est-check">
+                                        <span>Gestion réseaux (mensuel) — 2&#8239;200&#8239;CHF</span>
+                                    </label>
+                                    <label class="cursor-pointer border border-white/20 hover:border-white transition-colors rounded-none p-3.5 flex items-start gap-3 font-mono text-xs text-white/85">
+                                        <input type="checkbox" value="1800" onchange="calculateTotal()" class="est-check">
+                                        <span>Pack Reels / vidéos — 1&#8239;800&#8239;CHF</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between items-center mb-4 font-mono text-[11px] uppercase tracking-[0.2em]">
+                                    <span class="text-white">2 — Volume / livrables</span>
+                                    <span id="volume-val" class="text-star">×1</span>
+                                </div>
+                                <input type="range" id="volume-range" min="1" max="5" value="1" oninput="calculateTotal()" class="w-full h-1 cursor-pointer rounded-none">
+                                <div class="flex justify-between mt-2 font-mono text-[10px] uppercase tracking-[0.15em] text-tint">
+                                    <span>1× campagne</span><span>5× campagne</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <p class="font-mono text-[11px] uppercase tracking-[0.2em] text-white mb-4">3 — Délai de livraison</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 font-mono text-xs">
+                                    <button type="button" onclick="setSpeed(1, this)" class="speed-btn is-active border border-white text-white px-4 py-3 hover:bg-white hover:text-ink transition-colors rounded-none text-left">Standard<br><span class="opacity-60">10–14 jours · ×1.0</span></button>
+                                    <button type="button" onclick="setSpeed(1.25, this)" class="speed-btn border border-white/20 hover:border-white transition-colors rounded-none px-4 py-3 text-left">Fast-track<br><span class="opacity-60">5 jours · ×1.25</span></button>
+                                    <button type="button" onclick="setSpeed(1.5, this)" class="speed-btn border border-white/20 hover:border-white transition-colors rounded-none px-4 py-3 text-left">Express<br><span class="opacity-60">48h · ×1.5</span></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Reçu -->
+                        <div class="lg:col-span-4 border border-white/15 rounded-none p-6 flex flex-col justify-between font-mono text-xs">
+                            <div>
+                                <div class="flex justify-between uppercase tracking-[0.15em] text-tint border-b border-white/10 pb-3 mb-5">
+                                    <span>Reçu d'estimation</span><span class="text-star">✦</span>
+                                </div>
+                                <div class="space-y-3 text-white/80">
+                                    <div class="flex justify-between"><span>Base prestations</span><span id="summary-base">0 CHF</span></div>
+                                    <div class="flex justify-between"><span>Multiplicateur volume</span><span id="summary-vol">×1</span></div>
+                                    <div class="flex justify-between"><span>Option délai</span><span id="summary-speed">×1</span></div>
+                                </div>
+                            </div>
+                            <div class="pt-6 mt-6 border-t border-white/10">
+                                <span class="block text-[10px] uppercase tracking-[0.2em] text-tint mb-2">Estimation indicative</span>
+                                <span id="summary-total" class="block font-sans font-light text-4xl md:text-5xl tracking-tight text-white">0 CHF</span>
+                                <button onclick="toggleDrawer()" class="mt-6 w-full font-mono text-[11px] uppercase tracking-[0.18em] border border-white/40 px-6 py-3.5 hover:bg-white hover:text-ink transition-colors rounded-none">
+                                    Valider &amp; réserver
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════ SECTION 06 — FAQ (accordéon, même composant que config.figma.com) ═══════════════ -->
+        <section id="faq" class="border-t border-white/10 scroll-mt-24">
+            <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-16 md:py-24">
+                <p class="reveal font-mono text-[11px] sm:text-xs uppercase tracking-[0.25em] text-tint mb-6 md:mb-8">[ 05 — FAQ ]</p>
+                <h2 class="reveal font-sans font-normal text-3xl sm:text-4xl md:text-5xl leading-[1.1] tracking-tight mb-10 md:mb-14">Questions fréquentes.</h2>
+
+                <div class="reveal border-t border-white/10">
+                    <div class="faq-item border-b border-white/10">
+                        <button class="faq-btn w-full flex items-center justify-between gap-6 py-6 text-left" aria-expanded="false">
+                            <span class="font-mono text-sm sm:text-base text-white">Comment réserver un shooting ?</span>
+                            <span class="faq-icon font-mono text-xl text-tint flex-none">+</span>
+                        </button>
+                        <div class="faq-panel"><div>
+                            <p class="pb-6 pr-10 text-sm font-light leading-relaxed text-white/70 max-w-2xl">
+                                Un premier échange par email ou Instagram, un brief détaillé sous 24h, puis une proposition
+                                de calendrier et de devis. Tout se valide via le formulaire de réservation.
+                            </p>
+                        </div></div>
+                    </div>
+                    <div class="faq-item border-b border-white/10">
+                        <button class="faq-btn w-full flex items-center justify-between gap-6 py-6 text-left" aria-expanded="false">
+                            <span class="font-mono text-sm sm:text-base text-white">Quels sont les délais de livraison ?</span>
+                            <span class="faq-icon font-mono text-xl text-tint flex-none">+</span>
+                        </button>
+                        <div class="faq-panel"><div>
+                            <p class="pb-6 pr-10 text-sm font-light leading-relaxed text-white/70 max-w-2xl">
+                                Standard 10 à 14 jours, Fast-track 5 jours, Express 48h — l'option se choisit dans
+                                l'estimateur et ajuste le tarif en conséquence.
+                            </p>
+                        </div></div>
+                    </div>
+                    <div class="faq-item border-b border-white/10">
+                        <button class="faq-btn w-full flex items-center justify-between gap-6 py-6 text-left" aria-expanded="false">
+                            <span class="font-mono text-sm sm:text-base text-white">Intervenez-vous en dehors de la Suisse ?</span>
+                            <span class="faq-icon font-mono text-xl text-tint flex-none">+</span>
+                        </button>
+                        <div class="faq-panel"><div>
+                            <p class="pb-6 pr-10 text-sm font-light leading-relaxed text-white/70 max-w-2xl">
+                                Basés entre Lausanne et Genève, nous couvrons toute la Suisse romande et alémanique,
+                                ainsi que l'international sur demande pour les projets d'envergure.
+                            </p>
+                        </div></div>
+                    </div>
+                    <div class="faq-item border-b border-white/10">
+                        <button class="faq-btn w-full flex items-center justify-between gap-6 py-6 text-left" aria-expanded="false">
+                            <span class="font-mono text-sm sm:text-base text-white">Comment se déroule un projet ?</span>
+                            <span class="faq-icon font-mono text-xl text-tint flex-none">+</span>
+                        </button>
+                        <div class="faq-panel"><div>
+                            <p class="pb-6 pr-10 text-sm font-light leading-relaxed text-white/70 max-w-2xl">
+                                Direction artistique, production, retouche puis diffusion — chaque étape est construite
+                                sur-mesure, avec des points de validation à chaque jalon.
+                            </p>
+                        </div></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ═══════════════ FOOTER (même sobriété que Config : liens événement + réseaux + légal) ═══════════════ -->
+    <footer class="border-t border-white/10">
+        <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-14">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-white/10">
+                <div class="md:col-span-6">
+                    <p class="font-serif italic text-4xl">Anima<span class="star-spin not-italic font-sans font-light text-star text-2xl ml-1">✦</span></p>
+                    <p class="mt-5 text-sm font-light leading-relaxed text-white/70 max-w-sm">
+                        Studio de création digitale — pour les marques, les lieux et les événements,
+                        en Suisse et à l'international.
+                    </p>
+                </div>
+                <div class="md:col-span-3">
+                    <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-tint mb-5">Menu</p>
+                    <div class="flex flex-col gap-3 font-mono text-xs text-white/80">
+                        <a href="#studio" class="hover:text-star transition-colors w-fit">Studio</a>
+                        <a href="#services" class="hover:text-star transition-colors w-fit">Services</a>
+                        <a href="#projets" class="hover:text-star transition-colors w-fit">Projets</a>
+                        <a href="#estimateur" class="hover:text-star transition-colors w-fit">Estimateur</a>
+                        <a href="#faq" class="hover:text-star transition-colors w-fit">FAQ</a>
+                    </div>
+                </div>
+                <div class="md:col-span-3">
+                    <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-tint mb-5">Suivre</p>
+                    <div class="flex flex-col gap-3 font-mono text-xs text-white/80">
+                        <a href="https://instagram.com/anima.studio.ch" target="_blank" rel="noopener noreferrer" class="hover:text-star transition-colors w-fit">Instagram <span class="arr">↗</span> @anima.studio.ch</a>
+                        <a href="mailto:contact@anima.studio.ch" class="hover:text-star transition-colors w-fit">contact@anima.studio.ch</a>
+                    </div>
+                </div>
+            </div>
+            <div class="pt-8 flex flex-col sm:flex-row justify-between gap-3 font-mono text-[10px] uppercase tracking-[0.2em] text-tint">
+                <span>© 2026 Anima Studio CH — Tous droits réservés</span>
+                <span>Lausanne — Genève — Suisse</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ═══════════════ DRAWER RÉSERVATION (habillage Config : fond ink, filets, angles droits) ═══════════════ -->
+    <div id="booking-drawer" class="fixed inset-0 z-[60] pointer-events-none opacity-0 transition-opacity duration-300" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Formulaire de réservation">
+        <div id="drawer-backdrop" onclick="toggleDrawer()" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+        <div id="drawer-panel" class="absolute top-0 right-0 h-full w-full max-w-md bg-ink border-l border-white/15 p-6 sm:p-8 overflow-y-auto shadow-2xl transform translate-x-full transition-transform duration-300 pointer-events-auto flex flex-col justify-between rounded-none">
+            <div>
+                <div class="flex items-center justify-between pb-6 border-b border-white/10 mb-8">
+                    <div class="font-mono text-[11px] uppercase tracking-[0.2em]">
+                        <span class="block text-white">Anima — Réservation</span>
+                        <span class="text-tint">Réponse sous 24h</span>
+                    </div>
+                    <button onclick="toggleDrawer()" aria-label="Fermer" class="w-9 h-9 border border-white/25 hover:bg-white hover:text-ink transition-colors flex items-center justify-center font-mono rounded-none">✕</button>
+                </div>
+
+                <form id="contact-form" onsubmit="handleFormSubmit(event)" class="space-y-6 font-mono text-xs">
+                    <div>
+                        <label for="f-name" class="block text-[10px] uppercase tracking-[0.2em] text-tint mb-2">Nom / Enseigne *</label>
+                        <input id="f-name" name="name" type="text" required placeholder="Maison Noir — Lausanne" class="w-full bg-transparent border border-white/20 focus:border-white outline-none rounded-none px-4 py-3.5 text-white placeholder:text-white/40 transition-colors">
+                    </div>
+                    <div>
+                        <label for="f-email" class="block text-[10px] uppercase tracking-[0.2em] text-tint mb-2">Email de contact *</label>
+                        <input id="f-email" name="email" type="email" required placeholder="contact@votre-marque.ch" class="w-full bg-transparent border border-white/20 focus:border-white outline-none rounded-none px-4 py-3.5 text-white placeholder:text-white/40 transition-colors">
+                    </div>
+                    <div>
+                        <label for="f-service" class="block text-[10px] uppercase tracking-[0.2em] text-tint mb-2">Service souhaité</label>
+                        <select id="f-service" name="service" class="w-full bg-transparent border border-white/20 focus:border-white outline-none rounded-none px-4 py-3.5 text-white transition-colors [&>option]:bg-ink">
+                            <option>Photoshoot &amp; Direction Artistique</option>
+                            <option>Gestion Réseaux Sociaux</option>
+                            <option>Création de Contenu Événementiel</option>
+                            <option>Pack Global Sur-Mesure</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="f-msg" class="block text-[10px] uppercase tracking-[0.2em] text-tint mb-2">Détails du projet</label>
+                        <textarea id="f-msg" name="message" rows="4" placeholder="Attentes, dates, objectifs visuels…" class="w-full bg-transparent border border-white/20 focus:border-white outline-none rounded-none px-4 py-3.5 text-white placeholder:text-white/40 transition-colors resize-none"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-white text-ink font-bold uppercase tracking-[0.2em] rounded-none py-4 hover:bg-star hover:text-ink transition-colors">
+                        Envoyer la demande
+                    </button>
+                </form>
+
+                <div id="form-success" class="hidden border border-white/15 rounded-none p-8 text-center">
+                    <span class="text-star text-3xl block mb-4"><span class="star-spin inline-block">✦</span></span>
+                    <p class="font-mono text-sm text-white">Merci — votre demande est transmise.</p>
+                    <p class="mt-3 font-mono text-[11px] uppercase tracking-[0.15em] text-tint">Réponse sous 24h</p>
+                </div>
+            </div>
+
+            <div class="pt-8 mt-8 border-t border-white/10">
+                <div class="flex flex-col gap-3 mb-6 font-mono text-xs text-white/80">
+                    <a href="https://instagram.com/anima.studio.ch" target="_blank" rel="noopener noreferrer" class="hover:text-star transition-colors w-fit">Instagram <span class="arr">↗</span> @anima.studio.ch</a>
+                    <a href="mailto:contact@anima.studio.ch" class="hover:text-star transition-colors w-fit">contact@anima.studio.ch</a>
+                </div>
+                <div class="font-mono text-[10px] uppercase tracking-[0.2em] text-tint flex justify-between">
+                    <span>Switzerland — CH</span>
+                    <span>2026</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════ MODAL SERVICE (habillage Config) ═══════════════ -->
+    <div id="service-modal" class="fixed inset-0 z-[60] hidden items-center justify-center p-4 bg-black/70 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Détails du service">
+        <div class="bg-ink border border-white/15 max-w-lg w-full rounded-none relative p-8">
+            <button onclick="closeServiceModal()" aria-label="Fermer" class="absolute top-4 right-4 w-9 h-9 border border-white/25 hover:bg-white hover:text-ink transition-colors flex items-center justify-center font-mono">✕</button>
+            <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-star mb-3">/ Détails du service</p>
+            <h3 id="modal-service-title" class="font-sans font-normal text-2xl md:text-3xl tracking-tight mb-5"></h3>
+            <p id="modal-service-desc" class="text-sm font-light leading-relaxed text-white/70 mb-8"></p>
+            <button onclick="closeServiceModal(); toggleDrawer();" class="w-full font-mono text-[11px] uppercase tracking-[0.18em] border border-white/40 px-6 py-3.5 hover:bg-white hover:text-ink transition-colors rounded-none">
+                Demander un devis pour ce service
+            </button>
+        </div>
+    </div>
+
+    <!-- ═══════════════ LOGIQUE JS ═══════════════ -->
+    <script>
+        // ── Header : état scrollé (fond + filet) ──────────────────────────────
+        const header = document.getElementById('site-header');
+        const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 8);
+        addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+
+        // ── Apparitions au scroll (équivalent discret des animations Config) ─
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+            });
+        }, { threshold: 0.12 });
+        document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+        // Filet de sécurité : saut d'ancre instantané → on force les éléments dépassés
+        const revealPassed = () => {
+            document.querySelectorAll('.reveal:not(.visible)').forEach(el => {
+                if (el.getBoundingClientRect().top < innerHeight * 0.9) el.classList.add('visible');
+            });
+        };
+        addEventListener('scroll', revealPassed, { passive: true });
+
+        // ── Statistiques : compteur animé ────────────────────────────────────
+        const cio = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (!e.isIntersecting) return;
+                const el = e.target;
+                const target = parseInt(el.dataset.count, 10);
+                const suffix = el.dataset.suffix || '';
+                const t0 = performance.now(), dur = 1200;
+                const tick = (now) => {
+                    const p = Math.min((now - t0) / dur, 1);
+                    const eased = 1 - Math.pow(1 - p, 3);
+                    el.textContent = Math.round(target * eased) + suffix;
+                    if (p < 1) requestAnimationFrame(tick);
+                };
+                requestAnimationFrame(tick);
+                cio.unobserve(el);
+            });
+        }, { threshold: 0.5 });
+        document.querySelectorAll('[data-count]').forEach(el => cio.observe(el));
+
+        // ── Wordmark : rejoue l'entrée des lettres quand le héros revient à l'écran ──
+        const mark = document.querySelector('.wordmark');
+        new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (!e.isIntersecting) return;
+                mark.querySelectorAll('.letter, .star-pop').forEach(el => {
+                    el.style.animation = 'none';
+                    void el.offsetWidth; // reflow forcé pour relancer l'animation
+                    el.style.animation = '';
+                });
+            });
+        }, { threshold: 0.4 }).observe(mark);
+
+        // ── Estimateur ────────────────────────────────────────────────────────
+        let speedMultiplier = 1;
+
+        function setSpeed(multiplier, btn) {
+            speedMultiplier = multiplier;
+            document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('is-active'));
+            btn.classList.add('is-active');
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            let base = 0;
+            document.querySelectorAll('.est-check:checked').forEach(chk => { base += parseInt(chk.value, 10); });
+
+            const volume = parseInt(document.getElementById('volume-range').value, 10);
+            const total = Math.round(base * volume * speedMultiplier);
+
+            document.getElementById('volume-val').textContent = '×' + volume;
+            document.getElementById('summary-base').textContent = base.toLocaleString('fr-CH') + ' CHF';
+            document.getElementById('summary-vol').textContent = '×' + volume;
+            document.getElementById('summary-speed').textContent = '×' + speedMultiplier;
+            document.getElementById('summary-total').textContent = total.toLocaleString('fr-CH') + ' CHF';
+        }
+        calculateTotal();
+
+        // ── Drawer réservation (Esc + verrou scroll + focus) ─────────────────
+        const drawer = document.getElementById('booking-drawer');
+        const drawerPanel = document.getElementById('drawer-panel');
+
+        function drawerIsOpen() { return !drawer.classList.contains('pointer-events-none'); }
+
+        function openDrawer() {
+            drawer.classList.remove('pointer-events-none', 'opacity-0');
+            drawer.classList.add('pointer-events-auto', 'opacity-100');
+            drawerPanel.classList.remove('translate-x-full');
+            drawer.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+            const first = drawerPanel.querySelector('button, input, select, textarea');
+            if (first) first.focus();
+        }
+
+        function closeDrawer() {
+            drawer.classList.add('pointer-events-none', 'opacity-0');
+            drawer.classList.remove('pointer-events-auto', 'opacity-100');
+            drawerPanel.classList.add('translate-x-full');
+            drawer.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+
+        function toggleDrawer() { drawerIsOpen() ? closeDrawer() : openDrawer(); }
+
+        // ── Modal service ─────────────────────────────────────────────────────
+        const modal = document.getElementById('service-modal');
+
+        function openServiceModal(title) {
+            document.getElementById('modal-service-title').textContent = title;
+            document.getElementById('modal-service-desc').textContent =
+                `Accompagnement de haute précision par ANIMA Studio pour « ${title} ». Nous gérons chaque étape, ` +
+                `de la production à la diffusion, pour garantir une esthétique et des résultats irréprochables.`;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+            modal.querySelector('button').focus();
+        }
+
+        function closeServiceModal() {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            if (!drawerIsOpen()) document.body.style.overflow = '';
+        }
+
+        modal.addEventListener('click', (e) => { if (e.target === modal) closeServiceModal(); });
+
+        // ── Échap : ferme modal puis drawer ──────────────────────────────────
+        document.addEventListener('keydown', (e) => {
+            if (e.key !== 'Escape') return;
+            if (!modal.classList.contains('hidden')) closeServiceModal();
+            else if (drawerIsOpen()) closeDrawer();
+        });
+
+        // ── FAQ accordéon (un seul ouvert à la fois, comme Config) ───────────
+        document.querySelectorAll('.faq-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const item = btn.closest('.faq-item');
+                const wasOpen = item.classList.contains('open');
+                document.querySelectorAll('.faq-item.open').forEach(i => {
+                    i.classList.remove('open');
+                    i.querySelector('.faq-btn').setAttribute('aria-expanded', 'false');
+                });
+                if (!wasOpen) {
+                    item.classList.add('open');
+                    btn.setAttribute('aria-expanded', 'true');
+                }
+            });
+        });
+
+        // ── Formulaire : succès inline (plus d'alert bloquant) ───────────────
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            document.getElementById('contact-form').classList.add('hidden');
+            document.getElementById('form-success').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

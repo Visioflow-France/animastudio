@@ -113,6 +113,51 @@
         ::-webkit-scrollbar-track { background: #131313; }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.2); }
 
+        /* ═══ INTRO : zoom cinématique sur le point du logo, piloté au scroll ═══ */
+        #intro-spacer { height: 230vh; background: #131313; }
+        #intro {
+            position: fixed; inset: 0; z-index: 9999;
+            background: #ffffff; overflow: hidden; cursor: default;
+        }
+        #intro-img {
+            position: absolute; user-select: none; -webkit-user-drag: none;
+            pointer-events: none; will-change: transform;
+            transform: scale(1);
+            max-width: none;   /* neutralise le img{max-width:100%} du reset Tailwind :
+                                  sinon le bitmap est comprimé et décalé vs le cercle
+                                  overlay (la « bosse »), surtout à fort zoom */
+        }
+        /* Point : cercle PARFAIT affiché en permanence et dimensionné en layout
+           (jamais en transform) — bord net à n'importe quel zoom, forme strictement
+           constante (ratio 1:1 verrouillé), envahissement de l'écran symétrique */
+        #intro-dot {
+            position: absolute; left: 0; top: 0;
+            width: 0; height: 0;
+            border-radius: 50%; background: #000000;
+        }
+        #intro-hint {
+            position: absolute; left: 50%; bottom: 5vh; transform: translateX(-50%);
+            display: flex; flex-direction: column; align-items: center; gap: 14px;
+            font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+            letter-spacing: .25em; text-transform: uppercase; color: #131313;
+            will-change: opacity;
+        }
+        #intro-hint .bar {
+            width: 1px; height: 48px; position: relative; overflow: hidden;
+            background: rgba(19,19,19,.18);
+        }
+        #intro-hint .bar::after {
+            content: ""; position: absolute; left: 0; top: -14px; width: 1px; height: 14px;
+            background: #131313; animation: hintSlide 1.6s cubic-bezier(.65,0,.35,1) infinite;
+        }
+        @keyframes hintSlide { to { top: 48px; } }
+
+        /* Entrées du site mises en pause tant que l'intro n'est pas terminée :
+           le héros « démarre » au moment précis où le point noir a envahi l'écran */
+        body.intro-active #site-header,
+        body.intro-active .letter,
+        body.intro-active .star-pop { animation-play-state: paused; }
+
         /* Respect du reduced-motion (comme config.figma.com) */
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after { animation-duration: .001s !important; animation-iteration-count: 1 !important; transition-duration: .001s !important; }
@@ -122,10 +167,140 @@
             #site-header { animation: none; }
             .strip-track { animation: none; }
             .arr { transition: none; }
+            #intro, #intro-spacer { display: none; }
         }
     </style>
 </head>
 <body class="bg-ink text-white antialiased min-h-screen flex flex-col">
+
+    <!-- ═══════════════ INTRO : le logo s'affiche, le scroll zoome sur le point noir,
+         le point envahit l'écran puis le site s'ouvre (fondu noir → #131313) ═══════════════ -->
+    <div id="intro-spacer" aria-hidden="true"></div>
+    <div id="intro" aria-hidden="true">
+        <img id="intro-img" src="logo_intro_4x.png" alt="" draggable="false" decoding="async">
+        <div id="intro-dot"></div>
+        <div id="intro-hint">
+            <span class="bar"></span>
+            <span>Scroll — entrez dans le studio</span>
+        </div>
+    </div>
+    <noscript><style>#intro, #intro-spacer { display: none !important; }</style></noscript>
+
+    <script>
+    (function () {
+        'use strict';
+        var intro   = document.getElementById('intro');
+        var spacer  = document.getElementById('intro-spacer');
+        var img     = document.getElementById('intro-img');
+        var dot     = document.getElementById('intro-dot');
+        var hint    = document.getElementById('intro-hint');
+
+        function killIntro() {
+            if (intro.parentNode)   intro.parentNode.removeChild(intro);
+            if (spacer.parentNode)  spacer.parentNode.removeChild(spacer);
+        }
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { killIntro(); return; }
+
+        /* logo_intro_4x.png : re-rendu net en 7680×4320 (binaire).
+           Point noir : centre (4466, 2353.5) ; le fichier le dessine légèrement ovale
+           (239 × 204.5 en 4x) — l'overlay est un cercle PARFAIT de rayon 239 qui
+           l'englobe totalement : parfaitement rond à tout instant, jamais de double
+           bord, et un envahissement de l'écran rigoureusement symétrique. */
+        var IMG_W = 7680, IMG_H = 4320;
+        var DOT_X = 4466, DOT_Y = 2353.5, DOT_R = 239;
+        var PAN_END = 0.25;   /* recentrage caméra : terminé à 25% du scroll — ensuite le
+                                 point est verrouillé au CENTRE de l'écran et la plongée
+                                 (envahissement symétrique) est un zoom pur autour de lui */
+
+        if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+        var html = document.documentElement;
+        html.style.scrollBehavior = 'auto';
+        window.scrollTo(0, 0);
+        document.body.classList.add('intro-active');
+
+        var vw = 0, vh = 0, px0 = 0, py0 = 0, rB = 1, sMax = 8, maxScroll = 1;
+
+        function measure() {
+            /* largeur CSS RÉELLE (hors barre de défilement) : innerWidth la compte,
+               ce qui décalerait le cadrage et désalignerait le bitmap du cercle */
+            vw = document.documentElement.clientWidth; vh = window.innerHeight;
+            var fit = Math.min(vw / IMG_W, vh / IMG_H);   // contain : logo entier, parfaitement centré
+            var w = IMG_W * fit, h = IMG_H * fit;
+            img.style.width  = w + 'px';
+            img.style.height = h + 'px';
+            img.style.left   = ((vw - w) / 2) + 'px';
+            img.style.top    = ((vh - h) / 2) + 'px';
+            var originX = DOT_X * fit, originY = DOT_Y * fit;
+            px0 = (vw - w) / 2 + originX;                 // position ÉCRAN naturelle du point
+            py0 = (vh - h) / 2 + originY;
+            img.style.transformOrigin = originX + 'px ' + originY + 'px';
+            rB = DOT_R * fit;                             // rayon écran du cercle à l'échelle 1
+            /* zoom final : le cercle est centré à l'écran — les 4 coins sont équidistants */
+            sMax = Math.hypot(vw / 2, vh / 2) / rB * 1.06;
+            maxScroll = Math.max(1, spacer.offsetHeight - vh);
+        }
+
+        var smooth = function (t) { return t * t * (3 - 2 * t); };
+        var target = 0, cur = 0, done = false, rafId = 0, lastT = 0;
+
+        function apply() {
+            var s  = Math.pow(sMax, smooth(cur));         // zoom géométrique (vitesse constante en log)
+            var ep = smooth(Math.min(cur / PAN_END, 1));  // 0→1 sur les 25 premiers % : recentrage caméra
+            var tx = (vw / 2 - px0) * ep;                 // le point glisse vers le centre…
+            var ty = (vh / 2 - py0) * ep;                 // …puis y reste VERROUILLÉ jusqu'au noir final
+            img.style.transform = 'translate3d(' + tx.toFixed(2) + 'px,' + ty.toFixed(2) + 'px,0) scale(' + s.toFixed(4) + ')';
+            var r  = rB * s * 1.01;                       // +1% : absorbe le halo anticrénelage du bitmap
+            var cx = px0 + tx, cy = py0 + ty;             // le cercle suit le point au pixel près
+            dot.style.width  = (2 * r).toFixed(1) + 'px'; // largeur = hauteur : cercle parfait,
+            dot.style.height = (2 * r).toFixed(1) + 'px'; // ratio 1:1 verrouillé à tout instant
+            dot.style.left   = (cx - r).toFixed(1) + 'px';
+            dot.style.top    = (cy - r).toFixed(1) + 'px';
+            hint.style.opacity = Math.max(0, 1 - cur * 7);        // l'indice disparaît dès les premiers px
+        }
+
+        function tick(t) {
+            if (done) return;
+            var dt = lastT ? Math.min(0.05, (t - lastT) / 1000) : 0.016;
+            lastT = t;
+            cur += (target - cur) * (1 - Math.exp(-9 * dt));      // lissage indépendant du framerate
+            if (target >= 1 && cur > 0.9985) { complete(); return; }
+            apply();
+            rafId = requestAnimationFrame(tick);
+        }
+
+        function readScroll() {
+            if (done) return;
+            target = Math.min(1, Math.max(0, (window.scrollY || 0) / maxScroll));
+        }
+
+        function complete() {
+            done = true;
+            cur = 1; apply();                                     // écran 100% noir : le point a tout envahi
+            cancelAnimationFrame(rafId);
+            window.removeEventListener('scroll', readScroll);
+            document.documentElement.style.overflow = 'hidden';   // on fige le temps de basculer
+            requestAnimationFrame(function () {
+                spacer.style.display = 'none';
+                window.scrollTo(0, 0);                            // saut invisible : l'écran est noir plein
+                document.body.classList.remove('intro-active');   // le héros du site démarre maintenant
+                intro.style.transition = 'opacity .9s cubic-bezier(.4,0,.2,1)';
+                intro.style.pointerEvents = 'none';
+                intro.style.opacity = '0';                        // fondu noir → site (#131313 ≈ noir du point)
+                document.dispatchEvent(new CustomEvent('anima:intro-done'));
+                setTimeout(function () {
+                    document.documentElement.style.overflow = '';
+                    document.documentElement.style.scrollBehavior = '';
+                    killIntro();
+                }, 950);
+            });
+        }
+
+        window.addEventListener('scroll', readScroll, { passive: true });
+        window.addEventListener('resize', function () { measure(); if (!done) apply(); });
+        measure(); readScroll(); apply();
+        rafId = requestAnimationFrame(tick);
+    })();
+    </script>
 
     <a href="#main" class="skip">Aller au contenu principal</a>
 

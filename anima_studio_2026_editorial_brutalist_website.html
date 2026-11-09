@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANIMA Studio | Creative Studio & Communication Digitale</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts (Inter & Space Grotesk) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons (as SVG utilities) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'anima-black': '#0A0A0C',
+                        'anima-offwhite': '#FAFAFC',
+                        'anima-gray-light': '#F1F1F4',
+                        'anima-gray-border': '#E2E2E8',
+                        'anima-gray-text': '#666670',
+                        'figma-blue': '#0284C7',
+                        'figma-purple': '#8B5CF6'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Space Grotesk', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Figma Config Canvas Styling & Grid Lines */
+        body {
+            background-color: #FAFAFC;
+            color: #0A0A0C;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            cursor: default;
+        }
+
+        .figma-grid-bg {
+            background-size: 32px 32px;
+            background-image: 
+                linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+        }
+
+        .figma-node {
+            position: relative;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .figma-node:hover {
+            outline: 1.5px solid #0284C7;
+        }
+
+        .figma-handle {
+            width: 7px;
+            height: 7px;
+            background: #FFFFFF;
+            border: 1.5px solid #0284C7;
+            position: absolute;
+            z-index: 20;
+            opacity: 0;
+            transition: opacity 0.15s ease;
+        }
+
+        .figma-node:hover .figma-handle {
+            opacity: 1;
+        }
+
+        .figma-handle.tl { top: -4px; left: -4px; cursor: nwse-resize; }
+        .figma-handle.tr { top: -4px; right: -4px; cursor: nesw-resize; }
+        .figma-handle.bl { bottom: -4px; left: -4px; cursor: nesw-resize; }
+        .figma-handle.br { bottom: -4px; right: -4px; cursor: nwse-resize; }
+
+        .figma-badge {
+            position: absolute;
+            top: -20px;
+            left: 0;
+            background-color: #0284C7;
+            color: white;
+            font-family: 'Space Grotesk', monospace;
+            font-size: 10px;
+            padding: 1px 6px;
+            border-radius: 2px 2px 0 0;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.15s ease;
+        }
+
+        .figma-node:hover .figma-badge {
+            opacity: 1;
+        }
+
+        /* Glassmorphism & Brutalist shadows */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(226, 226, 232, 0.8);
+        }
+
+        .brutalist-border {
+            border: 1px solid #0A0A0C;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 4px;
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #FAFAFC;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #0A0A0C;
+        }
+
+        /* Camera Viewfinder Overlay */
+        .viewfinder-grid {
+            background-image: 
+                radial-gradient(circle, #00FF66 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* Custom Cursor Follower */
+        #cursor-follower {
+            pointer-events: none;
+            position: fixed;
+            z-index: 9999;
+            transition: transform 0.08s ease-out, opacity 0.2s ease;
+        }
+    </style>
+</head>
+<body class="figma-grid-bg antialiased selection:bg-black selection:text-white min-h-screen flex flex-col justify-between">
+
+    <!-- Custom Canvas Inspector Cursor Badge -->
+    <div id="cursor-follower" class="hidden md:flex items-center gap-1.5 px-2 py-1 bg-anima-black text-white text-[10px] font-mono rounded shadow-xl opacity-0">
+        <span id="cursor-pos">X:0 Y:0</span>
+        <span class="text-zinc-500">|</span>
+        <span id="cursor-label" class="text-sky-400 font-semibold">CANVAS</span>
+    </div>
+
+    <!-- CANVAS HEADER / TOOLBAR (FIGMA CONFIG STYLE) -->
+    <header class="sticky top-0 z-50 w-full glass-panel border-b border-anima-gray-border px-4 py-3">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            
+            <!-- LOGO & BRAND ID -->
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="bg-anima-black text-white px-3 py-1 font-black text-xl tracking-tighter flex items-center gap-0.5 rounded-sm transition-transform group-hover:scale-105">
+                    <span>a</span><span class="text-sky-400 font-bold">.</span><span class="text-xs self-start mt-1 font-mono">!</span>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-bold text-sm tracking-tight text-anima-black leading-none uppercase">ANIMA</span>
+                    <span class="text-[10px] font-mono text-anima-gray-text tracking-widest leading-none mt-1">STUDIO // CH</span>
+                </div>
+            </a>
+
+            <!-- NAV LINKS & CONFIG BADGES -->
+            <nav class="hidden lg:flex items-center gap-1 bg-anima-gray-light p-1 rounded-md border border-anima-gray-border text-xs font-mono">
+                <a href="#about" class="px-3 py-1.5 rounded text-anima-black hover:bg-white hover:shadow-sm transition-all font-medium">01. STUDIO</a>
+                <a href="#services" class="px-3 py-1.5 rounded text-anima-black hover:bg-white hover:shadow-sm transition-all font-medium">02. SERVICES</a>
+                <a href="#portfolio" class="px-3 py-1.5 rounded text-anima-black hover:bg-white hover:shadow-sm transition-all font-medium">03. PROJETS</a>
+                <a href="#estimator" class="px-3 py-1.5 rounded text-anima-black hover:bg-white hover:shadow-sm transition-all font-medium">04. ESTIMATEUR</a>
+            </nav>
+
+            <!-- ACTION BUTTONS -->
+            <div class="flex items-center gap-3">
+                <div class="hidden sm:flex items-center gap-2 text-[11px] font-mono text-anima-gray-text bg-white px-2.5 py-1 rounded border border-anima-gray-border">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>DISPONIBLE Q3/Q4</span>
+                </div>
+                
+                <button onclick="toggleDrawer()" class="relative inline-flex items-center justify-center px-4 py-2 text-xs font-bold font-mono text-white bg-anima-black rounded shadow-sm hover:bg-zinc-800 active:scale-95 transition-all">
+                    <span>BOOK SHOOT</span>
+                    <i class="fa-solid fa-arrow-right ml-2 text-[10px]"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CANVAS -->
+    <main class="flex-grow">
+        
+        <!-- HERO SECTION -->
+        <section class="relative pt-12 pb-20 px-4 max-w-7xl mx-auto border-b border-anima-gray-border">
+            
+            <!-- Canvas Coordinates Meta -->
+            <div class="flex items-center justify-between font-mono text-[11px] text-anima-gray-text mb-6">
+                <div class="flex items-center gap-2">
+                    <span class="px-1.5 py-0.5 bg-sky-100 text-sky-800 rounded font-bold">FRAME 01</span>
+                    <span>[ HERO_CANVAS // 100% ]</span>
+                </div>
+                <div class="hidden md:block">
+                    <span>LOCATION: LAUSANNE / GENÈVE / SWITZERLAND</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                
+                <!-- Hero Text Left -->
+                <div class="lg:col-span-7 space-y-6">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-anima-black text-xs font-mono font-bold uppercase tracking-wider bg-white">
+                        <i class="fa-solid fa-sparkles text-sky-600"></i>
+                        <span>Création Digitale & Direction Artistique</span>
+                    </div>
+
+                    <h1 class="text-4xl sm:text-6xl md:text-7xl font-black text-anima-black tracking-tighter leading-[0.95] uppercase">
+                        Là où votre <br>
+                        <span class="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-anima-black via-zinc-700 to-zinc-900 underline decoration-sky-500 decoration-wavy decoration-2">
+                            image prend
+                        </span>
+                        <br>vie<span class="text-sky-500 font-mono">.!</span>
+                    </h1>
+
+                    <p class="text-base sm:text-lg text-anima-gray-text max-w-xl font-normal leading-relaxed">
+                        Studio créatif suisse spécialisé dans la production visuelle haut de gamme, le content creation, les photoshoots de marque et la stratégie réseau sociale sur-mesure.
+                    </p>
+
+                    <!-- Interactive Badges & CTAs -->
+                    <div class="pt-4 flex flex-wrap items-center gap-4">
+                        <a href="#portfolio" class="px-6 py-3 bg-anima-black text-white font-mono text-xs font-bold uppercase tracking-wider rounded border border-anima-black hover:bg-white hover:text-anima-black transition-all shadow-md">
+                            Explorer le Portfolio
+                        </a>
+                        <a href="#estimator" class="px-6 py-3 bg-white text-anima-black font-mono text-xs font-bold uppercase tracking-wider rounded border border-anima-gray-border hover:border-anima-black transition-all">
+                            Simuler un Projet
+                        </a>
+                    </div>
+
+                    <!-- Social Proof / Followers -->
+                    <div class="pt-6 flex items-center gap-6 border-t border-anima-gray-border font-mono text-xs">
+                        <div>
+                            <span class="block text-xl font-bold text-anima-black">351+</span>
+                            <span class="text-anima-gray-text">Abonnés Instagram</span>
+                        </div>
+                        <div class="h-8 w-px bg-anima-gray-border"></div>
+                        <div>
+                            <span class="block text-xl font-bold text-anima-black">100%</span>
+                            <span class="text-anima-gray-text">Sur-Mesure</span>
+                        </div>
+                        <div class="h-8 w-px bg-anima-gray-border"></div>
+                        <div>
+                            <span class="block text-xl font-bold text-anima-black">CH / FR</span>
+                            <span class="text-anima-gray-text">Couverture Suisse</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Hero Camera Viewfinder Node (Right) -->
+                <div class="lg:col-span-5">
+                    <div class="figma-node glass-panel p-3 rounded-lg border border-anima-black shadow-2xl relative group overflow-hidden">
+                        
+                        <!-- Figma Handles -->
+                        <div class="figma-handle tl"></div>
+                        <div class="figma-handle tr"></div>
+                        <div class="figma-handle bl"></div>
+                        <div class="figma-handle br"></div>
+                        <div class="figma-badge">COMPONENT // VIEWFINDER_CAM_01</div>
+
+                        <!-- Camera Header UI -->
+                        <div class="flex items-center justify-between mb-2 font-mono text-[10px] text-zinc-500 bg-black/90 text-white p-2 rounded">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
+                                <span class="font-bold text-red-400">REC 4K HDR</span>
+                            </div>
+                            <div>60 FPS // ISO 800</div>
+                            <div>F2.8 1/250s</div>
+                        </div>
+
+                        <!-- Interactive Image Container -->
+                        <div class="relative aspect-[4/5] overflow-hidden rounded border border-zinc-800 bg-zinc-950 group">
+                            <!-- Background Photography Sample -->
+                            <img id="hero-shoot-img" 
+                                 src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1000&q=80" 
+                                 alt="ANIMA Shoot Sample" 
+                                 class="w-full h-full object-cover object-center grayscale contrast-125 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700">
+
+                            <!-- Viewfinder HUD Elements -->
+                            <div class="absolute inset-0 pointer-events-none p-4 flex flex-col justify-between border border-white/20 m-3 rounded">
+                                <div class="flex justify-between items-start">
+                                    <div class="w-4 h-4 border-l-2 border-t-2 border-white"></div>
+                                    <div class="w-4 h-4 border-r-2 border-t-2 border-white"></div>
+                                </div>
+
+                                <!-- Central Focus Crosshair -->
+                                <div class="self-center my-auto w-12 h-12 border border-white/40 rounded-full flex items-center justify-center">
+                                    <div class="w-1 h-1 bg-red-500 rounded-full"></div>
+                                </div>
+
+                                <div class="flex justify-between items-end">
+                                    <div class="w-4 h-4 border-l-2 border-b-2 border-white"></div>
+                                    <div class="w-4 h-4 border-r-2 border-b-2 border-white"></div>
+                                </div>
+                            </div>
+
+                            <!-- Interactive Image Selector Controls -->
+                            <div class="absolute bottom-3 left-3 right-3 flex justify-between items-center bg-black/80 backdrop-blur-md p-2 rounded border border-white/10 font-mono text-[10px] text-white">
+                                <span>SHOOT_ID: #0826</span>
+                                <div class="flex gap-1">
+                                    <button onclick="changeHeroImage(1)" class="px-2 py-0.5 bg-white/20 hover:bg-white/40 rounded">1</button>
+                                    <button onclick="changeHeroImage(2)" class="px-2 py-0.5 bg-white/20 hover:bg-white/40 rounded">2</button>
+                                    <button onclick="changeHeroImage(3)" class="px-2 py-0.5 bg-white/20 hover:bg-white/40 rounded">3</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-2 flex justify-between items-center font-mono text-[10px] text-anima-gray-text px-1">
+                            <span>ANIMA_CREATIVE_REEL_2026</span>
+                            <span class="text-sky-600 font-bold">CLICK TO INSPECT</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION 01: ABOUT / IDENTITY -->
+        <section id="about" class="py-20 px-4 max-w-7xl mx-auto border-b border-anima-gray-border">
+            <div class="font-mono text-xs text-anima-gray-text mb-4">
+                <span>[ SECTION 01 // À PROPOS ]</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+                <div class="md:col-span-4">
+                    <h2 class="text-3xl font-black uppercase text-anima-black tracking-tight">
+                        Une approche éditoriale et moderne.
+                    </h2>
+                </div>
+                <div class="md:col-span-8 space-y-6 text-base text-zinc-700 leading-relaxed font-light">
+                    <p class="text-lg font-normal text-anima-black">
+                        Basé en Suisse, <strong class="font-bold">ANIMA Studio</strong> est né d'une volonté simple : sublimer l'identité visuelle des marques, des lieux d'exception et des événements d'envergure.
+                    </p>
+                    <p>
+                        À l'ère où le contenu standardisé inonde les plateformes, nous croyons au pouvoir de la direction artistique forte, des images saisissantes et du storytelling sur-mesure. Nous ne produisons pas seulement du contenu : nous bâtissons des univers désirables.
+                    </p>
+
+                    <!-- Feature Tags -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
+                        <div class="p-4 bg-white border border-anima-gray-border rounded font-mono">
+                            <span class="text-xs text-sky-600 block mb-1">// 01</span>
+                            <span class="font-bold text-sm text-anima-black block">ÉDITORIAL LUXE</span>
+                            <span class="text-xs text-anima-gray-text mt-1 block">Esthétique léchée et travaillée.</span>
+                        </div>
+                        <div class="p-4 bg-white border border-anima-gray-border rounded font-mono">
+                            <span class="text-xs text-sky-600 block mb-1">// 02</span>
+                            <span class="font-bold text-sm text-anima-black block">RÉACTIVITÉ HIGH-SPEED</span>
+                            <span class="text-xs text-anima-gray-text mt-1 block">Rendus optimisés pour le digital.</span>
+                        </div>
+                        <div class="p-4 bg-white border border-anima-gray-border rounded font-mono">
+                            <span class="text-xs text-sky-600 block mb-1">// 03</span>
+                            <span class="font-bold text-sm text-anima-black block">EXCELLENCE SUISSE</span>
+                            <span class="text-xs text-anima-gray-text mt-1 block">Précision et exigence créative.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 02: BENTO SERVICES (FIGMA CONFIG STYLE) -->
+        <section id="services" class="py-20 px-4 max-w-7xl mx-auto border-b border-anima-gray-border">
+            
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+                <div>
+                    <div class="font-mono text-xs text-anima-gray-text mb-2">[ SECTION 02 // NOS SERVICES ]</div>
+                    <h2 class="text-3xl sm:text-5xl font-black uppercase text-anima-black tracking-tight">
+                        Nos Piliers de Création.
+                    </h2>
+                </div>
+                <p class="font-mono text-xs text-anima-gray-text mt-2 md:mt-0 max-w-xs">
+                    Une offre à 360° pensée pour les marques exigeantes et les lieux de prestige.
+                </p>
+            </div>
+
+            <!-- Bento Grid Services -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <!-- Service 1: Photoshoots & Production -->
+                <div class="figma-node bg-white p-6 rounded-lg border border-anima-black shadow-sm flex flex-col justify-between h-full group hover:shadow-xl transition-all">
+                    <div class="figma-handle tl"></div>
+                    <div class="figma-handle tr"></div>
+                    <div class="figma-handle bl"></div>
+                    <div class="figma-handle br"></div>
+                    <div class="figma-badge">SERVICE // 01</div>
+
+                    <div>
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-10 h-10 bg-anima-black text-white rounded flex items-center justify-center font-mono font-bold text-sm">
+                                <i class="fa-solid fa-camera"></i>
+                            </div>
+                            <span class="font-mono text-xs text-zinc-400">01 / 03</span>
+                        </div>
+
+                        <h3 class="text-2xl font-bold uppercase text-anima-black mb-3 group-hover:text-sky-600 transition-colors">
+                            Photoshoots & Direction Artistique
+                        </h3>
+
+                        <p class="text-sm text-anima-gray-text mb-6 leading-relaxed">
+                            Shootings photo et vidéo éditoriaux, direction de mannequins, stylisme visuel et moodboards sur-mesure pour vos campagnes produits ou lieux.
+                        </p>
+
+                        <ul class="space-y-2 font-mono text-xs text-zinc-700 mb-8 border-t border-anima-gray-light pt-4">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-sky-600 text-[10px]"></i> Campagnes Lookbook & Mode</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-sky-600 text-[10px]"></i> Photographie d'Architecture & Lieux</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-sky-600 text-[10px]"></i> Retouche Électronique & Color Grading</li>
+                        </ul>
+                    </div>
+
+                    <button onclick="openServiceModal('Photoshoots & Direction Artistique')" class="w-full py-2.5 font-mono text-xs font-bold uppercase border border-anima-black bg-anima-black text-white group-hover:bg-white group-hover:text-anima-black transition-all rounded">
+                        Détails de l'offre
+                    </button>
+                </div>
+
+                <!-- Service 2: Social Media Management -->
+                <div class="figma-node bg-white p-6 rounded-lg border border-anima-black shadow-sm flex flex-col justify-between h-full group hover:shadow-xl transition-all">
+                    <div class="figma-handle tl"></div>
+                    <div class="figma-handle tr"></div>
+                    <div class="figma-handle bl"></div>
+                    <div class="figma-handle br"></div>
+                    <div class="figma-badge">SERVICE // 02</div>
+
+                    <div>
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-10 h-10 bg-anima-black text-white rounded flex items-center justify-center font-mono font-bold text-sm">
+                                <i class="fa-solid fa-hashtag"></i>
+                            </div>
+                            <span class="font-mono text-xs text-zinc-400">02 / 03</span>
+                        </div>
+
+                        <h3 class="text-2xl font-bold uppercase text-anima-black mb-3 group-hover:text-sky-600 transition-colors">
+                            Gestion des Réseaux Sociaux
+                        </h3>
+
+                        <p class="text-sm text-anima-gray-text mb-6 leading-relaxed">
+                            Gestion complète de votre présence Instagram & TikTok. Curations de feed harmonieuses, copywriting ciblé et calendrier éditorial stratégique.
+                        </p>
+
+                        <ul class="space-y-2 font-mono text-xs text-zinc-700 mb-8 border-t border-anima-gray-light pt-4">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-sky-600 text-[10px]"></i> Stratégie de Contenu & Feed Aesthetics</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-sky-600 text-[10px]"></i> Planification & Copywriting</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-sky-600 text-[10px]"></i> Analyse de performance & Reporting</li>
+                        </ul>
+                    </div>
+
+                    <button onclick="openServiceModal('Gestion des Réseaux Sociaux')" class="w-full py-2.5 font-mono text-xs font-bold uppercase border border-anima-black bg-anima-black text-white group-hover:bg-white group-hover:text-anima-black transition-all rounded">
+                        Détails de l'offre
+                    </button>
+                </div>
+
+                <!-- Service 3: Content Creation & Events -->
+                <div class="figma-node bg-white p-6 rounded-lg border border-anima-black shadow-sm flex flex-col justify-between h-full group hover:shadow-xl transition-all">
+                    <div class="figma-handle tl"></div>
+                    <div class="figma-handle tr"></div>
+                    <div class="figma-handle bl"></div>
+                    <div class="figma-handle br"></div>
+                    <div class="figma-badge">SERVICE // 03</div>
+
+                    <div>
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-10 h-10 bg-anima-black text-white rounded flex items-center justify-center font-mono font-bold text-sm">
+                                <i class="fa-solid fa-clapperboard"></i>
+                            </div>
+                            <span class="font-mono text-xs text-zinc-400">03 / 03</span>
+                        </div>
+
+                        <h3 class="text-2xl font-bold uppercase text-anima-black mb-3 group-hover:text-sky-600 transition-colors">
+                            Création de Contenu & Événements
+                        </h3>
+
+                        <p class="text-sm text-anima-gray-text mb-6 leading-relaxed">
+                            Captation d'événements exclusifs, création de Reels/Shorts immersifs, snack-content haute fréquence pour maintenir votre audience en haleine.
+                        </p>
+
+                        <ul class="space-y-2 font-mono text-xs text-zinc-700 mb-8 border-t border-anima-gray-light pt-4">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-sky-600 text-[10px]"></i> Reels / TikTok Shorts Immersifs</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-sky-600 text-[10px]"></i> Couverture Événementielle Temps Réel</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-sky-600 text-[10px]"></i> Brand Assets & Motion Snippets</li>
+                        </ul>
+                    </div>
+
+                    <button onclick="openServiceModal('Création de Contenu & Événements')" class="w-full py-2.5 font-mono text-xs font-bold uppercase border border-anima-black bg-anima-black text-white group-hover:bg-white group-hover:text-anima-black transition-all rounded">
+                        Détails de l'offre
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION 03: INTERACTIVE WORK / REEL GALLERY -->
+        <section id="portfolio" class="py-20 px-4 max-w-7xl mx-auto border-b border-anima-gray-border">
+            
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-8">
+                <div>
+                    <div class="font-mono text-xs text-anima-gray-text mb-2">[ SECTION 03 // PORTFOLIO ]</div>
+                    <h2 class="text-3xl sm:text-5xl font-black uppercase text-anima-black tracking-tight">
+                        Réalisations Sélectionnées.
+                    </h2>
+                </div>
+
+                <!-- Filter Controls -->
+                <div class="flex flex-wrap gap-2 mt-4 md:mt-0 font-mono text-xs">
+                    <button onclick="filterPortfolio('all')" class="port-filter-btn px-3 py-1.5 rounded border border-anima-black bg-anima-black text-white font-bold">TOUT</button>
+                    <button onclick="filterPortfolio('shoot')" class="port-filter-btn px-3 py-1.5 rounded border border-anima-gray-border bg-white text-anima-black hover:border-anima-black">SHOOTS</button>
+                    <button onclick="filterPortfolio('social')" class="port-filter-btn px-3 py-1.5 rounded border border-anima-gray-border bg-white text-anima-black hover:border-anima-black">SOCIAL</button>
+                    <button onclick="filterPortfolio('event')" class="port-filter-btn px-3 py-1.5 rounded border border-anima-gray-border bg-white text-anima-black hover:border-anima-black">ÉVÉNEMENTS</button>
+                </div>
+            </div>
+
+            <!-- Portfolio Gallery Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <!-- Item 1 -->
+                <div class="port-item shoot figma-node group bg-white border border-anima-black rounded overflow-hidden shadow-sm">
+                    <div class="figma-handle tl"></div>
+                    <div class="figma-handle tr"></div>
+                    <div class="figma-handle bl"></div>
+                    <div class="figma-handle br"></div>
+                    <div class="figma-badge">PROJECT // #01</div>
+
+                    <div class="relative aspect-[3/4] overflow-hidden bg-zinc-900">
+                        <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=800&q=80" 
+                             alt="Fashion Editorial" 
+                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 grayscale group-hover:grayscale-0">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-6 flex flex-col justify-end text-white">
+                            <span class="font-mono text-xs text-sky-400 font-bold">GENÈVE // FASHION</span>
+                            <h4 class="text-xl font-bold uppercase">L'Élégance Brute</h4>
+                        </div>
+                    </div>
+                    <div class="p-4 flex justify-between items-center border-t border-anima-gray-border font-mono text-xs">
+                        <span class="font-bold text-anima-black">LOOKBOOK EDITORIAL</span>
+                        <span class="text-anima-gray-text">2026</span>
+                    </div>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="port-item social figma-node group bg-white border border-anima-black rounded overflow-hidden shadow-sm">
+                    <div class="figma-handle tl"></div>
+                    <div class="figma-handle tr"></div>
+                    <div class="figma-handle bl"></div>
+                    <div class="figma-handle br"></div>
+                    <div class="figma-badge">PROJECT // #02</div>
+
+                    <div class="relative aspect-[3/4] overflow-hidden bg-zinc-900">
+                        <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80" 
+                             alt="Luxury Restaurant" 
+                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 grayscale group-hover:grayscale-0">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-6 flex flex-col justify-end text-white">
+                            <span class="font-mono text-xs text-sky-400 font-bold">LAUSANNE // GASTRONOMIE</span>
+                            <h4 class="text-xl font-bold uppercase">Maison Culinaire</h4>
+                        </div>
+                    </div>
+                    <div class="p-4 flex justify-between items-center border-t border-anima-gray-border font-mono text-xs">
+                        <span class="font-bold text-anima-black">INSTAGRAM CURATION</span>
+                        <span class="text-anima-gray-text">2026</span>
+                    </div>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="port-item event figma-node group bg-white border border-anima-black rounded overflow-hidden shadow-sm">
+                    <div class="figma-handle tl"></div>
+                    <div class="figma-handle tr"></div>
+                    <div class="figma-handle bl"></div>
+                    <div class="figma-handle br"></div>
+                    <div class="figma-badge">PROJECT // #03</div>
+
+                    <div class="relative aspect-[3/4] overflow-hidden bg-zinc-900">
+                        <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=800&q=80" 
+                             alt="Private Event" 
+                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 grayscale group-hover:grayscale-0">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-6 flex flex-col justify-end text-white">
+                            <span class="font-mono text-xs text-sky-400 font-bold">ZURICH // EVENT</span>
+                            <h4 class="text-xl font-bold uppercase">Private Gala 2026</h4>
+                        </div>
+                    </div>
+                    <div class="p-4 flex justify-between items-center border-t border-anima-gray-border font-mono text-xs">
+                        <span class="font-bold text-anima-black">REEL & LIVE COVERAGE</span>
+                        <span class="text-anima-gray-text">2026</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION 04: PROJECT ESTIMATOR & CALCULATOR (INTERACTIVE WIDGET) -->
+        <section id="estimator" class="py-20 px-4 max-w-7xl mx-auto border-b border-anima-gray-border">
+            
+            <div class="font-mono text-xs text-anima-gray-text mb-2">[ SECTION 04 // INTERACTIVE ESTIMATOR ]</div>
+            <h2 class="text-3xl sm:text-5xl font-black uppercase text-anima-black tracking-tight mb-8">
+                Calculez votre Devis en Direct.
+            </h2>
+
+            <div class="figma-node glass-panel p-6 sm:p-10 rounded-lg border border-anima-black shadow-xl">
+                <div class="figma-handle tl"></div>
+                <div class="figma-handle tr"></div>
+                <div class="figma-handle bl"></div>
+                <div class="figma-handle br"></div>
+                <div class="figma-badge">INTERACTIVE_CALCULATOR_V2</div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    
+                    <!-- Form Controls -->
+                    <div class="lg:col-span-8 space-y-6">
+                        
+                        <!-- Step 1: Type de prestation -->
+                        <div>
+                            <label class="block font-mono text-xs font-bold uppercase text-anima-black mb-3">
+                                1. Sélectionnez vos Prestations
+                            </label>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <label class="cursor-pointer border border-anima-gray-border rounded p-3 bg-white hover:border-anima-black flex items-center gap-2 font-mono text-xs">
+                                    <input type="checkbox" value="1500" onchange="calculateTotal()" class="est-check rounded text-anima-black focus:ring-0">
+                                    <span>Photoshoot Éditorial</span>
+                                </label>
+                                <label class="cursor-pointer border border-anima-gray-border rounded p-3 bg-white hover:border-anima-black flex items-center gap-2 font-mono text-xs">
+                                    <input type="checkbox" value="2200" onchange="calculateTotal()" class="est-check rounded text-anima-black focus:ring-0">
+                                    <span>Gestion Réseaux (Mensuel)</span>
+                                </label>
+                                <label class="cursor-pointer border border-anima-gray-border rounded p-3 bg-white hover:border-anima-black flex items-center gap-2 font-mono text-xs">
+                                    <input type="checkbox" value="1800" onchange="calculateTotal()" class="est-check rounded text-anima-black focus:ring-0">
+                                    <span>Pack Reels / Videos</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Scale slider -->
+                        <div>
+                            <div class="flex justify-between items-center mb-2 font-mono text-xs">
+                                <label class="font-bold uppercase text-anima-black">2. Volume / Nombre de Livrables</label>
+                                <span id="volume-val" class="text-sky-600 font-bold">1x Campagne</span>
+                            </div>
+                            <input type="range" id="volume-range" min="1" max="5" value="1" oninput="calculateTotal()" class="w-full accent-anima-black bg-anima-gray-light h-2 rounded cursor-pointer">
+                        </div>
+
+                        <!-- Step 3: Delais -->
+                        <div>
+                            <label class="block font-mono text-xs font-bold uppercase text-anima-black mb-3">
+                                3. Délai de Livraisons
+                            </label>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 font-mono text-xs">
+                                <button type="button" onclick="setSpeed(1, this)" class="speed-btn active-speed border border-anima-black bg-anima-black text-white p-2.5 rounded">Standard (10-14 jours)</button>
+                                <button type="button" onclick="setSpeed(1.25, this)" class="speed-btn border border-anima-gray-border bg-white text-anima-black p-2.5 rounded hover:border-anima-black">Fast-Track (5 jours)</button>
+                                <button type="button" onclick="setSpeed(1.5, this)" class="speed-btn border border-anima-gray-border bg-white text-anima-black p-2.5 rounded hover:border-anima-black">Express 48H</button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Receipt Summary -->
+                    <div class="lg:col-span-4 bg-anima-black text-white p-6 rounded-md flex flex-col justify-between font-mono">
+                        <div>
+                            <div class="flex justify-between items-center text-xs text-zinc-400 border-b border-zinc-800 pb-3 mb-4">
+                                <span>REÇU D'ESTIMATION</span>
+                                <span>ANIMA_CALC</span>
+                            </div>
+
+                            <div class="space-y-2 text-xs">
+                                <div class="flex justify-between text-zinc-300">
+                                    <span>Base Prestations:</span>
+                                    <span id="summary-base">0 CHF</span>
+                                </div>
+                                <div class="flex justify-between text-zinc-300">
+                                    <span>Multiplicateur Volume:</span>
+                                    <span id="summary-vol">x1</span>
+                                </div>
+                                <div class="flex justify-between text-zinc-300">
+                                    <span>Option Délai:</span>
+                                    <span id="summary-speed">x1.0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-6 border-t border-zinc-800 mt-6">
+                            <span class="text-[10px] text-zinc-500 uppercase block mb-1">Estimation Totale Indicative</span>
+                            <div id="summary-total" class="text-3xl font-bold text-sky-400">0 CHF</div>
+
+                            <button onclick="toggleDrawer()" class="w-full mt-4 py-3 bg-white text-anima-black text-xs font-bold uppercase rounded hover:bg-sky-400 hover:text-white transition-all">
+                                Valider & Réserver
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER SECTION -->
+    <footer class="bg-anima-black text-white pt-16 pb-12 px-4 border-t border-zinc-800 font-mono">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 pb-12 border-b border-zinc-800">
+            
+            <div class="md:col-span-5 space-y-4">
+                <div class="flex items-center gap-2 text-2xl font-black tracking-tighter">
+                    <span>ANIMA</span><span class="text-sky-500">.!</span>
+                </div>
+                <p class="text-xs text-zinc-400 max-w-sm font-sans font-light leading-relaxed">
+                    Studio de création digitale, photoshoots & communication réseau sociale pour les marques et lieux d'exception en Suisse et à l'international.
+                </p>
+                <div class="text-xs text-zinc-500">
+                    <span>© 2026 ANIMA STUDIO CH. TOUS DROITS RÉSERVÉS.</span>
+                </div>
+            </div>
+
+            <div class="md:col-span-3 space-y-2 text-xs">
+                <span class="text-zinc-500 font-bold block mb-3">// NAVIGATION</span>
+                <a href="#about" class="block text-zinc-300 hover:text-sky-400">À Propos</a>
+                <a href="#services" class="block text-zinc-300 hover:text-sky-400">Nos Services</a>
+                <a href="#portfolio" class="block text-zinc-300 hover:text-sky-400">Portfolio Projets</a>
+                <a href="#estimator" class="block text-zinc-300 hover:text-sky-400">Estimateur de Projets</a>
+            </div>
+
+            <div class="md:col-span-4 space-y-2 text-xs">
+                <span class="text-zinc-500 font-bold block mb-3">// CONTACT & INSTAGRAM</span>
+                <a href="https://instagram.com/anima.studio.ch" target="_blank" class="flex items-center gap-2 text-zinc-300 hover:text-sky-400">
+                    <i class="fa-brands fa-instagram"></i>
+                    <span>@anima.studio.ch</span>
+                </a>
+                <a href="mailto:contact@anima.studio.ch" class="flex items-center gap-2 text-zinc-300 hover:text-sky-400">
+                    <i class="fa-regular fa-envelope"></i>
+                    <span>contact@anima.studio.ch</span>
+                </a>
+                <div class="pt-2 text-[10px] text-zinc-600">
+                    <span>DESIGNED WITH FIGMA CONFIG 2026 STANDARDS</span>
+                </div>
+            </div>
+
+        </div>
+    </footer>
+
+    <!-- INTERACTIVE SLIDE-OVER DRAWER FOR BOOKING / CONTACT -->
+    <div id="booking-drawer" class="fixed inset-0 z-50 pointer-events-none opacity-0 transition-opacity duration-300">
+        <!-- Backdrop -->
+        <div id="drawer-backdrop" onclick="toggleDrawer()" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+
+        <!-- Drawer Body -->
+        <div class="absolute top-0 right-0 h-full w-full max-w-md bg-white border-l border-anima-black p-6 sm:p-8 overflow-y-auto shadow-2xl transform translate-x-full transition-transform duration-300 pointer-events-auto flex flex-col justify-between" id="drawer-panel">
+            
+            <div>
+                <!-- Header -->
+                <div class="flex items-center justify-between pb-6 border-b border-anima-gray-border mb-6">
+                    <div class="font-mono text-xs">
+                        <span class="font-bold text-anima-black block">ANIMA // BOOKING</span>
+                        <span class="text-anima-gray-text">Formulaire Direct 2026</span>
+                    </div>
+                    <button onclick="toggleDrawer()" class="w-8 h-8 rounded bg-anima-gray-light flex items-center justify-center text-anima-black hover:bg-anima-black hover:text-white transition-colors">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- Booking Form -->
+                <form id="contact-form" onsubmit="handleFormSubmit(event)" class="space-y-4 font-mono text-xs">
+                    <div>
+                        <label class="block text-anima-black font-bold uppercase mb-1">Nom / Enseigne *</label>
+                        <input type="text" required placeholder="Ex: Maison Noir / Lausanne" class="w-full p-3 bg-anima-gray-light border border-anima-gray-border rounded focus:border-anima-black focus:outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-anima-black font-bold uppercase mb-1">Email de Contact *</label>
+                        <input type="email" required placeholder="contact@votre-marque.ch" class="w-full p-3 bg-anima-gray-light border border-anima-gray-border rounded focus:border-anima-black focus:outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-anima-black font-bold uppercase mb-1">Service Souhaité</label>
+                        <select class="w-full p-3 bg-anima-gray-light border border-anima-gray-border rounded focus:border-anima-black focus:outline-none">
+                            <option>Photoshoot & Direction Artistique</option>
+                            <option>Gestion Réseaux Sociaux</option>
+                            <option>Création de Contenu Événementiel</option>
+                            <option>Pack Global Sur-Mesure</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-anima-black font-bold uppercase mb-1">Détails du projet</label>
+                        <textarea rows="4" placeholder="Décrivez vos attentes, dates souhaitées et vos objectifs visuels..." class="w-full p-3 bg-anima-gray-light border border-anima-gray-border rounded focus:border-anima-black focus:outline-none"></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full py-3 bg-anima-black text-white font-bold uppercase rounded hover:bg-sky-600 transition-colors shadow-lg">
+                        Envoyer la Demande
+                    </button>
+                </form>
+            </div>
+
+            <!-- Drawer Footer -->
+            <div class="pt-6 border-t border-anima-gray-border font-mono text-[10px] text-anima-gray-text flex justify-between">
+                <span>RÉPONSE EN MOINS DE 24H</span>
+                <span>SWITZERLAND // CH</span>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SERVICE MODAL -->
+    <div id="service-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <div class="glass-panel p-6 sm:p-8 rounded-lg border border-anima-black max-w-lg w-full bg-white relative">
+            <button onclick="closeServiceModal()" class="absolute top-4 right-4 text-anima-black hover:text-sky-600">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <span class="font-mono text-xs text-sky-600 font-bold block mb-1">// DÉTAILS DU SERVICE</span>
+            <h3 id="modal-service-title" class="text-2xl font-black uppercase text-anima-black mb-4"></h3>
+            <p id="modal-service-desc" class="text-sm text-anima-gray-text mb-6 leading-relaxed"></p>
+            <button onclick="closeServiceModal(); toggleDrawer();" class="w-full py-3 bg-anima-black text-white font-mono text-xs font-bold uppercase rounded hover:bg-sky-600 transition-colors">
+                Demander un devis pour ce service
+            </button>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Hero Image Swapper Logic
+        const heroImages = [
+            "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1000&q=80",
+            "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1000&q=80"
+        ];
+        function changeHeroImage(index) {
+            const img = document.getElementById('hero-shoot-img');
+            img.src = heroImages[index - 1];
+        }
+
+        // Custom Inspector Cursor Tracking
+        const cursorFollower = document.getElementById('cursor-follower');
+        const cursorPos = document.getElementById('cursor-pos');
+        const cursorLabel = document.getElementById('cursor-label');
+
+        document.addEventListener('mousemove', (e) => {
+            cursorFollower.style.opacity = '1';
+            cursorFollower.style.transform = `translate3d(${e.clientX + 12}px, ${e.clientY + 12}px, 0)`;
+            cursorPos.textContent = `X:${e.clientX} Y:${e.clientY}`;
+
+            const hoveredNode = e.target.closest('.figma-node');
+            if (hoveredNode) {
+                const badge = hoveredNode.querySelector('.figma-badge');
+                cursorLabel.textContent = badge ? badge.textContent : 'NODE';
+            } else {
+                cursorLabel.textContent = 'CANVAS';
+            }
+        });
+
+        document.addEventListener('mouseleave', () => {
+            cursorFollower.style.opacity = '0';
+        });
+
+        // Estimator Calculator Logic
+        let speedMultiplier = 1;
+
+        function setSpeed(multiplier, btn) {
+            speedMultiplier = multiplier;
+            document.querySelectorAll('.speed-btn').forEach(b => {
+                b.classList.remove('active-speed', 'bg-anima-black', 'text-white', 'border-anima-black');
+                b.classList.add('bg-white', 'text-anima-black', 'border-anima-gray-border');
+            });
+            btn.classList.add('active-speed', 'bg-anima-black', 'text-white', 'border-anima-black');
+            btn.classList.remove('bg-white', 'text-anima-black', 'border-anima-gray-border');
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            let base = 0;
+            document.querySelectorAll('.est-check:checked').forEach(chk => {
+                base += parseInt(chk.value);
+            });
+
+            const volume = parseInt(document.getElementById('volume-range').value);
+            document.getElementById('volume-val').textContent = `${volume}x Volume`;
+
+            const total = Math.round(base * volume * speedMultiplier);
+
+            document.getElementById('summary-base').textContent = `${base} CHF`;
+            document.getElementById('summary-vol').textContent = `x${volume}`;
+            document.getElementById('summary-speed').textContent = `x${speedMultiplier}`;
+            document.getElementById('summary-total').textContent = `${total} CHF`;
+        }
+
+        // Portfolio Filtering
+        function filterPortfolio(category) {
+            document.querySelectorAll('.port-filter-btn').forEach(btn => {
+                btn.classList.remove('bg-anima-black', 'text-white', 'border-anima-black');
+                btn.classList.add('bg-white', 'text-anima-black', 'border-anima-gray-border');
+            });
+            event.target.classList.add('bg-anima-black', 'text-white', 'border-anima-black');
+
+            document.querySelectorAll('.port-item').forEach(item => {
+                if (category === 'all' || item.classList.contains(category)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Slide Drawer Toggle
+        function toggleDrawer() {
+            const drawer = document.getElementById('booking-drawer');
+            const panel = document.getElementById('drawer-panel');
+
+            if (drawer.classList.contains('pointer-events-none')) {
+                drawer.classList.remove('pointer-events-none', 'opacity-0');
+                drawer.classList.add('pointer-events-auto', 'opacity-100');
+                panel.classList.remove('translate-x-full');
+            } else {
+                drawer.classList.add('pointer-events-none', 'opacity-0');
+                drawer.classList.remove('pointer-events-auto', 'opacity-100');
+                panel.classList.add('translate-x-full');
+            }
+        }
+
+        // Service Modal Handlers
+        function openServiceModal(title) {
+            const modal = document.getElementById('service-modal');
+            document.getElementById('modal-service-title').textContent = title;
+            document.getElementById('modal-service-desc').textContent = 
+                `Accompagnement de haute précision par ANIMA Studio pour ${title}. Nous gérons chaque étape de la production à la diffusion pour garantir une esthétique et des résultats irréprochables.`;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeServiceModal() {
+            const modal = document.getElementById('service-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            alert("Merci ! Votre demande a été transmise au studio ANIMA. Nous vous recontacterons sous 24h.");
+            toggleDrawer();
+        }
+
+        // Initial Calculation
+        calculateTotal();
+    </script>
+</body>
+</html>
