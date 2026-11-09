@@ -47,25 +47,80 @@
         }
         ::selection { background: #FF4D00; color: #131313; }
 
-        /* Skip link (accessibilité, comme sur config.figma.com) */
+        /* Skip link (accessibilité) */
         .skip { position: absolute; left: -9999px; top: 0; z-index: 100; }
         .skip:focus { left: 16px; top: 16px; padding: 8px 16px; background: #fff; color: #131313; font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: .15em; }
 
+        /* ═══ HERO IMAGE — anima_studio_hero_1920x1080 ═══
+           La photo plein cadre sert de décor ; l'UI de l'image d'origine
+           (nav, titre, cartes) est masquée par des scrims et reconstruite
+           en HTML réel — cliquable et responsive. */
+        .hero-bg {
+            background-image: url('anima_studio_hero.jpg');
+            background-size: cover;
+            background-position: 74% 34%;
+            transform: scale(1.04); /* léger sur-cadre : absorbe les bords de l'image d'origine */
+        }
+        @media (max-width: 1023px) { .hero-bg { background-position: 62% 42%; } }
+
+        /* Cartes verre (glassmorphism façon image d'origine) */
+        .glass-card {
+            position: relative;
+            display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+            padding: 1.1rem 1.35rem;
+            border: 1px solid rgba(255,255,255,.16);
+            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.035));
+            -webkit-backdrop-filter: blur(22px) saturate(1.2);
+            backdrop-filter: blur(22px) saturate(1.2);
+            transition: border-color .35s ease, transform .35s ease, background .35s ease;
+        }
+        .glass-card:hover {
+            border-color: rgba(255,255,255,.45);
+            background: linear-gradient(135deg, rgba(255,255,255,.14), rgba(255,255,255,.055));
+            transform: translateY(-3px);
+        }
+        .glass-card .card-arrow {
+            width: 44px; height: 44px; flex: none;
+            border: 1px solid rgba(255,255,255,.35); border-radius: 9999px;
+            display: grid; place-items: center;
+            font-size: 15px; color: #fff;
+            transition: background .3s ease, color .3s ease, border-color .3s ease, transform .3s ease;
+        }
+        .glass-card:hover .card-arrow { background: #fff; color: #131313; border-color: #fff; transform: rotate(-45deg); }
+
+        /* Nav pilule (header) */
+        .pill-nav {
+            border: 1px solid rgba(255,255,255,.12);
+            background: rgba(16,16,19,.72);
+            -webkit-backdrop-filter: blur(18px);
+            backdrop-filter: blur(18px);
+        }
+        .pill-nav a {
+            position: relative;
+            padding: .45rem 1.05rem;
+            border-radius: 9999px;
+            font-size: 12.5px; letter-spacing: .06em;
+            color: rgba(255,255,255,.72);
+            transition: color .25s ease, background .25s ease;
+            white-space: nowrap;
+        }
+        .pill-nav a:hover { color: #fff; background: rgba(255,255,255,.09); }
+        .pill-nav a[aria-current="page"] { color: #fff; background: rgba(255,255,255,.12); }
+        .pill-nav .sep { width: 1px; height: 14px; background: rgba(255,255,255,.18); flex: none; }
+
         /* Header sticky : transparent puis fond flouté au scroll */
         #site-header { border-bottom: 1px solid transparent; transition: background-color .35s ease, border-color .35s ease, backdrop-filter .35s ease; }
-        #site-header.is-scrolled { background: rgba(19,19,19,.88); backdrop-filter: blur(12px); border-bottom-color: rgba(255,255,255,.1); }
+        #site-header.is-scrolled { background: rgba(19,19,19,.9); backdrop-filter: blur(12px); border-bottom-color: rgba(255,255,255,.1); }
 
-        /* Wordmark hero : lettres révélées en cascade, astérisque en rotation lente (façon Rive) */
+        /* Héro : lettres révélées en cascade */
         .wrap-l { display: inline-block; overflow: hidden; vertical-align: bottom; padding-bottom: .06em; }
         .letter { display: inline-block; transform: translateY(115%); animation: rise 1s cubic-bezier(.16,1,.3,1) forwards; }
         @keyframes rise { to { transform: translateY(0); } }
         .star-spin { display: inline-block; transform-origin: 50% 54%; animation: spin 18s linear infinite; }
-        .wordmark:hover .star-spin { animation-duration: 4s; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .star-pop { display: inline-block; opacity: 0; animation: pop .6s ease .9s forwards; }
-        @keyframes pop { from { opacity: 0; transform: scale(.4); } to { opacity: 1; transform: scale(1); } }
 
-        /* Ruban photos défilant — animation signature de config.figma.com (100s infini) */
+        /* Ruban photos défilant */
         .strip { overflow: hidden; }
         .strip-track { display: flex; width: max-content; animation: strip 100s linear infinite; }
         .strip:hover .strip-track { animation-play-state: paused; }
@@ -78,7 +133,7 @@
         #site-header { animation: headerIn .8s cubic-bezier(.16,1,.3,1) both; }
         @keyframes headerIn { from { transform: translateY(-100%); } }
 
-        /* Flèches ↗ qui glissent au survol */
+        /* Flèches qui glissent au survol */
         .arr { display: inline-block; transition: transform .3s ease; }
         a:hover .arr, button:hover .arr { transform: translate(3px, -3px); }
 
@@ -86,14 +141,14 @@
         .reveal { opacity: 0; transform: translateY(48px); transition: opacity .9s ease, transform .9s cubic-bezier(.16,1,.3,1); }
         .reveal.visible { opacity: 1; transform: none; }
 
-        /* Accordéon FAQ (animation de hauteur fluide) */
+        /* Accordéon FAQ */
         .faq-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .45s cubic-bezier(.16,1,.3,1); }
         .faq-item.open .faq-panel { grid-template-rows: 1fr; }
         .faq-panel > div { overflow: hidden; min-height: 0; }
         .faq-icon { transition: transform .3s ease; }
         .faq-item.open .faq-icon { transform: rotate(45deg); }
 
-        /* Estimateur : checkbox carrée et slider custom, angles droits */
+        /* Estimateur */
         input[type="checkbox"].est-check {
             appearance: none; width: 1rem; height: 1rem; margin: 0;
             border: 1px solid rgba(255,255,255,.4); display: inline-grid; place-content: center;
@@ -107,6 +162,41 @@
         input[type="checkbox"].est-check:checked::before { transform: scale(1); }
         input[type="range"] { accent-color: #ffffff; }
         .speed-btn.is-active { background: #fff; color: #131313; border-color: #fff; }
+
+        /* ═══ OVERLAY MENU (bouton MENU du hero) ═══ */
+        #menu-overlay {
+            position: fixed; inset: 0; z-index: 90;
+            background: rgba(10,10,11,.97);
+            -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+            opacity: 0; pointer-events: none;
+            transition: opacity .35s ease;
+        }
+        #menu-overlay.open { opacity: 1; pointer-events: auto; }
+        #menu-overlay .menu-link {
+            opacity: 0; transform: translateY(26px);
+            transition: opacity .55s ease, transform .55s cubic-bezier(.16,1,.3,1), color .2s ease;
+        }
+        #menu-overlay.open .menu-link { opacity: 1; transform: none; }
+        #menu-overlay.open .menu-link:nth-child(1) { transition-delay: .08s; }
+        #menu-overlay.open .menu-link:nth-child(2) { transition-delay: .14s; }
+        #menu-overlay.open .menu-link:nth-child(3) { transition-delay: .20s; }
+        #menu-overlay.open .menu-link:nth-child(4) { transition-delay: .26s; }
+        #menu-overlay.open .menu-link:nth-child(5) { transition-delay: .32s; }
+
+        /* ═══ OVERLAY RECHERCHE (icône loupe du hero) ═══ */
+        #search-overlay {
+            position: fixed; inset: 0; z-index: 90;
+            background: rgba(10,10,11,.94);
+            -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+            opacity: 0; pointer-events: none;
+            transition: opacity .3s ease;
+        }
+        #search-overlay.open { opacity: 1; pointer-events: auto; }
+        #search-overlay .search-panel { transform: translateY(14px); transition: transform .35s cubic-bezier(.16,1,.3,1); }
+        #search-overlay.open .search-panel { transform: none; }
+        .search-result { transition: background .2s ease, border-color .2s ease; }
+        .search-result:hover, .search-result.is-cursor { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.25); }
+        .search-result mark { background: none; color: #FF4D00; }
 
         /* Scrollbar fine sombre */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -123,13 +213,8 @@
             position: absolute; user-select: none; -webkit-user-drag: none;
             pointer-events: none; will-change: transform;
             transform: scale(1);
-            max-width: none;   /* neutralise le img{max-width:100%} du reset Tailwind :
-                                  sinon le bitmap est comprimé et décalé vs le cercle
-                                  overlay (la « bosse »), surtout à fort zoom */
+            max-width: none;
         }
-        /* Point : cercle PARFAIT affiché en permanence et dimensionné en layout
-           (jamais en transform) — bord net à n'importe quel zoom, forme strictement
-           constante (ratio 1:1 verrouillé), envahissement de l'écran symétrique */
         #intro-dot {
             position: absolute; left: 0; top: 0;
             width: 0; height: 0;
@@ -152,18 +237,14 @@
         }
         @keyframes hintSlide { to { top: 48px; } }
 
-        /* Entrées du site mises en pause tant que l'intro n'est pas terminée :
-           le héros « démarre » au moment précis où le point noir a envahi l'écran */
         body.intro-active #site-header,
-        body.intro-active .letter,
-        body.intro-active .star-pop { animation-play-state: paused; }
+        body.intro-active .letter { animation-play-state: paused; }
 
-        /* Respect du reduced-motion (comme config.figma.com) */
+        /* Respect du reduced-motion */
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after { animation-duration: .001s !important; animation-iteration-count: 1 !important; transition-duration: .001s !important; }
             .reveal { opacity: 1; transform: none; }
             .letter { transform: none; }
-            .star-pop { opacity: 1; }
             #site-header { animation: none; }
             .strip-track { animation: none; }
             .arr { transition: none; }
@@ -173,8 +254,7 @@
 </head>
 <body class="bg-ink text-white antialiased min-h-screen flex flex-col">
 
-    <!-- ═══════════════ INTRO : le logo s'affiche, le scroll zoome sur le point noir,
-         le point envahit l'écran puis le site s'ouvre (fondu noir → #131313) ═══════════════ -->
+    <!-- ═══════════════ INTRO : le logo s'affiche, le scroll zoome sur le point noir ═══════════════ -->
     <div id="intro-spacer" aria-hidden="true"></div>
     <div id="intro" aria-hidden="true">
         <img id="intro-img" src="logo_intro_4x.png" alt="" draggable="false" decoding="async">
@@ -201,16 +281,9 @@
         }
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { killIntro(); return; }
 
-        /* logo_intro_4x.png : re-rendu net en 7680×4320 (binaire).
-           Point noir : centre (4466, 2353.5) ; le fichier le dessine légèrement ovale
-           (239 × 204.5 en 4x) — l'overlay est un cercle PARFAIT de rayon 239 qui
-           l'englobe totalement : parfaitement rond à tout instant, jamais de double
-           bord, et un envahissement de l'écran rigoureusement symétrique. */
         var IMG_W = 7680, IMG_H = 4320;
         var DOT_X = 4466, DOT_Y = 2353.5, DOT_R = 239;
-        var PAN_END = 0.25;   /* recentrage caméra : terminé à 25% du scroll — ensuite le
-                                 point est verrouillé au CENTRE de l'écran et la plongée
-                                 (envahissement symétrique) est un zoom pur autour de lui */
+        var PAN_END = 0.25;
 
         if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
         var html = document.documentElement;
@@ -221,21 +294,18 @@
         var vw = 0, vh = 0, px0 = 0, py0 = 0, rB = 1, sMax = 8, maxScroll = 1;
 
         function measure() {
-            /* largeur CSS RÉELLE (hors barre de défilement) : innerWidth la compte,
-               ce qui décalerait le cadrage et désalignerait le bitmap du cercle */
             vw = document.documentElement.clientWidth; vh = window.innerHeight;
-            var fit = Math.min(vw / IMG_W, vh / IMG_H);   // contain : logo entier, parfaitement centré
+            var fit = Math.min(vw / IMG_W, vh / IMG_H);
             var w = IMG_W * fit, h = IMG_H * fit;
             img.style.width  = w + 'px';
             img.style.height = h + 'px';
             img.style.left   = ((vw - w) / 2) + 'px';
             img.style.top    = ((vh - h) / 2) + 'px';
             var originX = DOT_X * fit, originY = DOT_Y * fit;
-            px0 = (vw - w) / 2 + originX;                 // position ÉCRAN naturelle du point
+            px0 = (vw - w) / 2 + originX;
             py0 = (vh - h) / 2 + originY;
             img.style.transformOrigin = originX + 'px ' + originY + 'px';
-            rB = DOT_R * fit;                             // rayon écran du cercle à l'échelle 1
-            /* zoom final : le cercle est centré à l'écran — les 4 coins sont équidistants */
+            rB = DOT_R * fit;
             sMax = Math.hypot(vw / 2, vh / 2) / rB * 1.06;
             maxScroll = Math.max(1, spacer.offsetHeight - vh);
         }
@@ -244,25 +314,25 @@
         var target = 0, cur = 0, done = false, rafId = 0, lastT = 0;
 
         function apply() {
-            var s  = Math.pow(sMax, smooth(cur));         // zoom géométrique (vitesse constante en log)
-            var ep = smooth(Math.min(cur / PAN_END, 1));  // 0→1 sur les 25 premiers % : recentrage caméra
-            var tx = (vw / 2 - px0) * ep;                 // le point glisse vers le centre…
-            var ty = (vh / 2 - py0) * ep;                 // …puis y reste VERROUILLÉ jusqu'au noir final
+            var s  = Math.pow(sMax, smooth(cur));
+            var ep = smooth(Math.min(cur / PAN_END, 1));
+            var tx = (vw / 2 - px0) * ep;
+            var ty = (vh / 2 - py0) * ep;
             img.style.transform = 'translate3d(' + tx.toFixed(2) + 'px,' + ty.toFixed(2) + 'px,0) scale(' + s.toFixed(4) + ')';
-            var r  = rB * s * 1.01;                       // +1% : absorbe le halo anticrénelage du bitmap
-            var cx = px0 + tx, cy = py0 + ty;             // le cercle suit le point au pixel près
-            dot.style.width  = (2 * r).toFixed(1) + 'px'; // largeur = hauteur : cercle parfait,
-            dot.style.height = (2 * r).toFixed(1) + 'px'; // ratio 1:1 verrouillé à tout instant
+            var r  = rB * s * 1.01;
+            var cx = px0 + tx, cy = py0 + ty;
+            dot.style.width  = (2 * r).toFixed(1) + 'px';
+            dot.style.height = (2 * r).toFixed(1) + 'px';
             dot.style.left   = (cx - r).toFixed(1) + 'px';
             dot.style.top    = (cy - r).toFixed(1) + 'px';
-            hint.style.opacity = Math.max(0, 1 - cur * 7);        // l'indice disparaît dès les premiers px
+            hint.style.opacity = Math.max(0, 1 - cur * 7);
         }
 
         function tick(t) {
             if (done) return;
             var dt = lastT ? Math.min(0.05, (t - lastT) / 1000) : 0.016;
             lastT = t;
-            cur += (target - cur) * (1 - Math.exp(-9 * dt));      // lissage indépendant du framerate
+            cur += (target - cur) * (1 - Math.exp(-9 * dt));
             if (target >= 1 && cur > 0.9985) { complete(); return; }
             apply();
             rafId = requestAnimationFrame(tick);
@@ -275,17 +345,17 @@
 
         function complete() {
             done = true;
-            cur = 1; apply();                                     // écran 100% noir : le point a tout envahi
+            cur = 1; apply();
             cancelAnimationFrame(rafId);
             window.removeEventListener('scroll', readScroll);
-            document.documentElement.style.overflow = 'hidden';   // on fige le temps de basculer
+            document.documentElement.style.overflow = 'hidden';
             requestAnimationFrame(function () {
                 spacer.style.display = 'none';
-                window.scrollTo(0, 0);                            // saut invisible : l'écran est noir plein
-                document.body.classList.remove('intro-active');   // le héros du site démarre maintenant
+                window.scrollTo(0, 0);
+                document.body.classList.remove('intro-active');
                 intro.style.transition = 'opacity .9s cubic-bezier(.4,0,.2,1)';
                 intro.style.pointerEvents = 'none';
-                intro.style.opacity = '0';                        // fondu noir → site (#131313 ≈ noir du point)
+                intro.style.opacity = '0';
                 document.dispatchEvent(new CustomEvent('anima:intro-done'));
                 setTimeout(function () {
                     document.documentElement.style.overflow = '';
@@ -304,92 +374,162 @@
 
     <a href="#main" class="skip">Aller au contenu principal</a>
 
-    <!-- ═══════════════ HEADER STICKY (logo à gauche, liens à droite — placement config.figma.com) ═══════════════ -->
+    <!-- ═══════════════ HEADER — reconstruit depuis le hero : logo, nav pilule, recherche, MENU ═══════════════ -->
     <header id="site-header" class="sticky top-0 z-50 w-full">
-        <div class="max-w-[1400px] mx-auto flex items-center justify-between px-4 sm:px-8 h-16">
-            <a href="#top" class="font-serif italic text-2xl tracking-tight leading-none">
-                Anima<span class="star-spin text-star not-italic font-sans font-light ml-1 text-xl">✦</span>
+        <div class="max-w-[1500px] mx-auto flex items-center justify-between gap-4 px-4 sm:px-8 h-16">
+
+            <!-- Logo (celui du hero : marque a. + aNIMA / STUDIO) -->
+            <a href="index.html" class="flex items-center gap-3 group" aria-label="ANIMA Studio — Accueil">
+                <span class="font-serif italic text-[26px] leading-none group-hover:text-star transition-colors">a<span class="text-star group-hover:text-white transition-colors">.</span></span>
+                <span class="leading-none">
+                    <span class="block font-serif italic text-[19px] tracking-tight">aNIMA</span>
+                    <span class="block font-mono text-[8.5px] uppercase tracking-[0.5em] text-white/55 mt-1">Studio</span>
+                </span>
             </a>
-            <nav class="flex items-center gap-5 lg:gap-8" aria-label="Navigation principale">
-                <div class="hidden lg:flex items-center gap-6 font-mono text-[11px] uppercase tracking-[0.18em] text-tint">
-                    <a href="#studio" class="hover:text-white transition-colors">Studio</a>
-                    <a href="#services" class="hover:text-white transition-colors">Services</a>
-                    <a href="#projets" class="hover:text-white transition-colors">Projets</a>
-                    <a href="#estimateur" class="hover:text-white transition-colors">Estimateur</a>
-                    <a href="#faq" class="hover:text-white transition-colors">FAQ</a>
-                </div>
-                <button onclick="toggleDrawer()" class="font-mono text-[11px] uppercase tracking-[0.18em] border border-white/40 px-4 py-2 hover:bg-white hover:text-ink transition-colors rounded-none">
-                    Réserver
-                </button>
+
+            <!-- Nav pilule (identique au hero) -->
+            <nav class="pill-nav hidden md:flex items-center gap-1 rounded-full px-2 py-1" aria-label="Navigation principale">
+                <a href="index.html" aria-current="page">Accueil</a>
+                <span class="sep" aria-hidden="true"></span>
+                <a href="services.html">Services</a>
+                <span class="sep" aria-hidden="true"></span>
+                <a href="apropos.html">À propos</a>
+                <span class="sep" aria-hidden="true"></span>
+                <a href="portfolio.html">Portfolio</a>
+                <span class="sep" aria-hidden="true"></span>
+                <a href="contact.html">Contact</a>
             </nav>
+
+            <!-- Actions droite : recherche + MENU (identiques au hero) -->
+            <div class="flex items-center gap-3">
+                <button onclick="toggleSearch()" aria-label="Rechercher sur le site" class="w-10 h-10 rounded-full border border-white/25 hover:border-white hover:bg-white/10 transition-colors grid place-items-center">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.5" y2="16.5"></line>
+                    </svg>
+                </button>
+                <button onclick="toggleMenu()" class="font-mono text-[11px] uppercase tracking-[0.25em] border border-white/30 hover:bg-white hover:text-ink transition-colors rounded-full px-5 py-2.5">
+                    Menu
+                </button>
+            </div>
         </div>
     </header>
 
     <main id="main" class="flex-grow">
 
-        <!-- ═══════════════ HERO : wordmark plein cadre + ligne méta (structure config.figma.com) ═══════════════ -->
-        <section id="top" class="max-w-[1400px] mx-auto px-4 sm:px-8 pt-14 pb-16 md:pt-20 md:pb-24 scroll-mt-24">
+        <!-- ═══════════════ HERO — l'image fournie, reconstruite en éléments réels et cliquables ═══════════════ -->
+        <section id="top" class="relative -mt-16 min-h-[100svh] flex items-stretch overflow-hidden scroll-mt-0">
 
-            <p class="font-mono text-[11px] sm:text-xs uppercase tracking-[0.25em] text-tint mb-6 md:mb-10 flex items-center gap-4">
-                <span class="inline-block w-10 h-px bg-white/25 flex-none"></span>
-                <span class="min-w-0">Création de contenu &amp; communication digitale</span>
-            </p>
+            <!-- La photo plein cadre (anima_studio_hero) -->
+            <div class="hero-bg absolute inset-0" role="img" aria-label="Plateau du studio ANIMA — éclairage cinéma, canapé de tournage et écran de contrôle"></div>
 
-            <!-- Wordmark géant serif italique + astérisque accent (comme "Config✳") -->
-            <h1 class="wordmark font-serif italic font-normal leading-[0.85] tracking-[-0.02em] select-none text-[clamp(5.5rem,21vw,19rem)]">
-                <span class="wrap-l"><span class="letter" style="animation-delay:.05s">A</span></span><span class="wrap-l"><span class="letter" style="animation-delay:.12s">n</span></span><span class="wrap-l"><span class="letter" style="animation-delay:.19s">i</span></span><span class="wrap-l"><span class="letter" style="animation-delay:.26s">m</span></span><span class="wrap-l"><span class="letter" style="animation-delay:.33s">a</span></span><span class="star-pop text-star not-italic font-sans font-light align-top text-[0.35em] ml-[0.06em]"><span class="star-spin">✦</span></span>
-            </h1>
+            <!-- Scrims : masquent l'UI gravée dans l'image d'origine et assurent la lisibilité -->
+            <div class="absolute inset-0 pointer-events-none bg-gradient-to-r from-[#0a0a0b]/95 via-[#0a0a0b]/55 to-transparent" aria-hidden="true"></div>
+            <div class="absolute inset-0 pointer-events-none bg-gradient-to-b from-[#0a0a0b]/95 via-transparent to-[#0a0a0b]/80" aria-hidden="true"></div>
 
-            <!-- Ligne méta équivalente dates/lieu de Config -->
-            <div class="mt-8 md:mt-12 border-y border-white/10 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 font-mono text-[11px] sm:text-xs uppercase tracking-[0.2em] text-tint">
-                <span>Pour les marques, les lieux &amp; les événements</span>
-                <span>Lausanne — Genève — Suisse</span>
-            </div>
+            <div class="relative z-10 w-full max-w-[1500px] mx-auto px-4 sm:px-8 pt-24 pb-14 lg:pt-28 lg:pb-16 grid lg:grid-cols-[1.02fr_400px] xl:grid-cols-[1.02fr_460px] gap-10 lg:gap-16 items-stretch flex-grow">
 
-            <!-- Ruban photos pleine largeur défilant en continu (animation signature de config.figma.com) -->
-            <div class="strip relative left-[calc(-50%+1rem)] sm:left-[calc(-50%+2rem)] w-screen mt-10 md:mt-14" aria-hidden="true">
-                <div class="strip-track">
-                    <div class="strip-half">
-                        <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=520&h=340&q=80" alt="" draggable="false">
-                        <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
-                        <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
-                        <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
-                        <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
-                        <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
-                        <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
-                        <img src="https://images.unsplash.com/photo-1529900748604-07564a03e7f6?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
+                <!-- Colonne éditoriale : titre + tagline + CTA (textes de l'image) -->
+                <div class="flex flex-col justify-center max-w-xl">
+                    <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-white/60 mb-6 flex items-center gap-4">
+                        <span class="inline-block w-10 h-px bg-white/25 flex-none"></span>
+                        <span>Studio créatif — Suisse</span>
+                    </p>
+
+                    <h1 class="font-serif font-normal leading-[1.02] tracking-[-0.01em] select-none text-[clamp(2.7rem,5.3vw,5rem)]">
+                        <span class="wrap-l"><span class="letter" style="animation-delay:.05s">Là où votre</span></span><br>
+                        <span class="wrap-l"><span class="letter" style="animation-delay:.18s">image <em class="italic text-star">prend vie.</em></span></span>
+                    </h1>
+
+                    <p class="mt-7 text-base md:text-lg font-light leading-relaxed text-white/78 max-w-md">
+                        Imaginer et créer des contenus qui racontent votre histoire,
+                        révèlent votre identité et donnent vie à vos idées.
+                    </p>
+
+                    <div class="mt-10">
+                        <a href="services.html" class="group inline-flex items-center gap-3 font-mono text-[12px] uppercase tracking-[0.2em] text-white underline decoration-white/40 underline-offset-8 hover:decoration-star hover:text-star transition-colors">
+                            Découvrir nos services <span class="arr text-base">→</span>
+                        </a>
                     </div>
-                    <div class="strip-half">
-                        <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
-                        <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
-                        <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
-                        <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
-                        <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
-                        <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
-                        <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
-                        <img src="https://images.unsplash.com/photo-1529900748604-07564a03e7f6?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
-                    </div>
+                </div>
+
+                <!-- Colonne services : les 4 cartes verre de l'image, réelles et cliquables -->
+                <div class="self-stretch flex lg:flex-col gap-3 lg:gap-4 overflow-x-auto lg:overflow-visible snap-x snap-mandatory lg:snap-none pb-1 lg:pb-0" aria-label="Nos services en un coup d'œil">
+
+                    <a href="services.html#creation-contenu" class="glass-card snap-center flex-none min-w-[248px] lg:min-w-0 lg:flex-1 group">
+                        <div class="min-w-0">
+                            <span class="font-mono text-[10px] tracking-[0.2em] text-white/45 block mb-1.5">01</span>
+                            <span class="block text-[15px] font-medium tracking-tight">Création de Contenu</span>
+                            <span class="block mt-1 text-[12.5px] font-light leading-snug text-white/65">Vidéos, photos, formats courts pour sublimer votre marque.</span>
+                        </div>
+                        <span class="card-arrow" aria-hidden="true">→</span>
+                    </a>
+
+                    <a href="services.html#reseaux-sociaux" class="glass-card snap-center flex-none min-w-[248px] lg:min-w-0 lg:flex-1 group">
+                        <div class="min-w-0">
+                            <span class="font-mono text-[10px] tracking-[0.2em] text-white/45 block mb-1.5">02</span>
+                            <span class="block text-[15px] font-medium tracking-tight">Gestion des Réseaux Sociaux</span>
+                            <span class="block mt-1 text-[12.5px] font-light leading-snug text-white/65">Stratégie et accompagnement pour une présence digitale forte.</span>
+                        </div>
+                        <span class="card-arrow" aria-hidden="true">→</span>
+                    </a>
+
+                    <a href="services.html#evenementiel" class="glass-card snap-center flex-none min-w-[248px] lg:min-w-0 lg:flex-1 group">
+                        <div class="min-w-0">
+                            <span class="font-mono text-[10px] tracking-[0.2em] text-white/45 block mb-1.5">03</span>
+                            <span class="block text-[15px] font-medium tracking-tight">Contenu Événementiel</span>
+                            <span class="block mt-1 text-[12.5px] font-light leading-snug text-white/65">Capturez l'essence de vos événements.</span>
+                        </div>
+                        <span class="card-arrow" aria-hidden="true">→</span>
+                    </a>
+
+                    <a href="services.html#photoshoots" class="glass-card snap-center flex-none min-w-[248px] lg:min-w-0 lg:flex-1 group">
+                        <div class="min-w-0">
+                            <span class="font-mono text-[10px] tracking-[0.2em] text-white/45 block mb-1.5">04</span>
+                            <span class="block text-[15px] font-medium tracking-tight">Photoshoots</span>
+                            <span class="block mt-1 text-[12.5px] font-light leading-snug text-white/65">Des images soignées qui révèlent votre identité.</span>
+                        </div>
+                        <span class="card-arrow" aria-hidden="true">→</span>
+                    </a>
+
                 </div>
             </div>
 
-            <div class="mt-10 md:mt-14 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-end">
-                <p class="lg:col-span-6 text-lg md:text-xl font-light leading-relaxed text-white/85 max-w-xl">
-                    Là où votre image prend vie<span class="text-star">.</span>
-                    Studio créatif suisse de production visuelle haut de gamme — photoshoots éditoriaux,
-                    direction artistique et stratégie sociale sur-mesure.
-                </p>
-                <div class="lg:col-span-6 flex flex-wrap items-center gap-6 lg:justify-end">
-                    <a href="#projets" class="font-mono text-[11px] uppercase tracking-[0.18em] border border-white/40 px-6 py-3.5 hover:bg-white hover:text-ink transition-colors rounded-none">
-                        Explorer les projets
-                    </a>
-                    <a href="#estimateur" class="inline-block py-3 font-mono text-[11px] uppercase tracking-[0.18em] text-white underline decoration-white/40 underline-offset-8 hover:decoration-star hover:text-star transition-colors">
-                        Simuler un devis <span class="arr">↗</span>
-                    </a>
-                </div>
-            </div>
+            <!-- Indicateur scroll (bas du hero) -->
+            <a href="#studio" class="hidden lg:flex absolute bottom-7 left-1/2 -translate-x-1/2 z-10 flex-col items-center gap-3 font-mono text-[9.5px] uppercase tracking-[0.3em] text-white/50 hover:text-white transition-colors" aria-label="Faire défiler vers le studio">
+                <span>Scroll</span>
+                <span class="w-px h-10 overflow-hidden bg-white/15 relative">
+                    <span class="absolute left-0 top-[-14px] w-px h-3.5 bg-white/80" style="animation:hintSlide 1.6s cubic-bezier(.65,0,.35,1) infinite"></span>
+                </span>
+            </a>
         </section>
 
-        <!-- ═══════════════ SECTION 01 — STUDIO (structure "Call for speakers" de Config) ═══════════════ -->
+        <!-- ═══════════════ RUBAN PHOTOS DÉFILANT ═══════════════ -->
+        <div class="strip relative left-[calc(-50%+1rem)] sm:left-[calc(-50%+2rem)] w-screen" aria-hidden="true">
+            <div class="strip-track">
+                <div class="strip-half">
+                    <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=520&h=340&q=80" alt="" draggable="false">
+                    <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
+                    <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
+                    <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
+                    <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
+                    <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
+                    <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
+                    <img src="https://images.unsplash.com/photo-1529900748604-07564a03e7f6?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
+                </div>
+                <div class="strip-half">
+                    <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
+                    <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
+                    <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
+                    <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
+                    <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
+                    <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
+                    <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
+                    <img src="https://images.unsplash.com/photo-1529900748604-07564a03e7f6?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════ SECTION 01 — STUDIO ═══════════════ -->
         <section id="studio" class="border-t border-white/10 scroll-mt-24">
             <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-16 md:py-24">
                 <p class="reveal font-mono text-[11px] sm:text-xs uppercase tracking-[0.25em] text-tint mb-6 md:mb-8">[ 01 — Le studio ]</p>
@@ -412,15 +552,15 @@
                         <button onclick="toggleDrawer()" class="font-mono text-[11px] uppercase tracking-[0.18em] border border-white/40 px-6 py-4 hover:bg-white hover:text-ink transition-colors rounded-none w-full sm:w-auto sm:self-end">
                             Réserver un shoot
                         </button>
-                        <a href="mailto:contact@anima.studio.ch" class="font-mono text-[11px] uppercase tracking-[0.18em] text-white underline decoration-white/40 underline-offset-8 hover:decoration-star hover:text-star transition-colors sm:self-end">
-                            ou écrire au studio <span class="arr">↗</span>
+                        <a href="apropos.html" class="font-mono text-[11px] uppercase tracking-[0.18em] text-white underline decoration-white/40 underline-offset-8 hover:decoration-star hover:text-star transition-colors sm:self-end">
+                            ou découvrir le studio <span class="arr">↗</span>
                         </a>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- ═══════════════ SECTION 02 — EN UN COUP D'ŒIL (structure "At a glance" de Config) ═══════════════ -->
+        <!-- ═══════════════ SECTION 02 — EN UN COUP D'ŒIL ═══════════════ -->
         <section class="border-t border-white/10">
             <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-16 md:py-24">
                 <p class="reveal font-mono text-[11px] sm:text-xs uppercase tracking-[0.25em] text-tint mb-10 md:mb-14">[ Anima en un coup d'œil ]</p>
@@ -441,68 +581,62 @@
             </div>
         </section>
 
-        <!-- ═══════════════ SECTION 03 — SERVICES (structure "Why attend" : 3 colonnes séparées par filets) ═══════════════ -->
+        <!-- ═══════════════ SECTION 03 — SERVICES (aperçu → page Services) ═══════════════ -->
         <section id="services" class="border-t border-white/10 scroll-mt-24">
             <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-16 md:py-24">
-                <p class="reveal font-mono text-[11px] sm:text-xs uppercase tracking-[0.25em] text-tint mb-10 md:mb-14">[ 02 — Nos services ]</p>
+                <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10 md:mb-14">
+                    <div class="reveal">
+                        <p class="font-mono text-[11px] sm:text-xs uppercase tracking-[0.25em] text-tint mb-6 md:mb-8">[ 02 — Nos services ]</p>
+                        <h2 class="font-sans font-normal text-3xl sm:text-4xl md:text-5xl leading-[1.1] tracking-tight">Ce que nous faisons.</h2>
+                    </div>
+                    <a href="services.html" class="reveal font-mono text-[11px] uppercase tracking-[0.18em] text-tint hover:text-white transition-colors">
+                        Tous les services <span class="arr">↗</span>
+                    </a>
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-3 md:divide-x divide-white/10 md:gap-0 gap-12">
 
-                    <div class="reveal md:pr-10">
+                    <a href="services.html#creation-contenu" class="reveal md:pr-10 group block">
                         <span class="font-mono text-[11px] text-tint">/ 01</span>
-                        <h3 class="mt-4 font-sans font-normal text-2xl md:text-3xl leading-snug tracking-tight">Photoshoots &amp; direction artistique</h3>
+                        <h3 class="mt-4 font-sans font-normal text-2xl md:text-3xl leading-snug tracking-tight group-hover:text-star transition-colors">Création de contenu &amp; formats courts</h3>
                         <p class="mt-5 text-sm font-light leading-relaxed text-white/70">
-                            Shootings éditoriaux photo et vidéo, direction de mannequins, stylisme visuel et
-                            moodboards sur-mesure pour vos campagnes.
+                            Vidéos, photos et Reels immersifs — une production haute fréquence
+                            pour maintenir votre audience en haleine.
                         </p>
-                        <ul class="mt-7 pt-6 border-t border-white/10 font-mono text-xs leading-loose text-white/80 space-y-1.5">
-                            <li>Campagnes lookbook &amp; mode</li>
-                            <li>Photographie de lieux &amp; architecture</li>
-                            <li>Retouche &amp; color grading</li>
-                        </ul>
-                        <button onclick="openServiceModal('Photoshoots & Direction Artistique')" class="mt-7 font-mono text-[11px] uppercase tracking-[0.18em] underline decoration-white/40 underline-offset-8 hover:decoration-star hover:text-star transition-colors">
+                        <span class="mt-7 inline-block font-mono text-[11px] uppercase tracking-[0.18em] underline decoration-white/40 underline-offset-8 group-hover:decoration-star group-hover:text-star transition-colors">
                             Détails de l'offre <span class="arr">↗</span>
-                        </button>
-                    </div>
+                        </span>
+                    </a>
 
-                    <div class="reveal md:px-10" style="transition-delay:.1s">
+                    <a href="services.html#reseaux-sociaux" class="reveal md:px-10 group block" style="transition-delay:.1s">
                         <span class="font-mono text-[11px] text-tint">/ 02</span>
-                        <h3 class="mt-4 font-sans font-normal text-2xl md:text-3xl leading-snug tracking-tight">Gestion des réseaux sociaux</h3>
+                        <h3 class="mt-4 font-sans font-normal text-2xl md:text-3xl leading-snug tracking-tight group-hover:text-star transition-colors">Gestion des réseaux sociaux</h3>
                         <p class="mt-5 text-sm font-light leading-relaxed text-white/70">
-                            Gestion complète de votre présence Instagram &amp; TikTok — curation de feed,
-                            copywriting ciblé et calendrier éditorial stratégique.
+                            Stratégie, curation de feed, copywriting et calendrier éditorial —
+                            une présence digitale forte, pilotée de A à Z.
                         </p>
-                        <ul class="mt-7 pt-6 border-t border-white/10 font-mono text-xs leading-loose text-white/80 space-y-1.5">
-                            <li>Stratégie de contenu &amp; feed aesthetics</li>
-                            <li>Planification &amp; copywriting</li>
-                            <li>Analyse de performance &amp; reporting</li>
-                        </ul>
-                        <button onclick="openServiceModal('Gestion des Réseaux Sociaux')" class="mt-7 font-mono text-[11px] uppercase tracking-[0.18em] underline decoration-white/40 underline-offset-8 hover:decoration-star hover:text-star transition-colors">
+                        <span class="mt-7 inline-block font-mono text-[11px] uppercase tracking-[0.18em] underline decoration-white/40 underline-offset-8 group-hover:decoration-star group-hover:text-star transition-colors">
                             Détails de l'offre <span class="arr">↗</span>
-                        </button>
-                    </div>
+                        </span>
+                    </a>
 
-                    <div class="reveal md:pl-10" style="transition-delay:.2s">
+                    <a href="services.html#photoshoots" class="reveal md:pl-10 group block" style="transition-delay:.2s">
                         <span class="font-mono text-[11px] text-tint">/ 03</span>
-                        <h3 class="mt-4 font-sans font-normal text-2xl md:text-3xl leading-snug tracking-tight">Création de contenu &amp; événements</h3>
+                        <h3 class="mt-4 font-sans font-normal text-2xl md:text-3xl leading-snug tracking-tight group-hover:text-star transition-colors">Photoshoots &amp; événements</h3>
                         <p class="mt-5 text-sm font-light leading-relaxed text-white/70">
-                            Captation d'événements exclusifs, Reels immersifs et snack-content haute
-                            fréquence pour maintenir votre audience en haleine.
+                            Shootings éditoriaux, direction artistique et couverture d'événements
+                            exclusifs — des images qui racontent.
                         </p>
-                        <ul class="mt-7 pt-6 border-t border-white/10 font-mono text-xs leading-loose text-white/80 space-y-1.5">
-                            <li>Reels / TikTok shorts immersifs</li>
-                            <li>Couverture événementielle temps réel</li>
-                            <li>Brand assets &amp; motion snippets</li>
-                        </ul>
-                        <button onclick="openServiceModal('Création de Contenu & Événements')" class="mt-7 font-mono text-[11px] uppercase tracking-[0.18em] underline decoration-white/40 underline-offset-8 hover:decoration-star hover:text-star transition-colors">
+                        <span class="mt-7 inline-block font-mono text-[11px] uppercase tracking-[0.18em] underline decoration-white/40 underline-offset-8 group-hover:decoration-star group-hover:text-star transition-colors">
                             Détails de l'offre <span class="arr">↗</span>
-                        </button>
-                    </div>
+                        </span>
+                    </a>
 
                 </div>
             </div>
         </section>
 
-        <!-- ═══════════════ SECTION 04 — PROJETS (structure "Memorable moments" : cartes à filet 1px, angles droits) ═══════════════ -->
+        <!-- ═══════════════ SECTION 04 — PROJETS (aperçu → page Portfolio) ═══════════════ -->
         <section id="projets" class="border-t border-white/10 scroll-mt-24">
             <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-16 md:py-24">
                 <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10 md:mb-14">
@@ -510,13 +644,13 @@
                         <p class="font-mono text-[11px] sm:text-xs uppercase tracking-[0.25em] text-tint mb-6 md:mb-8">[ 03 — Projets choisis ]</p>
                         <h2 class="font-sans font-normal text-3xl sm:text-4xl md:text-5xl leading-[1.1] tracking-tight">Réalisations sélectionnées.</h2>
                     </div>
-                    <a href="https://instagram.com/anima.studio.ch" target="_blank" rel="noopener noreferrer" class="reveal font-mono text-[11px] uppercase tracking-[0.18em] text-tint hover:text-white transition-colors">
-                        @anima.studio.ch <span class="arr">↗</span>
+                    <a href="portfolio.html" class="reveal font-mono text-[11px] uppercase tracking-[0.18em] text-tint hover:text-white transition-colors">
+                        Tout le portfolio <span class="arr">↗</span>
                     </a>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <a href="https://instagram.com/anima.studio.ch" target="_blank" rel="noopener noreferrer" class="reveal group block border border-white/15 hover:border-white transition-colors rounded-none overflow-hidden">
+                    <a href="portfolio.html" class="reveal group block border border-white/15 hover:border-white transition-colors rounded-none overflow-hidden">
                         <div class="aspect-[4/5] overflow-hidden bg-[#1d1d1d]">
                             <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1000&q=80" alt="Éditorial mode — lookbook" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
                         </div>
@@ -525,7 +659,7 @@
                             <span class="text-tint group-hover:text-star transition-colors">2026 <span class="arr">↗</span></span>
                         </div>
                     </a>
-                    <a href="https://instagram.com/anima.studio.ch" target="_blank" rel="noopener noreferrer" class="reveal group block border border-white/15 hover:border-white transition-colors rounded-none overflow-hidden" style="transition-delay:.1s">
+                    <a href="portfolio.html" class="reveal group block border border-white/15 hover:border-white transition-colors rounded-none overflow-hidden" style="transition-delay:.1s">
                         <div class="aspect-[4/5] overflow-hidden bg-[#1d1d1d]">
                             <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1000&q=80" alt="Gastronomie — curation Instagram" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
                         </div>
@@ -534,7 +668,7 @@
                             <span class="text-tint group-hover:text-star transition-colors">2026 <span class="arr">↗</span></span>
                         </div>
                     </a>
-                    <a href="https://instagram.com/anima.studio.ch" target="_blank" rel="noopener noreferrer" class="reveal group block border border-white/15 hover:border-white transition-colors rounded-none overflow-hidden" style="transition-delay:.2s">
+                    <a href="portfolio.html" class="reveal group block border border-white/15 hover:border-white transition-colors rounded-none overflow-hidden" style="transition-delay:.2s">
                         <div class="aspect-[4/5] overflow-hidden bg-[#1d1d1d]">
                             <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1000&q=80" alt="Gala privé — couverture événementielle" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
                         </div>
@@ -547,7 +681,7 @@
             </div>
         </section>
 
-        <!-- ═══════════════ SECTION 05 — ESTIMATEUR (fonctionnalité ANIMA, habillage Config) ═══════════════ -->
+        <!-- ═══════════════ SECTION 05 — ESTIMATEUR ═══════════════ -->
         <section id="estimateur" class="border-t border-white/10 scroll-mt-24">
             <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-16 md:py-24">
                 <p class="reveal font-mono text-[11px] sm:text-xs uppercase tracking-[0.25em] text-tint mb-6 md:mb-8">[ 04 — Estimateur ]</p>
@@ -612,9 +746,9 @@
                             <div class="pt-6 mt-6 border-t border-white/10">
                                 <span class="block text-[10px] uppercase tracking-[0.2em] text-tint mb-2">Estimation indicative</span>
                                 <span id="summary-total" class="block font-sans font-light text-4xl md:text-5xl tracking-tight text-white">0 CHF</span>
-                                <button onclick="toggleDrawer()" class="mt-6 w-full font-mono text-[11px] uppercase tracking-[0.18em] border border-white/40 px-6 py-3.5 hover:bg-white hover:text-ink transition-colors rounded-none">
+                                <a href="contact.html" class="mt-6 block text-center font-mono text-[11px] uppercase tracking-[0.18em] border border-white/40 px-6 py-3.5 hover:bg-white hover:text-ink transition-colors rounded-none">
                                     Valider &amp; réserver
-                                </button>
+                                </a>
                             </div>
                         </div>
 
@@ -623,7 +757,7 @@
             </div>
         </section>
 
-        <!-- ═══════════════ SECTION 06 — FAQ (accordéon, même composant que config.figma.com) ═══════════════ -->
+        <!-- ═══════════════ SECTION 06 — FAQ ═══════════════ -->
         <section id="faq" class="border-t border-white/10 scroll-mt-24">
             <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-16 md:py-24">
                 <p class="reveal font-mono text-[11px] sm:text-xs uppercase tracking-[0.25em] text-tint mb-6 md:mb-8">[ 05 — FAQ ]</p>
@@ -637,8 +771,9 @@
                         </button>
                         <div class="faq-panel"><div>
                             <p class="pb-6 pr-10 text-sm font-light leading-relaxed text-white/70 max-w-2xl">
-                                Un premier échange par email ou Instagram, un brief détaillé sous 24h, puis une proposition
-                                de calendrier et de devis. Tout se valide via le formulaire de réservation.
+                                Un premier échange via la <a href="contact.html" class="underline decoration-white/30 hover:decoration-star hover:text-star transition-colors">page contact</a>,
+                                un brief détaillé sous 24h, puis une proposition de calendrier et de devis.
+                                Tout se valide en ligne, sans engagement.
                             </p>
                         </div></div>
                     </div>
@@ -684,12 +819,12 @@
 
     </main>
 
-    <!-- ═══════════════ FOOTER (même sobriété que Config : liens événement + réseaux + légal) ═══════════════ -->
+    <!-- ═══════════════ FOOTER ═══════════════ -->
     <footer class="border-t border-white/10">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-14">
             <div class="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-white/10">
                 <div class="md:col-span-6">
-                    <p class="font-serif italic text-4xl">Anima<span class="star-spin not-italic font-sans font-light text-star text-2xl ml-1">✦</span></p>
+                    <a href="index.html" class="font-serif italic text-4xl inline-block">Anima<span class="star-spin not-italic font-sans font-light text-star text-2xl ml-1">✦</span></a>
                     <p class="mt-5 text-sm font-light leading-relaxed text-white/70 max-w-sm">
                         Studio de création digitale — pour les marques, les lieux et les événements,
                         en Suisse et à l'international.
@@ -698,11 +833,11 @@
                 <div class="md:col-span-3">
                     <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-tint mb-5">Menu</p>
                     <div class="flex flex-col gap-3 font-mono text-xs text-white/80">
-                        <a href="#studio" class="hover:text-star transition-colors w-fit">Studio</a>
-                        <a href="#services" class="hover:text-star transition-colors w-fit">Services</a>
-                        <a href="#projets" class="hover:text-star transition-colors w-fit">Projets</a>
-                        <a href="#estimateur" class="hover:text-star transition-colors w-fit">Estimateur</a>
-                        <a href="#faq" class="hover:text-star transition-colors w-fit">FAQ</a>
+                        <a href="index.html" class="hover:text-star transition-colors w-fit">Accueil</a>
+                        <a href="services.html" class="hover:text-star transition-colors w-fit">Services</a>
+                        <a href="apropos.html" class="hover:text-star transition-colors w-fit">À propos</a>
+                        <a href="portfolio.html" class="hover:text-star transition-colors w-fit">Portfolio</a>
+                        <a href="contact.html" class="hover:text-star transition-colors w-fit">Contact</a>
                     </div>
                 </div>
                 <div class="md:col-span-3">
@@ -720,7 +855,71 @@
         </div>
     </footer>
 
-    <!-- ═══════════════ DRAWER RÉSERVATION (habillage Config : fond ink, filets, angles droits) ═══════════════ -->
+    <!-- ═══════════════ OVERLAY MENU (bouton MENU) ═══════════════ -->
+    <div id="menu-overlay" role="dialog" aria-modal="true" aria-label="Menu de navigation" aria-hidden="true">
+        <div class="h-full flex flex-col max-w-[1400px] mx-auto px-4 sm:px-8 pt-6 pb-10">
+
+            <div class="flex items-center justify-between h-16">
+                <span class="font-serif italic text-2xl">Anima<span class="text-star">✦</span></span>
+                <button onclick="toggleMenu()" aria-label="Fermer le menu" class="w-10 h-10 rounded-full border border-white/30 hover:bg-white hover:text-ink transition-colors grid place-items-center font-mono">✕</button>
+            </div>
+
+            <nav class="flex-1 flex flex-col justify-center gap-1 sm:gap-2" aria-label="Menu">
+                <a href="index.html" class="menu-link group flex items-baseline gap-5 sm:gap-8 py-2 border-b border-white/10">
+                    <span class="font-mono text-[11px] text-tint flex-none">01</span>
+                    <span class="font-serif italic text-[clamp(2.2rem,7vw,4.5rem)] leading-none group-hover:text-star group-hover:translate-x-3 transition-all duration-300">Accueil</span>
+                    <span class="arr ml-auto text-tint group-hover:text-star transition-colors">→</span>
+                </a>
+                <a href="services.html" class="menu-link group flex items-baseline gap-5 sm:gap-8 py-2 border-b border-white/10">
+                    <span class="font-mono text-[11px] text-tint flex-none">02</span>
+                    <span class="font-serif italic text-[clamp(2.2rem,7vw,4.5rem)] leading-none group-hover:text-star group-hover:translate-x-3 transition-all duration-300">Services</span>
+                    <span class="arr ml-auto text-tint group-hover:text-star transition-colors">→</span>
+                </a>
+                <a href="apropos.html" class="menu-link group flex items-baseline gap-5 sm:gap-8 py-2 border-b border-white/10">
+                    <span class="font-mono text-[11px] text-tint flex-none">03</span>
+                    <span class="font-serif italic text-[clamp(2.2rem,7vw,4.5rem)] leading-none group-hover:text-star group-hover:translate-x-3 transition-all duration-300">À propos</span>
+                    <span class="arr ml-auto text-tint group-hover:text-star transition-colors">→</span>
+                </a>
+                <a href="portfolio.html" class="menu-link group flex items-baseline gap-5 sm:gap-8 py-2 border-b border-white/10">
+                    <span class="font-mono text-[11px] text-tint flex-none">04</span>
+                    <span class="font-serif italic text-[clamp(2.2rem,7vw,4.5rem)] leading-none group-hover:text-star group-hover:translate-x-3 transition-all duration-300">Portfolio</span>
+                    <span class="arr ml-auto text-tint group-hover:text-star transition-colors">→</span>
+                </a>
+                <a href="contact.html" class="menu-link group flex items-baseline gap-5 sm:gap-8 py-2">
+                    <span class="font-mono text-[11px] text-tint flex-none">05</span>
+                    <span class="font-serif italic text-[clamp(2.2rem,7vw,4.5rem)] leading-none group-hover:text-star group-hover:translate-x-3 transition-all duration-300">Contact</span>
+                    <span class="arr ml-auto text-tint group-hover:text-star transition-colors">→</span>
+                </a>
+            </nav>
+
+            <div class="pt-8 flex flex-col sm:flex-row justify-between gap-4 font-mono text-[11px] uppercase tracking-[0.18em] text-tint">
+                <div class="flex flex-wrap gap-x-8 gap-y-3">
+                    <a href="https://instagram.com/anima.studio.ch" target="_blank" rel="noopener noreferrer" class="hover:text-star transition-colors">Instagram ↗</a>
+                    <a href="mailto:contact@anima.studio.ch" class="hover:text-star transition-colors">contact@anima.studio.ch</a>
+                </div>
+                <span>Lausanne — Genève — Suisse</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════ OVERLAY RECHERCHE (icône loupe) ═══════════════ -->
+    <div id="search-overlay" role="dialog" aria-modal="true" aria-label="Recherche sur le site" aria-hidden="true">
+        <button onclick="toggleSearch()" class="absolute inset-0 cursor-default" aria-label="Fermer la recherche" tabindex="-1"></button>
+        <div class="search-panel relative max-w-2xl mx-auto px-4 sm:px-8 pt-[16vh]">
+            <div class="flex items-center gap-4 border-b border-white/25 pb-4">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="text-white/50 flex-none" aria-hidden="true">
+                    <circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.5" y2="16.5"></line>
+                </svg>
+                <input id="search-input" type="text" placeholder="Rechercher un service, une page, une info…" autocomplete="off"
+                       class="w-full bg-transparent outline-none text-xl sm:text-2xl font-light placeholder:text-white/35 text-white" aria-label="Champ de recherche">
+                <button onclick="toggleSearch()" aria-label="Fermer" class="font-mono text-[10px] uppercase tracking-[0.2em] border border-white/25 rounded-full px-3 py-1.5 hover:bg-white hover:text-ink transition-colors flex-none">Esc</button>
+            </div>
+            <div id="search-results" class="mt-4 divide-y divide-white/8 border border-white/10 bg-[#161619]/90 backdrop-blur-xl rounded-2xl overflow-hidden max-h-[46vh] overflow-y-auto" role="listbox" aria-label="Résultats de recherche"></div>
+            <p class="mt-4 font-mono text-[10px] uppercase tracking-[0.2em] text-tint">↑↓ naviguer · ↵ ouvrir · / rechercher depuis n'importe quelle page</p>
+        </div>
+    </div>
+
+    <!-- ═══════════════ DRAWER RÉSERVATION ═══════════════ -->
     <div id="booking-drawer" class="fixed inset-0 z-[60] pointer-events-none opacity-0 transition-opacity duration-300" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Formulaire de réservation">
         <div id="drawer-backdrop" onclick="toggleDrawer()" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
         <div id="drawer-panel" class="absolute top-0 right-0 h-full w-full max-w-md bg-ink border-l border-white/15 p-6 sm:p-8 overflow-y-auto shadow-2xl transform translate-x-full transition-transform duration-300 pointer-events-auto flex flex-col justify-between rounded-none">
@@ -745,9 +944,10 @@
                     <div>
                         <label for="f-service" class="block text-[10px] uppercase tracking-[0.2em] text-tint mb-2">Service souhaité</label>
                         <select id="f-service" name="service" class="w-full bg-transparent border border-white/20 focus:border-white outline-none rounded-none px-4 py-3.5 text-white transition-colors [&>option]:bg-ink">
-                            <option>Photoshoot &amp; Direction Artistique</option>
-                            <option>Gestion Réseaux Sociaux</option>
-                            <option>Création de Contenu Événementiel</option>
+                            <option>Photoshoots &amp; Direction Artistique</option>
+                            <option>Gestion des Réseaux Sociaux</option>
+                            <option>Création de Contenu</option>
+                            <option>Contenu Événementiel</option>
                             <option>Pack Global Sur-Mesure</option>
                         </select>
                     </div>
@@ -758,6 +958,7 @@
                     <button type="submit" class="w-full bg-white text-ink font-bold uppercase tracking-[0.2em] rounded-none py-4 hover:bg-star hover:text-ink transition-colors">
                         Envoyer la demande
                     </button>
+                    <p class="text-tint text-center text-[10px] uppercase tracking-[0.15em]">ou via la <a href="contact.html" class="underline decoration-white/30 hover:decoration-star hover:text-star transition-colors">page contact complète</a></p>
                 </form>
 
                 <div id="form-success" class="hidden border border-white/15 rounded-none p-8 text-center">
@@ -780,28 +981,15 @@
         </div>
     </div>
 
-    <!-- ═══════════════ MODAL SERVICE (habillage Config) ═══════════════ -->
-    <div id="service-modal" class="fixed inset-0 z-[60] hidden items-center justify-center p-4 bg-black/70 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Détails du service">
-        <div class="bg-ink border border-white/15 max-w-lg w-full rounded-none relative p-8">
-            <button onclick="closeServiceModal()" aria-label="Fermer" class="absolute top-4 right-4 w-9 h-9 border border-white/25 hover:bg-white hover:text-ink transition-colors flex items-center justify-center font-mono">✕</button>
-            <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-star mb-3">/ Détails du service</p>
-            <h3 id="modal-service-title" class="font-sans font-normal text-2xl md:text-3xl tracking-tight mb-5"></h3>
-            <p id="modal-service-desc" class="text-sm font-light leading-relaxed text-white/70 mb-8"></p>
-            <button onclick="closeServiceModal(); toggleDrawer();" class="w-full font-mono text-[11px] uppercase tracking-[0.18em] border border-white/40 px-6 py-3.5 hover:bg-white hover:text-ink transition-colors rounded-none">
-                Demander un devis pour ce service
-            </button>
-        </div>
-    </div>
-
     <!-- ═══════════════ LOGIQUE JS ═══════════════ -->
     <script>
-        // ── Header : état scrollé (fond + filet) ──────────────────────────────
+        // ── Header : état scrollé ─────────────────────────────────────────
         const header = document.getElementById('site-header');
         const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 8);
         addEventListener('scroll', onScroll, { passive: true });
         onScroll();
 
-        // ── Apparitions au scroll (équivalent discret des animations Config) ─
+        // ── Apparitions au scroll ─────────────────────────────────────────
         const io = new IntersectionObserver((entries) => {
             entries.forEach(e => {
                 if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
@@ -809,7 +997,6 @@
         }, { threshold: 0.12 });
         document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-        // Filet de sécurité : saut d'ancre instantané → on force les éléments dépassés
         const revealPassed = () => {
             document.querySelectorAll('.reveal:not(.visible)').forEach(el => {
                 if (el.getBoundingClientRect().top < innerHeight * 0.9) el.classList.add('visible');
@@ -817,7 +1004,7 @@
         };
         addEventListener('scroll', revealPassed, { passive: true });
 
-        // ── Statistiques : compteur animé ────────────────────────────────────
+        // ── Statistiques : compteur animé ────────────────────────────────
         const cio = new IntersectionObserver((entries) => {
             entries.forEach(e => {
                 if (!e.isIntersecting) return;
@@ -837,20 +1024,7 @@
         }, { threshold: 0.5 });
         document.querySelectorAll('[data-count]').forEach(el => cio.observe(el));
 
-        // ── Wordmark : rejoue l'entrée des lettres quand le héros revient à l'écran ──
-        const mark = document.querySelector('.wordmark');
-        new IntersectionObserver((entries) => {
-            entries.forEach(e => {
-                if (!e.isIntersecting) return;
-                mark.querySelectorAll('.letter, .star-pop').forEach(el => {
-                    el.style.animation = 'none';
-                    void el.offsetWidth; // reflow forcé pour relancer l'animation
-                    el.style.animation = '';
-                });
-            });
-        }, { threshold: 0.4 }).observe(mark);
-
-        // ── Estimateur ────────────────────────────────────────────────────────
+        // ── Estimateur ────────────────────────────────────────────────────
         let speedMultiplier = 1;
 
         function setSpeed(multiplier, btn) {
@@ -875,7 +1049,7 @@
         }
         calculateTotal();
 
-        // ── Drawer réservation (Esc + verrou scroll + focus) ─────────────────
+        // ── Drawer réservation ───────────────────────────────────────────
         const drawer = document.getElementById('booking-drawer');
         const drawerPanel = document.getElementById('drawer-panel');
 
@@ -901,36 +1075,95 @@
 
         function toggleDrawer() { drawerIsOpen() ? closeDrawer() : openDrawer(); }
 
-        // ── Modal service ─────────────────────────────────────────────────────
-        const modal = document.getElementById('service-modal');
-
-        function openServiceModal(title) {
-            document.getElementById('modal-service-title').textContent = title;
-            document.getElementById('modal-service-desc').textContent =
-                `Accompagnement de haute précision par ANIMA Studio pour « ${title} ». Nous gérons chaque étape, ` +
-                `de la production à la diffusion, pour garantir une esthétique et des résultats irréprochables.`;
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            document.body.style.overflow = 'hidden';
-            modal.querySelector('button').focus();
+        // ── Overlay MENU ─────────────────────────────────────────────────
+        const menuOverlay = document.getElementById('menu-overlay');
+        function menuIsOpen() { return menuOverlay.classList.contains('open'); }
+        function toggleMenu(force) {
+            const open = typeof force === 'boolean' ? force : !menuIsOpen();
+            menuOverlay.classList.toggle('open', open);
+            menuOverlay.setAttribute('aria-hidden', String(!open));
+            document.body.style.overflow = open ? 'hidden' : '';
+            if (open) menuOverlay.querySelector('button').focus();
         }
 
-        function closeServiceModal() {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-            if (!drawerIsOpen()) document.body.style.overflow = '';
+        // ── Overlay RECHERCHE ────────────────────────────────────────────
+        const searchOverlay = document.getElementById('search-overlay');
+        const searchInput = document.getElementById('search-input');
+        const searchResults = document.getElementById('search-results');
+        let searchCursor = 0;
+
+        const SEARCH_INDEX = [
+            { t: 'Accueil',              d: 'Là où votre image prend vie',                 u: 'index.html' },
+            { t: 'Le studio',            d: 'Basé en Suisse, tourné vers l\'exceptionnel', u: 'index.html#studio' },
+            { t: 'Estimateur de devis',  d: 'Calculez votre devis en direct',              u: 'index.html#estimateur' },
+            { t: 'FAQ',                  d: 'Questions fréquentes',                        u: 'index.html#faq' },
+            { t: 'Création de Contenu',  d: 'Vidéos, photos, formats courts',              u: 'services.html#creation-contenu' },
+            { t: 'Gestion des Réseaux Sociaux', d: 'Stratégie & présence digitale',        u: 'services.html#reseaux-sociaux' },
+            { t: 'Contenu Événementiel', d: 'Capturez l\'essence de vos événements',      u: 'services.html#evenementiel' },
+            { t: 'Photoshoots',          d: 'Images éditoriales & direction artistique',   u: 'services.html#photoshoots' },
+            { t: 'À propos',             d: 'L\'histoire du studio & la méthode',          u: 'apropos.html' },
+            { t: 'Portfolio',            d: 'Réalisations sélectionnées',                  u: 'portfolio.html' },
+            { t: 'Contact',              d: 'Réserver un shoot / demander un devis',       u: 'contact.html' }
+        ];
+
+        function searchIsOpen() { return searchOverlay.classList.contains('open'); }
+
+        function renderResults(q) {
+            const query = q.trim().toLowerCase();
+            const hits = query
+                ? SEARCH_INDEX.filter(i => (i.t + ' ' + i.d).toLowerCase().includes(query))
+                : SEARCH_INDEX;
+            searchCursor = 0;
+            if (!hits.length) {
+                searchResults.innerHTML = '<p class="px-5 py-6 font-mono text-xs text-tint">Aucun résultat pour « ' + query.replace(/[<>&]/g, '') + ' » — essayez « shoot », « reels », « devis »…</p>';
+                return;
+            }
+            searchResults.innerHTML = hits.slice(0, 8).map((h, i) => {
+                const title = h.t.replace(/[<>&]/g, '');
+                return '<a href="' + h.u + '" class="search-result' + (i === 0 ? ' is-cursor' : '') + ' flex items-center justify-between gap-4 px-5 py-4 border-l-2 border-transparent">' +
+                    '<span class="min-w-0"><span class="block text-sm text-white">' + title + '</span>' +
+                    '<span class="block font-mono text-[10.5px] uppercase tracking-[0.12em] text-tint mt-0.5">' + h.d.replace(/[<>&]/g, '') + '</span></span>' +
+                    '<span class="arr text-tint flex-none">→</span></a>';
+            }).join('');
         }
 
-        modal.addEventListener('click', (e) => { if (e.target === modal) closeServiceModal(); });
+        function toggleSearch(force) {
+            const open = typeof force === 'boolean' ? force : !searchIsOpen();
+            searchOverlay.classList.toggle('open', open);
+            searchOverlay.setAttribute('aria-hidden', String(!open));
+            document.body.style.overflow = open ? 'hidden' : '';
+            if (open) { renderResults(''); setTimeout(() => searchInput.focus(), 60); }
+        }
 
-        // ── Échap : ferme modal puis drawer ──────────────────────────────────
-        document.addEventListener('keydown', (e) => {
-            if (e.key !== 'Escape') return;
-            if (!modal.classList.contains('hidden')) closeServiceModal();
-            else if (drawerIsOpen()) closeDrawer();
+        searchInput.addEventListener('input', () => renderResults(searchInput.value));
+
+        searchInput.addEventListener('keydown', (e) => {
+            const items = [...searchResults.querySelectorAll('.search-result')];
+            if (!items.length) return;
+            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                searchCursor = (searchCursor + (e.key === 'ArrowDown' ? 1 : items.length - 1)) % items.length;
+                items.forEach((it, i) => it.classList.toggle('is-cursor', i === searchCursor));
+                items[searchCursor].scrollIntoView({ block: 'nearest' });
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                items[searchCursor].click();
+            }
         });
 
-        // ── FAQ accordéon (un seul ouvert à la fois, comme Config) ───────────
+        // ── Échap & raccourci « / » ─────────────────────────────────────
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (searchIsOpen()) toggleSearch(false);
+                else if (menuIsOpen()) toggleMenu(false);
+                else if (drawerIsOpen()) closeDrawer();
+            } else if (e.key === '/' && !searchIsOpen() && !menuIsOpen() && !drawerIsOpen()) {
+                const tag = (document.activeElement && document.activeElement.tagName) || '';
+                if (!/INPUT|TEXTAREA|SELECT/.test(tag)) { e.preventDefault(); toggleSearch(true); }
+            }
+        });
+
+        // ── FAQ accordéon ────────────────────────────────────────────────
         document.querySelectorAll('.faq-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const item = btn.closest('.faq-item');
@@ -946,7 +1179,7 @@
             });
         });
 
-        // ── Formulaire : succès inline (plus d'alert bloquant) ───────────────
+        // ── Formulaire : succès inline ──────────────────────────────────
         function handleFormSubmit(e) {
             e.preventDefault();
             document.getElementById('contact-form').classList.add('hidden');
