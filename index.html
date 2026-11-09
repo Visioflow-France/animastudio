@@ -13,10 +13,10 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Google Fonts : Instrument Serif (wordmark), Inter (sans), IBM Plex Mono (labels) -->
+    <!-- Google Fonts : Playfair Display (hero, comme l'image), Instrument Serif (wordmark site), Inter (sans), IBM Plex Mono (labels) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
@@ -30,6 +30,7 @@
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
                         serif: ['"Instrument Serif"', 'serif'],
+                        playfair: ['"Playfair Display"', 'serif'],
                         mono: ['"IBM Plex Mono"', 'monospace']
                     }
                 }
@@ -51,66 +52,138 @@
         .skip { position: absolute; left: -9999px; top: 0; z-index: 100; }
         .skip:focus { left: 16px; top: 16px; padding: 8px 16px; background: #fff; color: #131313; font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: .15em; }
 
-        /* ═══ HERO — l'image fournie, plein écran adaptatif ═══
-           L'image remplit TOUJOURS le viewport (jamais l'effet « image posée ») :
-           · Mode couverture (ordinateur) : zoom pour remplir, ancré sur le contenu
-             (nav, cartes, CTA) pour ne jamais rogner les boutons gravés.
-           · Mode letterbox (ratios très larges) : image entière + fond flouté.
-           · Mode panoramique (mobile portrait) : image plein écran en hauteur,
-             balayage horizontal naturel — tous les boutons restent cliquables.
-           Le positionnement des zones cliquables est recalculé en JS (px image → px écran). */
-        #top.hero-section { height: 100vh; height: 100svh; min-height: 420px; }
-
-        #hero-blur {
-            position: absolute; inset: 0; width: 100%; height: 100%;
-            object-fit: cover; transform: scale(1.14);
-            filter: blur(26px) brightness(.45) saturate(1.1);
-            visibility: hidden;
+        /* ═══ HERO — fond photo tel quel (zéro flou, zéro modif) + interface réelle ═══ */
+        #top.hero-section {
+            position: relative;
+            display: flex; flex-direction: column;
+            min-height: 100vh; min-height: 100svh;
+            background: #0a0908 url('hero_bg.jpg') center center / cover no-repeat;
         }
-        #top[data-hero-mode="B"] #hero-blur { visibility: visible; }
-
-        #hero-scroller {
-            position: absolute; inset: 0;
-            overflow: hidden;
-            scrollbar-width: none;
-        }
-        #hero-scroller::-webkit-scrollbar { display: none; }
-        #top[data-hero-mode="C"] #hero-scroller {
-            overflow-x: auto; overflow-y: hidden;
-            -webkit-overflow-scrolling: touch;
-            touch-action: pan-x pan-y;
-            overscroll-behavior-x: contain;
+        @media (min-width: 768px) {
+            #top.hero-section { height: 100vh; height: 100svh; min-height: 0; }
         }
 
-        #hero-canvas { position: absolute; } /* dimensions + position calculées en JS */
-        #hero-canvas img {
-            display: block; width: 100%; height: 100%;
-            user-select: none; -webkit-user-drag: none;
-            pointer-events: none;
+        .hero-inner {
+            flex: 1; display: flex; flex-direction: column;
+            width: 100%; max-width: 1560px; margin: 0 auto;
+            padding: 24px 40px 44px;
         }
 
-        /* Fondu latéral signalant le balayage en mode panoramique (mobile) */
-        .hero-edge {
-            position: absolute; top: 0; bottom: 0; width: 9vw;
-            pointer-events: none; z-index: 5; opacity: 0; transition: opacity .35s ease;
-        }
-        .hero-edge.is-right { right: 0; background: linear-gradient(to left, rgba(10,10,11,.55), rgba(10,10,11,0)); }
-        .hero-edge.is-left  { left: 0; background: linear-gradient(to right, rgba(10,10,11,.55), rgba(10,10,11,0)); }
-        #top[data-hero-mode="C"] .hero-edge { opacity: 1; }
-        #top[data-hero-mode="C"] .hero-edge.is-fully-left { opacity: 0; }
+        /* ── Barre du haut : logo | nav pilule bordure blanche | loupe + MENU ── */
+        .hero-bar { display: flex; align-items: center; justify-content: space-between; gap: 22px; }
+        .hero-logo { display: inline-flex; flex: none; }
+        .hero-logo img { height: 84px; width: auto; display: block; }
 
-        .hotspot {
-            position: absolute;
-            background: transparent;
-            border: 0; padding: 0; margin: 0;
-            cursor: pointer;
+        .hero-nav {
+            display: none; align-items: center; gap: 2px;
+            border: 2.5px solid #FFFFFF; border-radius: 999px;
+            background: rgba(12,10,9,.38);
+            padding: 5px 8px;
+        }
+        @media (min-width: 900px) { .hero-nav { display: flex; } }
+        .hero-nav a {
+            font-family: 'Inter', sans-serif; font-weight: 500; font-size: 15px;
+            color: #FFFFFF; text-decoration: none;
+            padding: 9px 19px; border-radius: 999px;
             transition: background .25s ease;
         }
-        .hotspot:hover { background: rgba(255,255,255,.055); }
-        .hotspot:focus-visible {
-            outline: 2px solid #FF4D00; outline-offset: 2px;
-            background: rgba(255,255,255,.055);
+        .hero-nav a:hover { background: rgba(255,255,255,.18); }
+        .hero-nav i { width: 1px; height: 16px; background: rgba(255,255,255,.4); flex: none; }
+        .hero-nav a:focus-visible, .hero-actions button:focus-visible { outline: 2px solid #FF4D00; outline-offset: 3px; }
+
+        .hero-actions { display: flex; align-items: center; gap: 14px; flex: none; }
+        .h-search {
+            width: 52px; height: 52px; border-radius: 999px;
+            border: 2.5px solid #FFFFFF; background: rgba(12,10,9,.38);
+            display: grid; place-items: center; color: #fff; cursor: pointer;
+            transition: background .25s ease, color .25s ease;
         }
+        .h-search:hover { background: rgba(255,255,255,.2); }
+        .h-menu {
+            height: 52px; padding: 0 28px; border-radius: 999px;
+            border: 2.5px solid #FFFFFF; background: rgba(12,10,9,.38);
+            font-family: 'Inter', sans-serif; font-weight: 500; font-size: 13px;
+            letter-spacing: .26em; text-indent: .26em;
+            color: #FFFFFF; cursor: pointer;
+            transition: background .25s ease, color .25s ease;
+        }
+        .h-menu:hover { background: #FFFFFF; color: #131313; }
+
+        /* ── Corps : titre (romain, sans flou derrière) + boutons rectangulaires à gauche ── */
+        .hero-body {
+            flex: 1; display: flex; flex-direction: column; justify-content: flex-end;
+            max-width: 500px; padding-top: 44px; min-height: 0;
+        }
+        .hero-title {
+            margin: 0 0 34px;
+            font-family: 'Playfair Display', serif;
+            font-weight: 400; font-style: normal;
+            font-size: clamp(46px, 4.6vw, 80px);
+            line-height: 1.06; letter-spacing: 0;
+            color: #FAF7F1;
+        }
+        .hero-cards { display: flex; flex-direction: column; gap: 16px; }
+        @media (min-width: 768px) { .hero-cards { flex: 1; min-height: 0; } }
+
+        .hero-card {
+            position: relative; display: block; flex: 1 1 0; min-height: 108px;
+            border: 2.5px solid #FFFFFF; border-radius: 22px; overflow: hidden;
+            text-decoration: none; background: #141210;
+        }
+        .hero-card img {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            object-fit: cover; object-position: 62% center;
+            transition: transform .6s cubic-bezier(.16,1,.3,1);
+        }
+        .hero-card::before {
+            content: ""; position: absolute; inset: 0; z-index: 1;
+            background: linear-gradient(90deg, rgba(8,7,6,.58), rgba(8,7,6,.14) 52%, rgba(8,7,6,0));
+        }
+        .hero-card b {
+            position: absolute; z-index: 2; left: 24px; top: 20px;
+            max-width: 44%;                              /* le texte ne dépasse jamais le milieu */
+            font-family: 'Inter', sans-serif; font-weight: 500;
+            font-size: 19px; line-height: 1.25; color: #FFFFFF;
+        }
+        .hero-card .go {
+            position: absolute; z-index: 2; left: 24px; bottom: 16px;
+            width: 40px; height: 40px; border-radius: 999px;
+            border: 2px solid #FFFFFF; background: rgba(8,7,6,.28);
+            display: grid; place-items: center;
+            color: #FFFFFF; font-size: 17px; line-height: 1;
+            transition: background .25s ease, color .25s ease;
+        }
+        .hero-card:hover img { transform: scale(1.045); }
+        .hero-card:hover .go { background: #FFFFFF; color: #131313; }
+        .hero-card:focus-visible { outline: 2px solid #FF4D00; outline-offset: 3px; }
+
+        /* ── Mobile ── */
+        @media (max-width: 767px) {
+            .hero-inner { padding: 16px 18px 26px; }
+            .hero-logo img { height: 60px; }
+            .h-search { width: 46px; height: 46px; }
+            .h-menu { height: 46px; padding: 0 20px; font-size: 11.5px; }
+            .hero-body { max-width: none; padding-top: 34px; justify-content: flex-start; }
+            .hero-title { font-size: clamp(36px, 10vw, 46px); margin-bottom: 24px; }
+            .hero-cards { gap: 12px; }
+            .hero-card { min-height: 112px; }
+            .hero-card b { left: 18px; top: 16px; font-size: 16px; }
+            .hero-card .go { left: 18px; bottom: 14px; width: 36px; height: 36px; font-size: 15px; }
+        }
+
+        /* ── Naissance du hero (après l'intro) ── */
+        .hero-logo, .hero-nav, .hero-actions, .hero-title, .hero-card {
+            opacity: 0; transform: translateY(24px);
+            transition: opacity .8s ease, transform .9s cubic-bezier(.16,1,.3,1);
+        }
+        #top.is-born .hero-logo    { opacity: 1; transform: none; transition-delay: .08s; }
+        #top.is-born .hero-nav     { opacity: 1; transform: none; transition-delay: .14s; }
+        #top.is-born .hero-actions { opacity: 1; transform: none; transition-delay: .20s; }
+        #top.is-born .hero-title   { opacity: 1; transform: none; transition-delay: .28s; }
+        #top.is-born .hero-card:nth-child(1) { opacity: 1; transform: none; transition-delay: .40s; }
+        #top.is-born .hero-card:nth-child(2) { opacity: 1; transform: none; transition-delay: .46s; }
+        #top.is-born .hero-card:nth-child(3) { opacity: 1; transform: none; transition-delay: .52s; }
+        #top.is-born .hero-card:nth-child(4) { opacity: 1; transform: none; transition-delay: .58s; }
 
         /* Header invisible tant que le hero (qui porte sa propre nav) est à l'écran */
         #site-header { transition: opacity .4s ease, transform .4s ease, background-color .35s ease, border-color .35s ease; }
@@ -276,6 +349,7 @@
             .strip-track { animation: none; }
             .arr { transition: none; }
             #intro, #intro-spacer { display: none; }
+            .hero-logo, .hero-nav, .hero-actions, .hero-title, .hero-card { opacity: 1 !important; transform: none !important; }
         }
     </style>
 </head>
@@ -443,47 +517,63 @@
 
     <main id="main" class="flex-grow">
 
-        <!-- ═══════════════ HERO — l'image fournie, plein écran, proportions adaptées ═══════════════
-             Modes (calculés en JS) : A couverture ancrée contenu · B image entière + fond flouté ·
-             C panoramique plein écran (mobile). Zones cliquables repositionnées au pixel. -->
-        <section id="top" class="hero-section relative w-full overflow-hidden bg-[#0a0a0b]">
+        <!-- ═══════════════ HERO — fond photo brut + interface réelle (zéro flou) ═══════════════ -->
+        <section id="top" class="hero-section">
 
-            <img id="hero-blur" src="anima_studio_hero.jpg" alt="" aria-hidden="true" draggable="false" decoding="async">
+            <div class="hero-inner">
 
-            <div id="hero-scroller">
-                <div id="hero-canvas">
-                    <img src="anima_studio_hero.jpg" alt="ANIMA Studio — Là où votre image prend vie. Plateau du studio : éclairage cinéma, canapé de tournage et écran de contrôle. Navigation : Accueil, Services, À propos, Portfolio. Services : Création de Contenu, Gestion des Réseaux Sociaux, Contenu Événementiel, Photoshoots." draggable="false" decoding="async">
-                    <div id="hero-hotspots">
+                <div class="hero-bar">
+                    <a class="hero-logo" href="#top" aria-label="ANIMA Studio — retour à l'accueil">
+                        <img src="logo_blanc_web.png" alt="ANIMA STUDIO" draggable="false">
+                    </a>
 
-                        <!-- Logo a. aNIMA STUDIO -->
-                        <a href="#top" class="hotspot" data-x="108" data-y="48" data-w="164" data-h="92" data-r="16" aria-label="ANIMA Studio — retour à l'accueil"></a>
+                    <nav class="hero-nav" aria-label="Navigation principale">
+                        <a href="#top">Accueil</a><i aria-hidden="true"></i>
+                        <a href="services.html">Services</a><i aria-hidden="true"></i>
+                        <a href="apropos.html">À propos</a><i aria-hidden="true"></i>
+                        <a href="portfolio.html">Portfolio</a>
+                    </nav>
 
-                        <!-- Nav : Accueil / Services / À propos / Portfolio -->
-                        <a href="#top" class="hotspot" data-x="806" data-y="56" data-w="94" data-h="60" data-r="999" aria-label="Accueil"></a>
-                        <a href="services.html" class="hotspot" data-x="918" data-y="56" data-w="104" data-h="60" data-r="999" aria-label="Services"></a>
-                        <a href="apropos.html" class="hotspot" data-x="1040" data-y="56" data-w="94" data-h="60" data-r="999" aria-label="À propos"></a>
-                        <a href="portfolio.html" class="hotspot" data-x="1151" data-y="56" data-w="96" data-h="60" data-r="999" aria-label="Portfolio"></a>
-
-                        <!-- Recherche (loupe) et MENU -->
-                        <button type="button" onclick="toggleSearch()" class="hotspot" data-x="1616" data-y="62" data-w="54" data-h="50" data-r="999" aria-label="Rechercher sur le site"></button>
-                        <button type="button" onclick="toggleMenu()" class="hotspot" data-x="1724" data-y="52" data-w="134" data-h="68" data-r="999" aria-label="Ouvrir le menu"></button>
-
-                        <!-- CTA « Découvrir nos services → » -->
-                        <a href="services.html" class="hotspot" data-x="106" data-y="880" data-w="430" data-h="66" data-r="12" aria-label="Découvrir nos services"></a>
-
-                        <!-- Les 4 cartes services -->
-                        <a href="services.html#creation-contenu" class="hotspot" data-x="1240" data-y="262" data-w="600" data-h="178" data-r="26" aria-label="Création de Contenu — Vidéos, photos, formats courts pour sublimer votre marque"></a>
-                        <a href="services.html#reseaux-sociaux" class="hotspot" data-x="1240" data-y="460" data-w="600" data-h="176" data-r="26" aria-label="Gestion des Réseaux Sociaux — Stratégie et accompagnement pour une présence digitale forte"></a>
-                        <a href="services.html#evenementiel" class="hotspot" data-x="1240" data-y="655" data-w="600" data-h="173" data-r="26" aria-label="Contenu Événementiel — Capturez l'essence de vos événements"></a>
-                        <a href="services.html#photoshoots" class="hotspot" data-x="1240" data-y="850" data-w="600" data-h="170" data-r="26" aria-label="Photoshoots — Des images soignées qui révèlent votre identité"></a>
-
+                    <div class="hero-actions">
+                        <button type="button" class="h-search" onclick="toggleSearch()" aria-label="Rechercher sur le site">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+                                <circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.5" y2="16.5"></line>
+                            </svg>
+                        </button>
+                        <button type="button" class="h-menu" onclick="toggleMenu()">MENU</button>
                     </div>
                 </div>
-            </div>
 
-            <div class="hero-edge is-right" id="hero-edge-right" aria-hidden="true"></div>
-            <div class="hero-edge is-left" id="hero-edge-left" aria-hidden="true"></div>
+                <div class="hero-body">
+                    <h1 class="hero-title">Là où votre<br>image prend vie.</h1>
+
+                    <div class="hero-cards" aria-label="Nos services">
+                        <a class="hero-card" href="services.html#creation-contenu">
+                            <img src="btn_creation.jpg" alt="" draggable="false" loading="lazy">
+                            <b>Création de Contenu</b>
+                            <span class="go" aria-hidden="true">→</span>
+                        </a>
+                        <a class="hero-card" href="services.html#reseaux-sociaux">
+                            <img src="btn_reseaux.jpg" alt="" draggable="false" loading="lazy">
+                            <b>Gestion des Réseaux Sociaux</b>
+                            <span class="go" aria-hidden="true">→</span>
+                        </a>
+                        <a class="hero-card" href="services.html#evenementiel">
+                            <img src="btn_evenementiel.jpg" alt="" draggable="false" loading="lazy">
+                            <b>Contenu Événementiel</b>
+                            <span class="go" aria-hidden="true">→</span>
+                        </a>
+                        <a class="hero-card" href="services.html#photoshoots">
+                            <img src="btn_photoshoots.jpg" alt="" draggable="false" loading="lazy">
+                            <b>Photoshoots</b>
+                            <span class="go" aria-hidden="true">→</span>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
         </section>
+        <noscript><style>.hero-logo, .hero-nav, .hero-actions, .hero-title, .hero-card { opacity: 1 !important; transform: none !important; }</style></noscript>
 
         <!-- ═══════════════ RUBAN PHOTOS DÉFILANT ═══════════════ -->
         <div class="strip relative left-[calc(-50%+1rem)] sm:left-[calc(-50%+2rem)] w-screen" aria-hidden="true">
@@ -977,78 +1067,15 @@
             header.classList.toggle('is-scrolled', !header.classList.contains('is-ghost') && window.scrollY > 8);
         }, { passive: true });
 
-        // ── HERO adaptatif : l'image remplit toujours l'écran, sans rogner les boutons ──
+        // ── HERO : naissance après l'intro (le layout est 100% CSS fluide) ──
         (function () {
-            const IMG_W = 1920, IMG_H = 1080;
-            const KEEP_X = [120, 1860];   // bande horizontale à préserver (logo → MENU)
-            const KEEP_Y = [50, 1040];    // bande verticale à préserver (nav → bas des cartes)
-            const sec  = document.getElementById('top');
-            const sc   = document.getElementById('hero-scroller');
-            const cv   = document.getElementById('hero-canvas');
-            const edgeL = document.getElementById('hero-edge-left');
-            const edgeR = document.getElementById('hero-edge-right');
-            const spots = [...document.querySelectorAll('#hero-hotspots .hotspot')];
-            const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-
-            function layout() {
-                const vw = sec.clientWidth, vh = sec.clientHeight;
-                if (!vw || !vh) return;
-                const sCover = Math.max(vw / IMG_W, vh / IMG_H);
-                // couverture possible si le contenu utile tient dans le cadre (tolérance 28px :
-                // absorbe les rognages invisibles dans les marges internes de l'image)
-                const fitsH = (KEEP_X[1] - KEEP_X[0]) * sCover <= vw + 28;
-                const fitsV = (KEEP_Y[1] - KEEP_Y[0]) * sCover <= vh + 28;
-
-                let mode, s, offX, offY;
-                if (fitsH && fitsV) {
-                    // A — couverture plein écran, centrée sur le contenu ; les bords du
-                    // contenu (logo, nav) ne sont JAMAIS rognés : le rognage reste dans
-                    // les marges internes de l'image (padding des éléments gravés)
-                    mode = 'A'; s = sCover;
-                    const minX = Math.max(vw - IMG_W * s, -(KEEP_X[0] - 8) * s);
-                    const minY = Math.max(vh - IMG_H * s, -(KEEP_Y[0] - 8) * s);
-                    offX = clamp(vw / 2 - (KEEP_X[0] + KEEP_X[1]) / 2 * s, minX, 0);
-                    offY = clamp(vh / 2 - (KEEP_Y[0] + KEEP_Y[1]) / 2 * s, minY, 0);
-                } else if (vw / vh >= 1.25) {
-                    // B — ratios larges : image entière centrée, fond flouté derrière
-                    mode = 'B';
-                    s = Math.min(vw / IMG_W, vh / IMG_H);
-                    offX = (vw - IMG_W * s) / 2;
-                    offY = (vh - IMG_H * s) / 2;
-                } else {
-                    // C — mobile portrait : plein écran en hauteur, balayage horizontal
-                    mode = 'C';
-                    s = vh / IMG_H;
-                    offX = 0; offY = 0;
-                }
-
-                sec.setAttribute('data-hero-mode', mode);
-                cv.style.width  = (IMG_W * s) + 'px';
-                cv.style.height = (IMG_H * s) + 'px';
-                cv.style.left   = offX + 'px';
-                cv.style.top    = offY + 'px';
-
-                spots.forEach(el => {
-                    el.style.left   = (el.dataset.x * s) + 'px';
-                    el.style.top    = (el.dataset.y * s) + 'px';
-                    el.style.width  = (el.dataset.w * s) + 'px';
-                    el.style.height = (el.dataset.h * s) + 'px';
-                    el.style.borderRadius = Math.min(999, el.dataset.r * s) + 'px';
-                });
-                updateEdges();
+            const sec = document.getElementById('top');
+            const born = () => sec.classList.add('is-born');
+            if (document.body.classList.contains('intro-active')) {
+                document.addEventListener('anima:intro-done', () => setTimeout(born, 140));
+            } else {
+                born();
             }
-
-            function updateEdges() {
-                if (sec.getAttribute('data-hero-mode') !== 'C') return;
-                edgeL.classList.toggle('is-fully-left', sc.scrollLeft <= 4);
-                edgeR.style.opacity = sc.scrollLeft >= sc.scrollWidth - sc.clientWidth - 4 ? 0 : '';
-            }
-
-            if ('ResizeObserver' in window) new ResizeObserver(layout).observe(sec);
-            else addEventListener('resize', layout);
-            sc.addEventListener('scroll', updateEdges, { passive: true });
-            addEventListener('orientationchange', () => setTimeout(layout, 250));
-            layout();
         })();
 
         // ── Apparitions au scroll ─────────────────────────────────────────

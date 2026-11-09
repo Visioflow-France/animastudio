@@ -12,13 +12,15 @@ Contenu de marque issu du profil Instagram [@anima.studio.ch](https://instagram.
 
 ## Structure du site
 
-Le hero de l'accueil est **l'image `anima_studio_hero_1920x1080.png` affichée telle quelle**, en **plein écran adaptatif** (version web optimisée : `anima_studio_hero.jpg`, qualité 92). Un moteur JS choisit le meilleur mode selon le ratio de l'écran :
+Le hero de l'accueil (refait de zéro) combine :
 
-- **Couverture ancrée contenu** (ordinateurs) : l'image remplit tout le viewport, zoom centré sur les éléments gravés (logo, nav, cartes, CTA) — jamais rognés ;
-- **Letterbox** (ratios très larges, ex. 21:9) : image entière centrée sur fond flouté de la même photo ;
-- **Panoramique** (mobile portrait) : plein écran en hauteur + balayage horizontal naturel (léger fondu sur les bords), tous les boutons restent à taille tactile.
+- **Fond** : `image de fond hero section.png` (version web : `hero_bg.jpg`) affichée **telle quelle** — plein cadre, **zéro flou, zéro modification** ;
+- **Logo** : `LOGO BLANC.png` (découpé au pixel : `logo_blanc_web.png`) en haut à gauche ;
+- **Navbar** : pilule **bordure blanche 2,5 px** (Accueil · Services · À propos · Portfolio) + loupe et MENU à droite ;
+- **Titre** : « Là où votre image prend vie. » en Playfair Display **romain** (pas d'italique), posé directement sur la photo sans panneau ;
+- **Boutons** : 4 rectangles à gauche avec les photos du dossier `image pour les boutons/` (versions web : `btn_*.jpg`) — arrondi doux 22 px, bordure blanche 2,5 px, titre aligné à gauche (limité à 44 % de la largeur, jamais au-delà du milieu), bouton flèche circulaire en bas à gauche.
 
-Chaque bouton gravé dans l'image — logo, nav (Accueil · Services · À propos · Portfolio), loupe, MENU, CTA « Découvrir nos services → » et les 4 cartes services — est rendu cliquable par une **zone invisible** repositionnée au pixel à chaque redimensionnement (coordonnées mesurées sur le PNG d'origine). Le header HTML n'apparaît que lorsque l'on a défilé passé le hero.
+Le tout en HTML/CSS fluide (aucun flou nulle part), animé en cascade après l'intro, et responsive : colonne à gauche sur ordinateur, empilement natif sur mobile.
 
 | Page | Contenu |
 |---|---|
