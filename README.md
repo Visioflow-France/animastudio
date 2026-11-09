@@ -12,7 +12,13 @@ Contenu de marque issu du profil Instagram [@anima.studio.ch](https://instagram.
 
 ## Structure du site
 
-Le hero de l'accueil est **l'image `anima_studio_hero_1920x1080.png` affichée telle quelle** (version web optimisée : `anima_studio_hero.jpg`). Chaque bouton gravé dans l'image — logo, nav (Accueil · Services · À propos · Portfolio), loupe, MENU, CTA « Découvrir nos services → » et les 4 cartes services — est rendu cliquable par une **zone invisible positionnée en %** de l'image (coordonnées mesurées au pixel sur le PNG d'origine), donc exact à toutes les tailles d'écran. Le header HTML n'apparaît que lorsque l'on a défilé passé le hero.
+Le hero de l'accueil est **l'image `anima_studio_hero_1920x1080.png` affichée telle quelle**, en **plein écran adaptatif** (version web optimisée : `anima_studio_hero.jpg`, qualité 92). Un moteur JS choisit le meilleur mode selon le ratio de l'écran :
+
+- **Couverture ancrée contenu** (ordinateurs) : l'image remplit tout le viewport, zoom centré sur les éléments gravés (logo, nav, cartes, CTA) — jamais rognés ;
+- **Letterbox** (ratios très larges, ex. 21:9) : image entière centrée sur fond flouté de la même photo ;
+- **Panoramique** (mobile portrait) : plein écran en hauteur + balayage horizontal naturel (léger fondu sur les bords), tous les boutons restent à taille tactile.
+
+Chaque bouton gravé dans l'image — logo, nav (Accueil · Services · À propos · Portfolio), loupe, MENU, CTA « Découvrir nos services → » et les 4 cartes services — est rendu cliquable par une **zone invisible** repositionnée au pixel à chaque redimensionnement (coordonnées mesurées sur le PNG d'origine). Le header HTML n'apparaît que lorsque l'on a défilé passé le hero.
 
 | Page | Contenu |
 |---|---|

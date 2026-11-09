@@ -51,19 +51,60 @@
         .skip { position: absolute; left: -9999px; top: 0; z-index: 100; }
         .skip:focus { left: 16px; top: 16px; padding: 8px 16px; background: #fff; color: #131313; font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: .15em; }
 
-        /* ═══ HERO — l'image fournie, affichée telle quelle ═══
-           Toute l'interface visible (nav, logo, MENU, CTA, cartes) est gravée
-           dans l'image ; chaque bouton reçoit une zone cliquable invisible
-           positionnée en % de l'image (1920×1080) — exact à toute taille. */
-        .hero-frame { position: relative; width: 100%; }
-        .hero-frame img { display: block; width: 100%; height: auto; user-select: none; -webkit-user-drag: none; }
+        /* ═══ HERO — l'image fournie, plein écran adaptatif ═══
+           L'image remplit TOUJOURS le viewport (jamais l'effet « image posée ») :
+           · Mode couverture (ordinateur) : zoom pour remplir, ancré sur le contenu
+             (nav, cartes, CTA) pour ne jamais rogner les boutons gravés.
+           · Mode letterbox (ratios très larges) : image entière + fond flouté.
+           · Mode panoramique (mobile portrait) : image plein écran en hauteur,
+             balayage horizontal naturel — tous les boutons restent cliquables.
+           Le positionnement des zones cliquables est recalculé en JS (px image → px écran). */
+        #top.hero-section { height: 100vh; height: 100svh; min-height: 420px; }
+
+        #hero-blur {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            object-fit: cover; transform: scale(1.14);
+            filter: blur(26px) brightness(.45) saturate(1.1);
+            visibility: hidden;
+        }
+        #top[data-hero-mode="B"] #hero-blur { visibility: visible; }
+
+        #hero-scroller {
+            position: absolute; inset: 0;
+            overflow: hidden;
+            scrollbar-width: none;
+        }
+        #hero-scroller::-webkit-scrollbar { display: none; }
+        #top[data-hero-mode="C"] #hero-scroller {
+            overflow-x: auto; overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+            overscroll-behavior-x: contain;
+        }
+
+        #hero-canvas { position: absolute; } /* dimensions + position calculées en JS */
+        #hero-canvas img {
+            display: block; width: 100%; height: 100%;
+            user-select: none; -webkit-user-drag: none;
+            pointer-events: none;
+        }
+
+        /* Fondu latéral signalant le balayage en mode panoramique (mobile) */
+        .hero-edge {
+            position: absolute; top: 0; bottom: 0; width: 9vw;
+            pointer-events: none; z-index: 5; opacity: 0; transition: opacity .35s ease;
+        }
+        .hero-edge.is-right { right: 0; background: linear-gradient(to left, rgba(10,10,11,.55), rgba(10,10,11,0)); }
+        .hero-edge.is-left  { left: 0; background: linear-gradient(to right, rgba(10,10,11,.55), rgba(10,10,11,0)); }
+        #top[data-hero-mode="C"] .hero-edge { opacity: 1; }
+        #top[data-hero-mode="C"] .hero-edge.is-fully-left { opacity: 0; }
 
         .hotspot {
             position: absolute;
             background: transparent;
             border: 0; padding: 0; margin: 0;
             cursor: pointer;
-            transition: background .25s ease, box-shadow .25s ease;
+            transition: background .25s ease;
         }
         .hotspot:hover { background: rgba(255,255,255,.055); }
         .hotspot:focus-visible {
@@ -402,40 +443,46 @@
 
     <main id="main" class="flex-grow">
 
-        <!-- ═══════════════ HERO — l'image fournie, affichée telle quelle ═══════════════
-             Chaque bouton gravé dans l'image (nav, logo, recherche, MENU, CTA, cartes)
-             est rendu cliquable par une zone invisible positionnée en % (base 1920×1080). -->
-        <section id="top" class="relative w-full overflow-hidden bg-[#0a0a0b]">
-            <div class="hero-frame">
-                <img src="anima_studio_hero.jpg" alt="ANIMA Studio — Là où votre image prend vie. Plateau du studio : éclairage cinéma, canapé de tournage et écran de contrôle. Navigation : Accueil, Services, À propos, Portfolio. Services : Création de Contenu, Gestion des Réseaux Sociaux, Contenu Événementiel, Photoshoots." draggable="false" decoding="async">
+        <!-- ═══════════════ HERO — l'image fournie, plein écran, proportions adaptées ═══════════════
+             Modes (calculés en JS) : A couverture ancrée contenu · B image entière + fond flouté ·
+             C panoramique plein écran (mobile). Zones cliquables repositionnées au pixel. -->
+        <section id="top" class="hero-section relative w-full overflow-hidden bg-[#0a0a0b]">
 
-                <!-- Zones cliquables invisibles (coordonnées en % de l'image 1920×1080) -->
-                <div class="absolute inset-0">
+            <img id="hero-blur" src="anima_studio_hero.jpg" alt="" aria-hidden="true" draggable="false" decoding="async">
 
-                    <!-- Logo a. aNIMA STUDIO -->
-                    <a href="#top" class="hotspot" style="left:5.73%;top:4.63%;width:8.33%;height:8.33%" aria-label="ANIMA Studio — retour à l'accueil"></a>
+            <div id="hero-scroller">
+                <div id="hero-canvas">
+                    <img src="anima_studio_hero.jpg" alt="ANIMA Studio — Là où votre image prend vie. Plateau du studio : éclairage cinéma, canapé de tournage et écran de contrôle. Navigation : Accueil, Services, À propos, Portfolio. Services : Création de Contenu, Gestion des Réseaux Sociaux, Contenu Événementiel, Photoshoots." draggable="false" decoding="async">
+                    <div id="hero-hotspots">
 
-                    <!-- Nav : Accueil / Services / À propos / Portfolio -->
-                    <a href="#top" class="hotspot" style="left:42%;top:5.37%;width:4.79%;height:5.28%" aria-label="Accueil"></a>
-                    <a href="services.html" class="hotspot" style="left:47.92%;top:5.37%;width:5.21%;height:5.28%" aria-label="Services"></a>
-                    <a href="apropos.html" class="hotspot" style="left:54.17%;top:5.37%;width:4.79%;height:5.28%" aria-label="À propos"></a>
-                    <a href="portfolio.html" class="hotspot" style="left:60.05%;top:5.37%;width:4.79%;height:5.28%" aria-label="Portfolio"></a>
+                        <!-- Logo a. aNIMA STUDIO -->
+                        <a href="#top" class="hotspot" data-x="108" data-y="48" data-w="164" data-h="92" data-r="16" aria-label="ANIMA Studio — retour à l'accueil"></a>
 
-                    <!-- Recherche (loupe) et MENU -->
-                    <button type="button" onclick="toggleSearch()" class="hotspot" style="left:84.06%;top:5.56%;width:2.86%;height:4.63%" aria-label="Rechercher sur le site"></button>
-                    <button type="button" onclick="toggleMenu()" class="hotspot" style="left:89.9%;top:4.63%;width:6.77%;height:5.93%" aria-label="Ouvrir le menu"></button>
+                        <!-- Nav : Accueil / Services / À propos / Portfolio -->
+                        <a href="#top" class="hotspot" data-x="806" data-y="56" data-w="94" data-h="60" data-r="999" aria-label="Accueil"></a>
+                        <a href="services.html" class="hotspot" data-x="918" data-y="56" data-w="104" data-h="60" data-r="999" aria-label="Services"></a>
+                        <a href="apropos.html" class="hotspot" data-x="1040" data-y="56" data-w="94" data-h="60" data-r="999" aria-label="À propos"></a>
+                        <a href="portfolio.html" class="hotspot" data-x="1151" data-y="56" data-w="96" data-h="60" data-r="999" aria-label="Portfolio"></a>
 
-                    <!-- CTA « Découvrir nos services → » -->
-                    <a href="services.html" class="hotspot" style="left:5.63%;top:81.85%;width:22.4%;height:5.37%" aria-label="Découvrir nos services"></a>
+                        <!-- Recherche (loupe) et MENU -->
+                        <button type="button" onclick="toggleSearch()" class="hotspot" data-x="1616" data-y="62" data-w="54" data-h="50" data-r="999" aria-label="Rechercher sur le site"></button>
+                        <button type="button" onclick="toggleMenu()" class="hotspot" data-x="1724" data-y="52" data-w="134" data-h="68" data-r="999" aria-label="Ouvrir le menu"></button>
 
-                    <!-- Les 4 cartes services -->
-                    <a href="services.html#creation-contenu" class="hotspot" style="left:64.58%;top:24.26%;width:31.25%;height:16.48%" aria-label="Création de Contenu — Vidéos, photos, formats courts pour sublimer votre marque"></a>
-                    <a href="services.html#reseaux-sociaux" class="hotspot" style="left:64.58%;top:42.59%;width:31.25%;height:16.3%" aria-label="Gestion des Réseaux Sociaux — Stratégie et accompagnement pour une présence digitale forte"></a>
-                    <a href="services.html#evenementiel" class="hotspot" style="left:64.58%;top:60.65%;width:31.25%;height:16.02%" aria-label="Contenu Événementiel — Capturez l'essence de vos événements"></a>
-                    <a href="services.html#photoshoots" class="hotspot" style="left:64.58%;top:78.7%;width:31.25%;height:15.74%" aria-label="Photoshoots — Des images soignées qui révèlent votre identité"></a>
+                        <!-- CTA « Découvrir nos services → » -->
+                        <a href="services.html" class="hotspot" data-x="106" data-y="880" data-w="430" data-h="66" data-r="12" aria-label="Découvrir nos services"></a>
 
+                        <!-- Les 4 cartes services -->
+                        <a href="services.html#creation-contenu" class="hotspot" data-x="1240" data-y="262" data-w="600" data-h="178" data-r="26" aria-label="Création de Contenu — Vidéos, photos, formats courts pour sublimer votre marque"></a>
+                        <a href="services.html#reseaux-sociaux" class="hotspot" data-x="1240" data-y="460" data-w="600" data-h="176" data-r="26" aria-label="Gestion des Réseaux Sociaux — Stratégie et accompagnement pour une présence digitale forte"></a>
+                        <a href="services.html#evenementiel" class="hotspot" data-x="1240" data-y="655" data-w="600" data-h="173" data-r="26" aria-label="Contenu Événementiel — Capturez l'essence de vos événements"></a>
+                        <a href="services.html#photoshoots" class="hotspot" data-x="1240" data-y="850" data-w="600" data-h="170" data-r="26" aria-label="Photoshoots — Des images soignées qui révèlent votre identité"></a>
+
+                    </div>
                 </div>
             </div>
+
+            <div class="hero-edge is-right" id="hero-edge-right" aria-hidden="true"></div>
+            <div class="hero-edge is-left" id="hero-edge-left" aria-hidden="true"></div>
         </section>
 
         <!-- ═══════════════ RUBAN PHOTOS DÉFILANT ═══════════════ -->
@@ -929,6 +976,80 @@
         addEventListener('scroll', () => {
             header.classList.toggle('is-scrolled', !header.classList.contains('is-ghost') && window.scrollY > 8);
         }, { passive: true });
+
+        // ── HERO adaptatif : l'image remplit toujours l'écran, sans rogner les boutons ──
+        (function () {
+            const IMG_W = 1920, IMG_H = 1080;
+            const KEEP_X = [120, 1860];   // bande horizontale à préserver (logo → MENU)
+            const KEEP_Y = [50, 1040];    // bande verticale à préserver (nav → bas des cartes)
+            const sec  = document.getElementById('top');
+            const sc   = document.getElementById('hero-scroller');
+            const cv   = document.getElementById('hero-canvas');
+            const edgeL = document.getElementById('hero-edge-left');
+            const edgeR = document.getElementById('hero-edge-right');
+            const spots = [...document.querySelectorAll('#hero-hotspots .hotspot')];
+            const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+            function layout() {
+                const vw = sec.clientWidth, vh = sec.clientHeight;
+                if (!vw || !vh) return;
+                const sCover = Math.max(vw / IMG_W, vh / IMG_H);
+                // couverture possible si le contenu utile tient dans le cadre (tolérance 28px :
+                // absorbe les rognages invisibles dans les marges internes de l'image)
+                const fitsH = (KEEP_X[1] - KEEP_X[0]) * sCover <= vw + 28;
+                const fitsV = (KEEP_Y[1] - KEEP_Y[0]) * sCover <= vh + 28;
+
+                let mode, s, offX, offY;
+                if (fitsH && fitsV) {
+                    // A — couverture plein écran, centrée sur le contenu ; les bords du
+                    // contenu (logo, nav) ne sont JAMAIS rognés : le rognage reste dans
+                    // les marges internes de l'image (padding des éléments gravés)
+                    mode = 'A'; s = sCover;
+                    const minX = Math.max(vw - IMG_W * s, -(KEEP_X[0] - 8) * s);
+                    const minY = Math.max(vh - IMG_H * s, -(KEEP_Y[0] - 8) * s);
+                    offX = clamp(vw / 2 - (KEEP_X[0] + KEEP_X[1]) / 2 * s, minX, 0);
+                    offY = clamp(vh / 2 - (KEEP_Y[0] + KEEP_Y[1]) / 2 * s, minY, 0);
+                } else if (vw / vh >= 1.25) {
+                    // B — ratios larges : image entière centrée, fond flouté derrière
+                    mode = 'B';
+                    s = Math.min(vw / IMG_W, vh / IMG_H);
+                    offX = (vw - IMG_W * s) / 2;
+                    offY = (vh - IMG_H * s) / 2;
+                } else {
+                    // C — mobile portrait : plein écran en hauteur, balayage horizontal
+                    mode = 'C';
+                    s = vh / IMG_H;
+                    offX = 0; offY = 0;
+                }
+
+                sec.setAttribute('data-hero-mode', mode);
+                cv.style.width  = (IMG_W * s) + 'px';
+                cv.style.height = (IMG_H * s) + 'px';
+                cv.style.left   = offX + 'px';
+                cv.style.top    = offY + 'px';
+
+                spots.forEach(el => {
+                    el.style.left   = (el.dataset.x * s) + 'px';
+                    el.style.top    = (el.dataset.y * s) + 'px';
+                    el.style.width  = (el.dataset.w * s) + 'px';
+                    el.style.height = (el.dataset.h * s) + 'px';
+                    el.style.borderRadius = Math.min(999, el.dataset.r * s) + 'px';
+                });
+                updateEdges();
+            }
+
+            function updateEdges() {
+                if (sec.getAttribute('data-hero-mode') !== 'C') return;
+                edgeL.classList.toggle('is-fully-left', sc.scrollLeft <= 4);
+                edgeR.style.opacity = sc.scrollLeft >= sc.scrollWidth - sc.clientWidth - 4 ? 0 : '';
+            }
+
+            if ('ResizeObserver' in window) new ResizeObserver(layout).observe(sec);
+            else addEventListener('resize', layout);
+            sc.addEventListener('scroll', updateEdges, { passive: true });
+            addEventListener('orientationchange', () => setTimeout(layout, 250));
+            layout();
+        })();
 
         // ── Apparitions au scroll ─────────────────────────────────────────
         const io = new IntersectionObserver((entries) => {
