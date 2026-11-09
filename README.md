@@ -12,7 +12,7 @@ Contenu de marque issu du profil Instagram [@anima.studio.ch](https://instagram.
 
 ## Structure du site
 
-Le hero de l'accueil reprend l'image `anima_studio_hero_1920x1080.png` (version web optimisée : `anima_studio_hero.jpg`) : la photo plein cadre sert de décor, et toute l'interface visible dessus (navbar pilule, titre, CTA, cartes services) est **reconstruite en HTML réel** — cliquable et responsive.
+Le hero de l'accueil est **l'image `anima_studio_hero_1920x1080.png` affichée telle quelle** (version web optimisée : `anima_studio_hero.jpg`). Chaque bouton gravé dans l'image — logo, nav (Accueil · Services · À propos · Portfolio), loupe, MENU, CTA « Découvrir nos services → » et les 4 cartes services — est rendu cliquable par une **zone invisible positionnée en %** de l'image (coordonnées mesurées au pixel sur le PNG d'origine), donc exact à toutes les tailles d'écran. Le header HTML n'apparaît que lorsque l'on a défilé passé le hero.
 
 | Page | Contenu |
 |---|---|

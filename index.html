@@ -51,43 +51,29 @@
         .skip { position: absolute; left: -9999px; top: 0; z-index: 100; }
         .skip:focus { left: 16px; top: 16px; padding: 8px 16px; background: #fff; color: #131313; font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: .15em; }
 
-        /* ═══ HERO IMAGE — anima_studio_hero_1920x1080 ═══
-           La photo plein cadre sert de décor ; l'UI de l'image d'origine
-           (nav, titre, cartes) est masquée par des scrims et reconstruite
-           en HTML réel — cliquable et responsive. */
-        .hero-bg {
-            background-image: url('anima_studio_hero.jpg');
-            background-size: cover;
-            background-position: 74% 34%;
-            transform: scale(1.04); /* léger sur-cadre : absorbe les bords de l'image d'origine */
-        }
-        @media (max-width: 1023px) { .hero-bg { background-position: 62% 42%; } }
+        /* ═══ HERO — l'image fournie, affichée telle quelle ═══
+           Toute l'interface visible (nav, logo, MENU, CTA, cartes) est gravée
+           dans l'image ; chaque bouton reçoit une zone cliquable invisible
+           positionnée en % de l'image (1920×1080) — exact à toute taille. */
+        .hero-frame { position: relative; width: 100%; }
+        .hero-frame img { display: block; width: 100%; height: auto; user-select: none; -webkit-user-drag: none; }
 
-        /* Cartes verre (glassmorphism façon image d'origine) */
-        .glass-card {
-            position: relative;
-            display: flex; align-items: center; justify-content: space-between; gap: 1rem;
-            padding: 1.1rem 1.35rem;
-            border: 1px solid rgba(255,255,255,.16);
-            border-radius: 20px;
-            background: linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.035));
-            -webkit-backdrop-filter: blur(22px) saturate(1.2);
-            backdrop-filter: blur(22px) saturate(1.2);
-            transition: border-color .35s ease, transform .35s ease, background .35s ease;
+        .hotspot {
+            position: absolute;
+            background: transparent;
+            border: 0; padding: 0; margin: 0;
+            cursor: pointer;
+            transition: background .25s ease, box-shadow .25s ease;
         }
-        .glass-card:hover {
-            border-color: rgba(255,255,255,.45);
-            background: linear-gradient(135deg, rgba(255,255,255,.14), rgba(255,255,255,.055));
-            transform: translateY(-3px);
+        .hotspot:hover { background: rgba(255,255,255,.055); }
+        .hotspot:focus-visible {
+            outline: 2px solid #FF4D00; outline-offset: 2px;
+            background: rgba(255,255,255,.055);
         }
-        .glass-card .card-arrow {
-            width: 44px; height: 44px; flex: none;
-            border: 1px solid rgba(255,255,255,.35); border-radius: 9999px;
-            display: grid; place-items: center;
-            font-size: 15px; color: #fff;
-            transition: background .3s ease, color .3s ease, border-color .3s ease, transform .3s ease;
-        }
-        .glass-card:hover .card-arrow { background: #fff; color: #131313; border-color: #fff; transform: rotate(-45deg); }
+
+        /* Header invisible tant que le hero (qui porte sa propre nav) est à l'écran */
+        #site-header { transition: opacity .4s ease, transform .4s ease, background-color .35s ease, border-color .35s ease; }
+        #site-header.is-ghost { opacity: 0; transform: translateY(-100%); pointer-events: none; }
 
         /* Nav pilule (header) */
         .pill-nav {
@@ -374,8 +360,8 @@
 
     <a href="#main" class="skip">Aller au contenu principal</a>
 
-    <!-- ═══════════════ HEADER — reconstruit depuis le hero : logo, nav pilule, recherche, MENU ═══════════════ -->
-    <header id="site-header" class="sticky top-0 z-50 w-full">
+    <!-- ═══════════════ HEADER — invisible tant que le hero (qui porte sa propre nav dans l'image) est à l'écran ═══════════════ -->
+    <header id="site-header" class="fixed top-0 left-0 z-50 w-full is-ghost">
         <div class="max-w-[1500px] mx-auto flex items-center justify-between gap-4 px-4 sm:px-8 h-16">
 
             <!-- Logo (celui du hero : marque a. + aNIMA / STUDIO) -->
@@ -416,91 +402,40 @@
 
     <main id="main" class="flex-grow">
 
-        <!-- ═══════════════ HERO — l'image fournie, reconstruite en éléments réels et cliquables ═══════════════ -->
-        <section id="top" class="relative -mt-16 min-h-[100svh] flex items-stretch overflow-hidden scroll-mt-0">
+        <!-- ═══════════════ HERO — l'image fournie, affichée telle quelle ═══════════════
+             Chaque bouton gravé dans l'image (nav, logo, recherche, MENU, CTA, cartes)
+             est rendu cliquable par une zone invisible positionnée en % (base 1920×1080). -->
+        <section id="top" class="relative w-full overflow-hidden bg-[#0a0a0b]">
+            <div class="hero-frame">
+                <img src="anima_studio_hero.jpg" alt="ANIMA Studio — Là où votre image prend vie. Plateau du studio : éclairage cinéma, canapé de tournage et écran de contrôle. Navigation : Accueil, Services, À propos, Portfolio. Services : Création de Contenu, Gestion des Réseaux Sociaux, Contenu Événementiel, Photoshoots." draggable="false" decoding="async">
 
-            <!-- La photo plein cadre (anima_studio_hero) -->
-            <div class="hero-bg absolute inset-0" role="img" aria-label="Plateau du studio ANIMA — éclairage cinéma, canapé de tournage et écran de contrôle"></div>
+                <!-- Zones cliquables invisibles (coordonnées en % de l'image 1920×1080) -->
+                <div class="absolute inset-0">
 
-            <!-- Scrims : masquent l'UI gravée dans l'image d'origine et assurent la lisibilité -->
-            <div class="absolute inset-0 pointer-events-none bg-gradient-to-r from-[#0a0a0b]/95 via-[#0a0a0b]/55 to-transparent" aria-hidden="true"></div>
-            <div class="absolute inset-0 pointer-events-none bg-gradient-to-b from-[#0a0a0b]/95 via-transparent to-[#0a0a0b]/80" aria-hidden="true"></div>
+                    <!-- Logo a. aNIMA STUDIO -->
+                    <a href="#top" class="hotspot" style="left:5.73%;top:4.63%;width:8.33%;height:8.33%" aria-label="ANIMA Studio — retour à l'accueil"></a>
 
-            <div class="relative z-10 w-full max-w-[1500px] mx-auto px-4 sm:px-8 pt-24 pb-14 lg:pt-28 lg:pb-16 grid lg:grid-cols-[1.02fr_400px] xl:grid-cols-[1.02fr_460px] gap-10 lg:gap-16 items-stretch flex-grow">
+                    <!-- Nav : Accueil / Services / À propos / Portfolio -->
+                    <a href="#top" class="hotspot" style="left:42%;top:5.37%;width:4.79%;height:5.28%" aria-label="Accueil"></a>
+                    <a href="services.html" class="hotspot" style="left:47.92%;top:5.37%;width:5.21%;height:5.28%" aria-label="Services"></a>
+                    <a href="apropos.html" class="hotspot" style="left:54.17%;top:5.37%;width:4.79%;height:5.28%" aria-label="À propos"></a>
+                    <a href="portfolio.html" class="hotspot" style="left:60.05%;top:5.37%;width:4.79%;height:5.28%" aria-label="Portfolio"></a>
 
-                <!-- Colonne éditoriale : titre + tagline + CTA (textes de l'image) -->
-                <div class="flex flex-col justify-center max-w-xl">
-                    <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-white/60 mb-6 flex items-center gap-4">
-                        <span class="inline-block w-10 h-px bg-white/25 flex-none"></span>
-                        <span>Studio créatif — Suisse</span>
-                    </p>
+                    <!-- Recherche (loupe) et MENU -->
+                    <button type="button" onclick="toggleSearch()" class="hotspot" style="left:84.06%;top:5.56%;width:2.86%;height:4.63%" aria-label="Rechercher sur le site"></button>
+                    <button type="button" onclick="toggleMenu()" class="hotspot" style="left:89.9%;top:4.63%;width:6.77%;height:5.93%" aria-label="Ouvrir le menu"></button>
 
-                    <h1 class="font-serif font-normal leading-[1.02] tracking-[-0.01em] select-none text-[clamp(2.7rem,5.3vw,5rem)]">
-                        <span class="wrap-l"><span class="letter" style="animation-delay:.05s">Là où votre</span></span><br>
-                        <span class="wrap-l"><span class="letter" style="animation-delay:.18s">image <em class="italic text-star">prend vie.</em></span></span>
-                    </h1>
+                    <!-- CTA « Découvrir nos services → » -->
+                    <a href="services.html" class="hotspot" style="left:5.63%;top:81.85%;width:22.4%;height:5.37%" aria-label="Découvrir nos services"></a>
 
-                    <p class="mt-7 text-base md:text-lg font-light leading-relaxed text-white/78 max-w-md">
-                        Imaginer et créer des contenus qui racontent votre histoire,
-                        révèlent votre identité et donnent vie à vos idées.
-                    </p>
-
-                    <div class="mt-10">
-                        <a href="services.html" class="group inline-flex items-center gap-3 font-mono text-[12px] uppercase tracking-[0.2em] text-white underline decoration-white/40 underline-offset-8 hover:decoration-star hover:text-star transition-colors">
-                            Découvrir nos services <span class="arr text-base">→</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Colonne services : les 4 cartes verre de l'image, réelles et cliquables -->
-                <div class="self-stretch flex lg:flex-col gap-3 lg:gap-4 overflow-x-auto lg:overflow-visible snap-x snap-mandatory lg:snap-none pb-1 lg:pb-0" aria-label="Nos services en un coup d'œil">
-
-                    <a href="services.html#creation-contenu" class="glass-card snap-center flex-none min-w-[248px] lg:min-w-0 lg:flex-1 group">
-                        <div class="min-w-0">
-                            <span class="font-mono text-[10px] tracking-[0.2em] text-white/45 block mb-1.5">01</span>
-                            <span class="block text-[15px] font-medium tracking-tight">Création de Contenu</span>
-                            <span class="block mt-1 text-[12.5px] font-light leading-snug text-white/65">Vidéos, photos, formats courts pour sublimer votre marque.</span>
-                        </div>
-                        <span class="card-arrow" aria-hidden="true">→</span>
-                    </a>
-
-                    <a href="services.html#reseaux-sociaux" class="glass-card snap-center flex-none min-w-[248px] lg:min-w-0 lg:flex-1 group">
-                        <div class="min-w-0">
-                            <span class="font-mono text-[10px] tracking-[0.2em] text-white/45 block mb-1.5">02</span>
-                            <span class="block text-[15px] font-medium tracking-tight">Gestion des Réseaux Sociaux</span>
-                            <span class="block mt-1 text-[12.5px] font-light leading-snug text-white/65">Stratégie et accompagnement pour une présence digitale forte.</span>
-                        </div>
-                        <span class="card-arrow" aria-hidden="true">→</span>
-                    </a>
-
-                    <a href="services.html#evenementiel" class="glass-card snap-center flex-none min-w-[248px] lg:min-w-0 lg:flex-1 group">
-                        <div class="min-w-0">
-                            <span class="font-mono text-[10px] tracking-[0.2em] text-white/45 block mb-1.5">03</span>
-                            <span class="block text-[15px] font-medium tracking-tight">Contenu Événementiel</span>
-                            <span class="block mt-1 text-[12.5px] font-light leading-snug text-white/65">Capturez l'essence de vos événements.</span>
-                        </div>
-                        <span class="card-arrow" aria-hidden="true">→</span>
-                    </a>
-
-                    <a href="services.html#photoshoots" class="glass-card snap-center flex-none min-w-[248px] lg:min-w-0 lg:flex-1 group">
-                        <div class="min-w-0">
-                            <span class="font-mono text-[10px] tracking-[0.2em] text-white/45 block mb-1.5">04</span>
-                            <span class="block text-[15px] font-medium tracking-tight">Photoshoots</span>
-                            <span class="block mt-1 text-[12.5px] font-light leading-snug text-white/65">Des images soignées qui révèlent votre identité.</span>
-                        </div>
-                        <span class="card-arrow" aria-hidden="true">→</span>
-                    </a>
+                    <!-- Les 4 cartes services -->
+                    <a href="services.html#creation-contenu" class="hotspot" style="left:64.58%;top:24.26%;width:31.25%;height:16.48%" aria-label="Création de Contenu — Vidéos, photos, formats courts pour sublimer votre marque"></a>
+                    <a href="services.html#reseaux-sociaux" class="hotspot" style="left:64.58%;top:42.59%;width:31.25%;height:16.3%" aria-label="Gestion des Réseaux Sociaux — Stratégie et accompagnement pour une présence digitale forte"></a>
+                    <a href="services.html#evenementiel" class="hotspot" style="left:64.58%;top:60.65%;width:31.25%;height:16.02%" aria-label="Contenu Événementiel — Capturez l'essence de vos événements"></a>
+                    <a href="services.html#photoshoots" class="hotspot" style="left:64.58%;top:78.7%;width:31.25%;height:15.74%" aria-label="Photoshoots — Des images soignées qui révèlent votre identité"></a>
 
                 </div>
             </div>
-
-            <!-- Indicateur scroll (bas du hero) -->
-            <a href="#studio" class="hidden lg:flex absolute bottom-7 left-1/2 -translate-x-1/2 z-10 flex-col items-center gap-3 font-mono text-[9.5px] uppercase tracking-[0.3em] text-white/50 hover:text-white transition-colors" aria-label="Faire défiler vers le studio">
-                <span>Scroll</span>
-                <span class="w-px h-10 overflow-hidden bg-white/15 relative">
-                    <span class="absolute left-0 top-[-14px] w-px h-3.5 bg-white/80" style="animation:hintSlide 1.6s cubic-bezier(.65,0,.35,1) infinite"></span>
-                </span>
-            </a>
         </section>
 
         <!-- ═══════════════ RUBAN PHOTOS DÉFILANT ═══════════════ -->
@@ -983,11 +918,17 @@
 
     <!-- ═══════════════ LOGIQUE JS ═══════════════ -->
     <script>
-        // ── Header : état scrollé ─────────────────────────────────────────
+        // ── Header : fantôme tant que le hero est visible (sa nav est dans l'image) ──
         const header = document.getElementById('site-header');
-        const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 8);
-        addEventListener('scroll', onScroll, { passive: true });
-        onScroll();
+        const heroSection = document.getElementById('top');
+        new IntersectionObserver((entries) => {
+            const heroVisible = entries[0].isIntersecting;
+            header.classList.toggle('is-ghost', heroVisible);
+            header.classList.toggle('is-scrolled', !heroVisible && window.scrollY > 8);
+        }, { threshold: 0.02 }).observe(heroSection);
+        addEventListener('scroll', () => {
+            header.classList.toggle('is-scrolled', !header.classList.contains('is-ghost') && window.scrollY > 8);
+        }, { passive: true });
 
         // ── Apparitions au scroll ─────────────────────────────────────────
         const io = new IntersectionObserver((entries) => {
