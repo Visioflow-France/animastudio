@@ -1,0 +1,6 @@
+# Fichiers internes à l'éditeur
+.zcodeignore
+
+# Système
+Thumbs.db
+.DS_Store
