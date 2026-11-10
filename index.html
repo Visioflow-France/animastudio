@@ -64,8 +64,9 @@
         @media (min-width: 768px) {
             #top.hero-section { height: 100vh; height: 100svh; min-height: 0; }
         }
-        /* Mobile : visuel dédié format portrait 9:16, plein écran, centré
-           (cover : aucune bande noire, léger rognage symétrique sur les côtés) */
+        /* Mobile : visuel dédié (format paysage), plein écran, centré
+           (cover : aucune bande noire ; sur un écran portrait, seule la zone centrale
+           de l'image reste visible, les côtés sont rognés symétriquement) */
         @media (max-width: 767px) {
             #top.hero-section {
                 background: #000000 url('hero_bg_mobile.jpg') center center / cover no-repeat;
@@ -118,7 +119,7 @@
         }
         .h-menu:hover { background: #FFFFFF; color: #131313; }
 
-        /* ── Corps : titre (romain, sans flou derrière) + boutons rectangulaires à gauche ── */
+        /* ── Corps : titre (romain, sans flou derrière) à gauche + bulle « Nos Services » à droite ── */
         .hero-body {
             flex: 1; display: flex; flex-direction: row;
             align-items: flex-end; justify-content: space-between;
@@ -132,17 +133,17 @@
             line-height: 1.06; letter-spacing: 0;
             color: #FAF7F1;
         }
-        .hero-cards { display: flex; flex-direction: column; gap: 14px; width: min(460px, 34vw); flex: none; }
-        @media (min-width: 768px) { .hero-card { min-height: 0; } }
+        .hero-cards { width: min(460px, 34vw); flex: none; }
 
+        /* Bulle unique : au ratio exact de son image (1671×941), qui reste donc entièrement visible */
         .hero-card {
-            position: relative; display: block; flex: 1 1 0; min-height: 134px;
+            position: relative; display: block; aspect-ratio: 1671 / 941;
             border: 2.5px solid #FFFFFF; border-radius: 22px; overflow: hidden;
             text-decoration: none; background: #141210;
         }
         .hero-card img {
             position: absolute; inset: 0; width: 100%; height: 100%;
-            object-fit: cover; object-position: 62% center;
+            object-fit: cover;
             transition: transform .6s cubic-bezier(.16,1,.3,1);
         }
         .hero-card::before {
@@ -175,16 +176,8 @@
             .h-menu { height: 46px; padding: 0 20px; font-size: 11.5px; }
             .hero-body { flex-direction: column; justify-content: flex-end; align-items: stretch; padding-top: 30px; }
             .hero-title { font-size: clamp(36px, 10vw, 46px); padding-bottom: 24px; margin-bottom: 78px; text-align: center; }
-            .hero-cards { display: none; }   /* les boutons passent dans la section noire ci-dessous */
+            .hero-cards { display: none; }   /* aucune bulle sur mobile */
         }
-
-        /* ─── Section services mobile : noir pur, sous le hero ─── */
-        .mobile-services { display: none; background: #000000; padding: 64px 18px calc(28px + env(safe-area-inset-bottom)); }
-        @media (max-width: 767px) { .mobile-services { display: block; } }
-        .ms-cards { display: flex; flex-direction: column; gap: 12px; }
-        .ms-cards .hero-card { min-height: 118px; }
-        .ms-cards .hero-card b { left: 18px; top: 16px; font-size: 16px; }
-        .ms-cards .hero-card .go { left: 18px; bottom: 14px; width: 36px; height: 36px; font-size: 15px; }
 
         /* ── Naissance du hero (après l'intro) ── */
         #top .hero-logo, #top .hero-nav, #top .hero-actions, #top .hero-title, #top .hero-card {
@@ -195,11 +188,7 @@
         #top.is-born .hero-nav     { opacity: 1; transform: none; transition-delay: .14s; }
         #top.is-born .hero-actions { opacity: 1; transform: none; transition-delay: .20s; }
         #top.is-born .hero-title   { opacity: 1; transform: none; transition-delay: .28s; }
-        #top.is-born .hero-card:nth-child(1) { opacity: 1; transform: none; transition-delay: .40s; }
-        #top.is-born .hero-card:nth-child(2) { opacity: 1; transform: none; transition-delay: .46s; }
-        #top.is-born .hero-card:nth-child(3) { opacity: 1; transform: none; transition-delay: .52s; }
-        #top.is-born .hero-card:nth-child(4) { opacity: 1; transform: none; transition-delay: .58s; }
-        .mobile-services .hero-card { opacity: 1; transform: none; }
+        #top.is-born .hero-card    { opacity: 1; transform: none; transition-delay: .40s; }
 
         /* Header invisible tant que le hero (qui porte sa propre nav) est à l'écran */
         #site-header { transition: opacity .4s ease, transform .4s ease, background-color .35s ease, border-color .35s ease; }
@@ -568,25 +557,10 @@
                 <div class="hero-body">
                     <h1 class="hero-title">Là où votre<br>image prend vie.</h1>
 
-                    <div class="hero-cards" aria-label="Nos services">
-                        <a class="hero-card" href="services.html#creation-contenu">
-                            <img src="btn_creation.jpg" alt="" draggable="false" loading="lazy">
-                            <b>Création de Contenu</b>
-                            <span class="go" aria-hidden="true">→</span>
-                        </a>
-                        <a class="hero-card" href="services.html#reseaux-sociaux">
-                            <img src="btn_reseaux.jpg" alt="" draggable="false" loading="lazy">
-                            <b>Gestion des Réseaux Sociaux</b>
-                            <span class="go" aria-hidden="true">→</span>
-                        </a>
-                        <a class="hero-card" href="services.html#evenementiel">
-                            <img src="btn_evenementiel.jpg" alt="" draggable="false" loading="lazy">
-                            <b>Contenu Événementiel</b>
-                            <span class="go" aria-hidden="true">→</span>
-                        </a>
-                        <a class="hero-card" href="services.html#photoshoots">
-                            <img src="btn_photoshoots.jpg" alt="" draggable="false" loading="lazy">
-                            <b>Photoshoots</b>
+                    <div class="hero-cards">
+                        <a class="hero-card" href="services.html">
+                            <img src="btn_services.jpg" alt="" draggable="false" loading="lazy">
+                            <b>Nos Services</b>
                             <span class="go" aria-hidden="true">→</span>
                         </a>
                     </div>
@@ -595,32 +569,6 @@
             </div>
         </section>
         <noscript><style>#top .hero-logo, #top .hero-nav, #top .hero-actions, #top .hero-title, #top .hero-card { opacity: 1 !important; transform: none !important; }</style></noscript>
-
-        <!-- ═══════════════ SECTION SERVICES MOBILE (noir pur, sous le hero) ═══════════════ -->
-        <section class="mobile-services" aria-label="Nos services">
-            <div class="ms-cards">
-                <a class="hero-card" href="services.html#creation-contenu">
-                    <img src="btn_creation.jpg" alt="" draggable="false" loading="lazy">
-                    <b>Création de Contenu</b>
-                    <span class="go" aria-hidden="true">→</span>
-                </a>
-                <a class="hero-card" href="services.html#reseaux-sociaux">
-                    <img src="btn_reseaux.jpg" alt="" draggable="false" loading="lazy">
-                    <b>Gestion des Réseaux Sociaux</b>
-                    <span class="go" aria-hidden="true">→</span>
-                </a>
-                <a class="hero-card" href="services.html#evenementiel">
-                    <img src="btn_evenementiel.jpg" alt="" draggable="false" loading="lazy">
-                    <b>Contenu Événementiel</b>
-                    <span class="go" aria-hidden="true">→</span>
-                </a>
-                <a class="hero-card" href="services.html#photoshoots">
-                    <img src="btn_photoshoots.jpg" alt="" draggable="false" loading="lazy">
-                    <b>Photoshoots</b>
-                    <span class="go" aria-hidden="true">→</span>
-                </a>
-            </div>
-        </section>
 
         <!-- ═══════════════ RUBAN PHOTOS DÉFILANT ═══════════════ -->
         <div class="strip relative left-[calc(-50%+1rem)] sm:left-[calc(-50%+2rem)] w-screen" aria-hidden="true">
