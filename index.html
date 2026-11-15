@@ -64,12 +64,13 @@
         @media (min-width: 768px) {
             #top.hero-section { height: 100vh; height: 100svh; min-height: 0; }
         }
-        /* Mobile : visuel dédié (format paysage), plein écran, centré
-           (cover : aucune bande noire ; sur un écran portrait, seule la zone centrale
-           de l'image reste visible, les côtés sont rognés symétriquement) */
+        /* Mobile : visuel dédié (format paysage, cover centré) + dégradé d'ombrage
+           global pour la lisibilité du titre blanc (néons / projecteurs atténués) */
         @media (max-width: 767px) {
             #top.hero-section {
-                background: #000000 url('hero_bg_mobile.jpg') center center / cover no-repeat;
+                background:
+                    linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.75) 100%),
+                    #000000 url('hero_bg_mobile.jpg') center center / cover no-repeat;
             }
         }
 
@@ -84,20 +85,20 @@
         .hero-logo { display: inline-flex; flex: none; }
         .hero-logo img { height: 84px; width: auto; display: block; }
 
+        /* Nav du hero : liens simples sans bande (raccord avec le header du site) */
         .hero-nav {
             display: none; align-items: center; gap: 2px;
-            border: 2.5px solid #FFFFFF; border-radius: 999px;
-            background: rgba(12,10,9,.38);
-            padding: 5px 8px;
+            padding: 0;
         }
         @media (min-width: 900px) { .hero-nav { display: flex; } }
         .hero-nav a {
             font-family: 'Inter', sans-serif; font-weight: 500; font-size: 15px;
             color: #FFFFFF; text-decoration: none;
-            padding: 9px 19px; border-radius: 999px;
+            padding: 9px 16px; border-radius: 999px;
+            text-shadow: 0 1px 14px rgba(0,0,0,.45);
             transition: background .25s ease;
         }
-        .hero-nav a:hover { background: rgba(255,255,255,.18); }
+        .hero-nav a:hover { background: rgba(255,255,255,.14); }
         .hero-nav i { width: 1px; height: 16px; background: rgba(255,255,255,.4); flex: none; }
         .hero-nav a:focus-visible, .hero-actions button:focus-visible { outline: 2px solid #FF4D00; outline-offset: 3px; }
 
@@ -126,13 +127,30 @@
             gap: 48px; padding-top: 40px; min-height: 0;
         }
         .hero-title {
-            margin: 0; padding-bottom: 190px;   /* placé haut : zone sombre calme (60-75% du hero), diagonale avec les cartes */
+            position: relative;
+            margin: 0; padding-bottom: 0;       /* bas du titre aligné sur le bas de la carte « Nos Services » */
+            max-width: 550px;
             font-family: 'Playfair Display', serif;
             font-weight: 400; font-style: normal;
             font-size: clamp(46px, 4.6vw, 80px);
-            line-height: 1.06; letter-spacing: 0;
-            color: #FAF7F1;
+            line-height: 1.06; letter-spacing: -0.02em;
+            /* dégradé éditorial sur les lettres ; drop-shadow remplace text-shadow
+               (incompatible avec background-clip: text) */
+            background: linear-gradient(180deg, #FFFFFF 0%, #E2DCD5 100%);
+            -webkit-background-clip: text; background-clip: text;
+            color: transparent;
+            filter: drop-shadow(0 4px 24px rgba(0, 0, 0, 0.75));
         }
+        /* calque de profondeur doux, uniquement derrière la zone du titre */
+        .hero-title::before {
+            content: ""; position: absolute; z-index: -1;
+            inset: -48px -64px -56px -40px;
+            background: radial-gradient(ellipse closest-side at 38% 55%, rgba(0,0,0,.6), rgba(0,0,0,0) 95%);
+            pointer-events: none;
+        }
+
+        /* CTA « Découvrir nos services » : visible uniquement sur mobile */
+        .hero-cta { display: none; }
         .hero-cards { width: min(460px, 34vw); flex: none; }
 
         /* Bulle unique : au ratio exact de son image (1671×941), qui reste donc entièrement visible */
@@ -174,13 +192,42 @@
             .hero-logo img { height: 60px; }
             .h-search { width: 46px; height: 46px; }
             .h-menu { height: 46px; padding: 0 20px; font-size: 11.5px; }
-            .hero-body { flex-direction: column; justify-content: flex-end; align-items: stretch; padding-top: 30px; }
-            .hero-title { font-size: clamp(36px, 10vw, 46px); padding-bottom: 24px; margin-bottom: 78px; text-align: center; }
+            /* Titre + CTA centrés, posés vers 38% de la hauteur de l'écran */
+            .hero-body {
+                position: absolute; top: 38%; left: 50%; transform: translateX(-50%);
+                width: 100%;
+                flex-direction: column; align-items: center; justify-content: flex-start;
+                padding: 0;
+            }
+            .hero-title {
+                font-size: 2rem; line-height: 1.2;
+                max-width: 90%; padding: 0; margin: 0;
+                text-align: center;
+            }
+            .hero-title::before { inset: -36px -24px; }
+
+            /* CTA minimaliste — remplace la carte « Nos Services » sur petit écran */
+            .hero-cta {
+                display: inline-flex; align-items: center; gap: 10px;
+                margin-top: 24px;
+                padding: 13px 28px;
+                border: 1px solid rgba(255,255,255,0.6);
+                border-radius: 9999px;
+                background: rgba(255,255,255,0.08);
+                -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+                font-family: 'IBM Plex Mono', monospace;
+                font-size: 11px; letter-spacing: .2em; text-indent: .2em; text-transform: uppercase;
+                color: #FFFFFF; text-decoration: none;
+                transition: background .25s ease, color .25s ease;
+            }
+            .hero-cta:hover, .hero-cta:focus-visible { background: #FFFFFF; color: #131313; }
+            .hero-cta:focus-visible { outline: 2px solid #FF4D00; outline-offset: 3px; }
+
             .hero-cards { display: none; }   /* aucune bulle sur mobile */
         }
 
         /* ── Naissance du hero (après l'intro) ── */
-        #top .hero-logo, #top .hero-nav, #top .hero-actions, #top .hero-title, #top .hero-card {
+        #top .hero-logo, #top .hero-nav, #top .hero-actions, #top .hero-title, #top .hero-cta, #top .hero-card {
             opacity: 0; transform: translateY(24px);
             transition: opacity .8s ease, transform .9s cubic-bezier(.16,1,.3,1);
         }
@@ -189,6 +236,7 @@
         #top.is-born .hero-actions { opacity: 1; transform: none; transition-delay: .20s; }
         #top.is-born .hero-title   { opacity: 1; transform: none; transition-delay: .28s; }
         #top.is-born .hero-card    { opacity: 1; transform: none; transition-delay: .40s; }
+        #top.is-born .hero-cta     { opacity: 1; transform: none; transition-delay: .48s; }
 
         /* Header invisible tant que le hero (qui porte sa propre nav) est à l'écran */
         #site-header { transition: opacity .4s ease, transform .4s ease, background-color .35s ease, border-color .35s ease; }
@@ -420,7 +468,7 @@
             #site-header { animation: none; }
             .arr { transition: none; }
             #intro, #intro-spacer { display: none; }
-            #top .hero-logo, #top .hero-nav, #top .hero-actions, #top .hero-title, #top .hero-card { opacity: 1 !important; transform: none !important; }
+            #top .hero-logo, #top .hero-nav, #top .hero-actions, #top .hero-title, #top .hero-cta, #top .hero-card { opacity: 1 !important; transform: none !important; }
         }
     </style>
 </head>
@@ -613,6 +661,7 @@
 
                 <div class="hero-body">
                     <h1 class="hero-title">Là où votre<br>image prend vie.</h1>
+                    <a class="hero-cta" href="services.html">Découvrir nos services</a>
 
                     <div class="hero-cards">
                         <a class="hero-card" href="services.html">
@@ -625,7 +674,7 @@
 
             </div>
         </section>
-        <noscript><style>#top .hero-logo, #top .hero-nav, #top .hero-actions, #top .hero-title, #top .hero-card { opacity: 1 !important; transform: none !important; }</style></noscript>
+        <noscript><style>#top .hero-logo, #top .hero-nav, #top .hero-actions, #top .hero-title, #top .hero-cta, #top .hero-card { opacity: 1 !important; transform: none !important; }</style></noscript>
 
         <!-- ═══════════════ SECTION 01 — TUNNEL IMMERSIF (galerie 3D pilotée au scroll) ═══════════════ -->
         <section id="tunnel" class="tunnel-section">
