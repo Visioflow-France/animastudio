@@ -239,6 +239,99 @@
         @media (max-width: 640px) { .strip-half img { height: 220px; } }
         @keyframes strip { to { transform: translateX(-50%); } }
 
+        /* ═══ TUNNEL — galerie 3D scroll-pilotée (port vanilla de l'animation React « Perspective Tunnel ») ═══
+           Piste de scroll de 320vh : la scène reste collée en 100svh (position:sticky) et la progression
+           du scroll (0→1) fait voler 9 cartes le long de l'axe Z, disposées en spirale d'angle d'or. */
+        .tunnel-section { position: relative; height: 320vh; }
+        .tunnel-stage {
+            position: sticky; top: 0; height: 100vh; height: 100svh;
+            overflow: hidden; background: #131313;
+            perspective: 1200px;
+        }
+        .tunnel-bg {
+            position: absolute; inset: 0; opacity: .5;
+            background-image: radial-gradient(rgba(255,255,255,.14) 1px, transparent 1px);
+            background-size: 28px 28px;
+            -webkit-mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, #000 60%, transparent 100%);
+            mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, #000 60%, transparent 100%);
+        }
+        .tunnel-glow {
+            position: absolute; inset: 0;
+            background: radial-gradient(circle at center, rgba(255,77,0,.13) 0%, transparent 70%);
+        }
+        .tunnel-ring { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); border-radius: 9999px; }
+        .tunnel-ring-a { width: 48vmin; height: 48vmin; border: 1px solid rgba(255,77,0,.28); }
+        .tunnel-ring-b { width: 76vmin; height: 76vmin; border: 1px dashed rgba(255,255,255,.12); }
+        .tunnel-copy {
+            position: absolute; inset: 0; z-index: 1;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; padding: 0 24px; pointer-events: none;
+            will-change: transform, opacity;
+        }
+        .tunnel-kicker { margin: 0 0 22px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .25em; text-transform: uppercase; color: #697485; }
+        .tunnel-title {
+            margin: 0; font-family: 'Inter', sans-serif; font-weight: 300;
+            font-size: clamp(38px, 6vw, 84px); line-height: 1.02; letter-spacing: -.02em;
+            background: linear-gradient(to bottom, #ffffff, rgba(255,255,255,.45));
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+        .tunnel-sub { margin: 18px 0 0; max-width: 42ch; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 300; color: rgba(255,255,255,.6); }
+        .tunnel-scene { position: absolute; inset: 0; transform-style: preserve-3d; pointer-events: none; }
+        .tunnel-card {
+            position: absolute; left: 50%; top: 50%; z-index: 2;
+            margin: 0; width: 230px; aspect-ratio: 4 / 5;
+            border-radius: 16px; overflow: hidden;
+            border: 1px solid rgba(255,255,255,.22); background: #1d1d1d;
+            box-shadow: 0 24px 48px -12px rgba(0,0,0,.85);
+            opacity: 0; will-change: transform, opacity; pointer-events: auto;
+        }
+        .tunnel-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .6s cubic-bezier(.16,1,.3,1); }
+        .tunnel-card figcaption {
+            position: absolute; inset: 0; display: flex; align-items: flex-end; padding: 14px 16px;
+            background: linear-gradient(to top, rgba(0,0,0,.82), rgba(0,0,0,.12) 48%, rgba(0,0,0,0));
+            font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase;
+            color: rgba(255,255,255,.95); line-height: 1.5;
+        }
+        .tunnel-card .idx { color: #FF4D00; margin-right: 8px; }
+        .tunnel-card:hover { border-color: rgba(255,77,0,.8); }
+        .tunnel-card:hover img { transform: scale(1.06); }
+        .tunnel-hint {
+            position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); z-index: 10;
+            display: flex; flex-direction: column; align-items: center; gap: 12px;
+            font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .3em; text-transform: uppercase; color: #697485;
+            pointer-events: none; will-change: opacity;
+        }
+        .tunnel-hint-bar { width: 1px; height: 44px; position: relative; overflow: hidden; background: rgba(255,255,255,.15); }
+        .tunnel-hint-bar::after {
+            content: ""; position: absolute; left: 0; top: -14px; width: 1px; height: 14px;
+            background: #FF4D00; animation: hintSlide 1.6s cubic-bezier(.65,0,.35,1) infinite;
+        }
+        .tunnel-cta {
+            position: absolute; inset: 0; z-index: 11;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+            opacity: 0; pointer-events: none; will-change: opacity, transform;
+        }
+        .tunnel-cta > * { pointer-events: none; }
+        .tunnel-cta.is-on > * { pointer-events: auto; }
+        /* Mobile : piste plus courte, perspective réduite, cartes plus petites */
+        @media (max-width: 767px) {
+            .tunnel-section { height: 260vh; }
+            .tunnel-stage { perspective: 900px; }
+            .tunnel-card { width: 150px; border-radius: 14px; }
+            .tunnel-title { font-size: clamp(34px, 9.5vw, 48px); }
+            .tunnel-sub { font-size: 12px; }
+        }
+        /* Reduced-motion : repli statique en grille (le JS ne démarre pas) */
+        @media (prefers-reduced-motion: reduce) {
+            .tunnel-section { height: auto; }
+            .tunnel-stage { position: static; height: auto; perspective: none; overflow: visible; display: block; }
+            .tunnel-bg, .tunnel-glow, .tunnel-ring, .tunnel-hint { display: none; }
+            .tunnel-copy { position: static; padding: 96px 24px 0; opacity: 1; }
+            .tunnel-scene { position: static; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; padding: 44px 20px; max-width: 760px; margin: 0 auto; }
+            .tunnel-card { position: static; width: 100% !important; opacity: 1; transform: none; }
+            .tunnel-cta { position: static; opacity: 1; padding: 8px 24px 96px; }
+        }
+
         /* Entrée du header au chargement */
         #site-header { animation: headerIn .8s cubic-bezier(.16,1,.3,1) both; }
         @keyframes headerIn { from { transform: translateY(-100%); } }
@@ -596,34 +689,79 @@
             </div>
         </div>
 
-        <!-- ═══════════════ SECTION 01 — STUDIO ═══════════════ -->
-        <section id="studio" class="border-t border-white/10 scroll-mt-24">
-            <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-16 md:py-24">
-                <p class="reveal font-mono text-[11px] sm:text-xs uppercase tracking-[0.25em] text-tint mb-6 md:mb-8">[ 01 — Le studio ]</p>
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
-                    <div class="lg:col-span-7 reveal">
-                        <h2 class="font-sans font-normal text-3xl sm:text-4xl md:text-5xl leading-[1.1] tracking-tight">
-                            Basé en Suisse,<br>tourné vers l'exceptionnel.
-                        </h2>
-                        <p class="mt-8 text-base md:text-lg font-light leading-relaxed text-white/70 max-w-2xl">
-                            <span class="text-white">ANIMA Studio</span> est né d'une volonté simple : sublimer l'identité
-                            visuelle des marques, des lieux d'exception et des événements d'envergure. À l'ère du contenu
-                            standardisé, nous croyons au pouvoir d'une direction artistique forte — nous ne produisons pas
-                            du contenu, nous bâtissons des univers désirables.
-                        </p>
-                        <p class="mt-6 font-mono text-[11px] uppercase tracking-[0.2em] text-tint">
-                            Réservations ouvertes — Q3 / Q4 2026 · Réponse sous 24h
-                        </p>
-                    </div>
-                    <div class="lg:col-span-5 reveal flex flex-col justify-end gap-5" style="transition-delay:.15s">
-                        <button onclick="toggleDrawer()" class="font-mono text-[11px] uppercase tracking-[0.18em] border border-white/40 px-6 py-4 hover:bg-white hover:text-ink transition-colors rounded-none w-full sm:w-auto sm:self-end">
-                            Réserver un shoot
-                        </button>
-                        <a href="apropos.html" class="font-mono text-[11px] uppercase tracking-[0.18em] text-white underline decoration-white/40 underline-offset-8 hover:decoration-star hover:text-star transition-colors sm:self-end">
-                            ou découvrir le studio <span class="arr">↗</span>
-                        </a>
-                    </div>
+        <!-- ═══════════════ SECTION 01 — TUNNEL IMMERSIF (galerie 3D pilotée au scroll) ═══════════════ -->
+        <section id="tunnel" class="tunnel-section">
+            <div class="tunnel-stage">
+
+                <!-- Fond : grille de points + halo star + anneaux de profondeur -->
+                <div class="tunnel-bg" aria-hidden="true"></div>
+                <div class="tunnel-glow" aria-hidden="true"></div>
+                <div class="tunnel-ring tunnel-ring-a" aria-hidden="true"></div>
+                <div class="tunnel-ring tunnel-ring-b" aria-hidden="true"></div>
+
+                <!-- Typographie centrale : s'approche puis s'efface au fil du vol -->
+                <div class="tunnel-copy">
+                    <p class="tunnel-kicker">[ 01 — Galerie ]</p>
+                    <h2 class="tunnel-title">Traversez<br>nos univers.</h2>
+                    <p class="tunnel-sub">Faites défiler — chaque image traversée est un projet signé ANIMA.</p>
                 </div>
+
+                <!-- Couloir 3D : 9 cartes en spirale d'angle d'or (pilotées en JS plus bas) -->
+                <div class="tunnel-scene" aria-hidden="true">
+                    <figure class="tunnel-card">
+                        <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=640&h=800&q=75" alt="" decoding="async">
+                        <figcaption><span class="idx">01</span>Lookbook — Genève</figcaption>
+                    </figure>
+                    <figure class="tunnel-card">
+                        <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=640&h=800&q=75" alt="" decoding="async">
+                        <figcaption><span class="idx">02</span>Campagne mode — Lausanne</figcaption>
+                    </figure>
+                    <figure class="tunnel-card">
+                        <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=640&h=800&q=75" alt="" decoding="async">
+                        <figcaption><span class="idx">03</span>Food stories — Carouge</figcaption>
+                    </figure>
+                    <figure class="tunnel-card">
+                        <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=640&h=800&q=75" alt="" decoding="async">
+                        <figcaption><span class="idx">04</span>Aftermovie — Festival</figcaption>
+                    </figure>
+                    <figure class="tunnel-card">
+                        <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=640&h=800&q=75" alt="" decoding="async">
+                        <figcaption><span class="idx">05</span>Gala privé — Zurich</figcaption>
+                    </figure>
+                    <figure class="tunnel-card">
+                        <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=640&h=800&q=75" alt="" decoding="async">
+                        <figcaption><span class="idx">06</span>Menu signature</figcaption>
+                    </figure>
+                    <figure class="tunnel-card">
+                        <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=640&h=800&q=75" alt="" decoding="async">
+                        <figcaption><span class="idx">07</span>Lancement de marque</figcaption>
+                    </figure>
+                    <figure class="tunnel-card">
+                        <img src="https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=640&h=800&q=75" alt="" decoding="async">
+                        <figcaption><span class="idx">08</span>Conférence — SwissTech</figcaption>
+                    </figure>
+                    <figure class="tunnel-card">
+                        <img src="https://images.unsplash.com/photo-1470337458703-46ad1756a187?auto=format&fit=crop&w=640&h=800&q=75" alt="" decoding="async">
+                        <figcaption><span class="idx">09</span>Cocktails &amp; lifestyle</figcaption>
+                    </figure>
+                </div>
+
+                <!-- Invite de scroll (s'efface dès le début du vol) -->
+                <div class="tunnel-hint" aria-hidden="true">
+                    <span>Défilez pour voler</span>
+                    <span class="tunnel-hint-bar"></span>
+                </div>
+
+                <!-- CTA de fin de vol : apparaît quand le couloir est traversé -->
+                <div class="tunnel-cta">
+                    <button onclick="toggleDrawer()" class="font-mono text-[11px] uppercase tracking-[0.18em] border border-white/40 px-6 py-4 hover:bg-white hover:text-ink transition-colors rounded-none">
+                        Réserver un shoot
+                    </button>
+                    <a href="portfolio.html" class="font-mono text-[11px] uppercase tracking-[0.18em] text-white underline decoration-white/40 underline-offset-8 hover:decoration-star hover:text-star transition-colors">
+                        ou voir tout le portfolio <span class="arr">↗</span>
+                    </a>
+                </div>
+
             </div>
         </section>
 
@@ -1073,6 +1211,124 @@
             }
         })();
 
+        // ── TUNNEL : galerie 3D scroll-pilotée ───────────────────────────
+        // Port vanilla de « Perspective Tunnel » : piste de scroll, scène sticky 100svh,
+        // 9 cartes disposées en spirale d'angle d'or qui volent de Z=-1700 vers la caméra.
+        // Lissage par lerp exponentiel (même idiome que l'intro), pause du rAF hors écran.
+        (function () {
+            'use strict';
+            var section = document.getElementById('tunnel');
+            if (!section) return;
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return; // repli statique CSS
+
+            var copy  = section.querySelector('.tunnel-copy');
+            var hint  = section.querySelector('.tunnel-hint');
+            var cta   = section.querySelector('.tunnel-cta');
+            var cards = Array.prototype.slice.call(section.querySelectorAll('.tunnel-card'));
+            var finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+            var GOLD = 137.5 * Math.PI / 180; // spirale phyllotaxique : aucune carte n'aligne la précédente
+            var STAGGER = 0.55;               // chevauchement des vols : 4-5 cartes en l'air à la fois
+            var N = cards.length;
+
+            var vw = 0, vh = 0, runway = 1, farZ = 0, nearZ = 0, pan = 0, cardW = 0;
+            var data = [];
+
+            function measure() {
+                vw = window.innerWidth; vh = window.innerHeight;
+                var mobile = vw < 768;
+                runway = Math.max(1, section.offsetHeight - vh);
+                farZ = mobile ? -1100 : -1700;
+                nearZ = mobile ? 300 : 500;
+                pan = (finePointer && !mobile) ? 45 : 0; // parallaxe pointeur : desktop uniquement
+                cardW = mobile ? Math.max(120, Math.min(170, vw * 0.36))
+                               : Math.max(170, Math.min(260, vw * 0.17));
+                data = cards.map(function (el, i) {
+                    var a = i * GOLD;
+                    el.style.zIndex = String(2 + i);
+                    return {
+                        el: el,
+                        cos: Math.cos(a), sin: Math.sin(a),
+                        rx: 0.28 + (i % 3) * 0.08,
+                        ry: 0.26 + (i % 2) * 0.09,
+                        rot: (i % 2 === 0 ? 1 : -1) * (3 + (i % 5) * 2),
+                        start: (i / N) * (1 - STAGGER),
+                        span: STAGGER
+                    };
+                });
+                cards.forEach(function (el) { el.style.width = cardW + 'px'; });
+            }
+
+            function clamp01(x) { return Math.min(1, Math.max(0, x)); }
+            function smoothstep(a, b, x) { var t = clamp01((x - a) / (b - a)); return t * t * (3 - 2 * t); }
+
+            var target = 0, cur = 0;
+            var ptx = 0, pty = 0, ptxS = 0, ptyS = 0;
+
+            function readScroll() {
+                target = clamp01(-section.getBoundingClientRect().top / runway);
+            }
+
+            window.addEventListener('scroll', readScroll, { passive: true });
+            window.addEventListener('resize', function () { measure(); readScroll(); });
+            if (finePointer) {
+                window.addEventListener('pointermove', function (e) {
+                    ptx = (e.clientX / vw - 0.5) * 2;
+                    pty = (e.clientY / vh - 0.5) * 2;
+                }, { passive: true });
+            }
+
+            var running = false, rafId = 0, lastT = 0;
+
+            function apply(dt) {
+                cur += (target - cur) * (1 - Math.exp(-8 * dt));
+                ptxS += (ptx - ptxS) * (1 - Math.exp(-6 * dt));
+                ptyS += (pty - ptyS) * (1 - Math.exp(-6 * dt));
+
+                for (var i = 0; i < data.length; i++) {
+                    var d = data[i];
+                    var local = clamp01((cur - d.start) / d.span);
+                    var z = farZ + (nearZ - farZ) * local;
+                    var op = smoothstep(0, 0.18, local) * (1 - smoothstep(0.82, 0.98, local));
+                    var ox = d.cos * vw * d.rx - ptxS * pan;
+                    var oy = d.sin * vh * d.ry - ptyS * pan;
+                    d.el.style.transform = 'translate3d(calc(-50% + ' + ox.toFixed(1) + 'px), calc(-50% + ' + oy.toFixed(1) + 'px), ' + z.toFixed(1) + 'px) rotateZ(' + d.rot + 'deg)';
+                    d.el.style.opacity = op.toFixed(3);
+                }
+
+                var t1 = clamp01(cur / 0.5), t2 = clamp01((cur - 0.5) / 0.5);
+                copy.style.transform = 'scale(' + (0.7 + 0.3 * t1 + 0.35 * t2).toFixed(4) + ')';
+                copy.style.opacity = ((0.25 + 0.75 * smoothstep(0, 0.12, cur)) * (1 - smoothstep(0.7, 0.85, cur))).toFixed(3);
+                hint.style.opacity = (1 - smoothstep(0, 0.12, cur)).toFixed(3);
+
+                var ctaOp = smoothstep(0.86, 0.97, cur);
+                cta.style.opacity = ctaOp.toFixed(3);
+                cta.style.transform = 'translateY(' + ((1 - ctaOp) * 26).toFixed(1) + 'px)';
+                cta.classList.toggle('is-on', ctaOp > 0.4);
+            }
+
+            function tick(now) {
+                if (!running) return;
+                var dt = lastT ? Math.min(0.05, (now - lastT) / 1000) : 0.016;
+                lastT = now;
+                apply(dt);
+                rafId = requestAnimationFrame(tick);
+            }
+            function startLoop() {
+                if (running) return;
+                running = true; lastT = 0;
+                cur = target; // reprise nette, sans rattrapage
+                rafId = requestAnimationFrame(tick);
+            }
+            function stopLoop() { running = false; cancelAnimationFrame(rafId); }
+
+            new IntersectionObserver(function (entries) {
+                if (entries[0].isIntersecting) startLoop(); else stopLoop();
+            }, { rootMargin: '25% 0px 25% 0px' }).observe(section);
+
+            measure(); readScroll(); cur = target;
+        })();
+
         // ── Apparitions au scroll ─────────────────────────────────────────
         const io = new IntersectionObserver((entries) => {
             entries.forEach(e => {
@@ -1178,7 +1434,7 @@
 
         const SEARCH_INDEX = [
             { t: 'Accueil',              d: 'Là où votre image prend vie',                 u: 'index.html' },
-            { t: 'Le studio',            d: 'Basé en Suisse, tourné vers l\'exceptionnel', u: 'index.html#studio' },
+            { t: 'Galerie immersive',    d: 'Traversez nos univers en 3D',                 u: 'index.html#tunnel' },
             { t: 'Estimateur de devis',  d: 'Calculez votre devis en direct',              u: 'index.html#estimateur' },
             { t: 'FAQ',                  d: 'Questions fréquentes',                        u: 'index.html#faq' },
             { t: 'Création de Contenu',  d: 'Vidéos, photos, formats courts',              u: 'services.html#creation-contenu' },
