@@ -7,7 +7,8 @@ Contenu de marque issu du profil Instagram [@anima.studio.ch](https://instagram.
 ## Aperçu
 
 - **Interface** : fond `#131313`, wordmark serif italique « Anima ✦ » avec astérisque en rotation, libellés de section en mono majuscules, boutons à filets 1px et angles droits.
-- **Animations** : ruban photos pleine largeur défilant en continu (boucle 100 s), entrée du wordmark en cascade rejouée au scroll, révélations IntersectionObserver, compteurs animés, accordéon FAQ fluide, drawer de réservation, estimateur de devis interactif (CHF), **tunnel 3D scroll-piloté** (9 cartes en spirale d'angle d'or qui volent vers la caméra, port vanilla de l'animation React « Perspective Tunnel », repli statique en `prefers-reduced-motion`).
+- **Animations** : entrée du wordmark en cascade rejouée au scroll, révélations IntersectionObserver, compteurs animés, accordéon FAQ fluide, drawer de réservation, estimateur de devis interactif (CHF), **tunnel 3D scroll-piloté** (9 cartes en spirale d'angle d'or qui volent vers la caméra sur fond **noir pur**, port vanilla de l'animation React « Perspective Tunnel », repli statique en `prefers-reduced-motion`).
+- **Logo** : le logo image du hero (`logo_blanc_web.png`, blanc) est utilisé partout dans les en-têtes du site, identique au hero et constant au scroll ; la version noire (`logo_intro_4x.png`) est réservée aux fonds blancs (intro).
 - **Accessibilité** : skip-link, `prefers-reduced-motion`, focus géré, `aria-expanded` sur l'accordéon, images en lazy-loading.
 
 ## Structure du site
@@ -24,7 +25,7 @@ Le tout en HTML/CSS fluide (aucun flou nulle part), animé en cascade après l'i
 
 | Page | Contenu |
 |---|---|
-| `index.html` | Accueil — intro zoom logo, hero image (nav pilule, titre, 4 cartes services), ruban photos, tunnel immersif (galerie 3D scroll-pilotée), chiffres, services, projets, estimateur, FAQ |
+| `index.html` | Accueil — intro zoom logo, hero image (nav pilule, titre, 4 cartes services), tunnel immersif (galerie 3D scroll-pilotée, fond noir pur), chiffres, services, projets, estimateur, FAQ |
 | `services.html` | Les 4 services détaillés avec ancres `#creation-contenu`, `#reseaux-sociaux`, `#evenementiel`, `#photoshoots` (cibles des cartes du hero) |
 | `apropos.html` | L'histoire du studio, les chiffres, la méthode en 4 jalons, manifeste |
 | `portfolio.html` | Grille de 9 projets filtrable (Mode & éditorial / Événementiel / Gastronomie / Digital) |

@@ -225,43 +225,19 @@
         .star-spin { display: inline-block; transform-origin: 50% 54%; animation: spin 18s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Ruban photos défilant */
-        .strip { overflow: hidden; }
-        /* Desktop : large respiration noire entre le bas du hero et le ruban
-           (padding + fond #000 raccordé au noir du hero, aucune couture) */
-        @media (min-width: 768px) {
-            .strip { background: #000000; padding-top: 88px; }
-        }
-        .strip-track { display: flex; width: max-content; animation: strip 100s linear infinite; }
-        .strip:hover .strip-track { animation-play-state: paused; }
-        .strip-half { display: flex; gap: 8px; padding-right: 8px; flex: none; }
-        .strip-half img { height: 340px; width: auto; object-fit: cover; pointer-events: none; user-select: none; }
-        @media (max-width: 640px) { .strip-half img { height: 220px; } }
-        @keyframes strip { to { transform: translateX(-50%); } }
-
         /* ═══ TUNNEL — galerie 3D scroll-pilotée (port vanilla de l'animation React « Perspective Tunnel ») ═══
            Piste de scroll de 320vh : la scène reste collée en 100svh (position:sticky) et la progression
-           du scroll (0→1) fait voler 9 cartes le long de l'axe Z, disposées en spirale d'angle d'or. */
+           du scroll (0→1) fait voler 9 cartes le long de l'axe Z, disposées en spirale d'angle d'or.
+           Fond noir pur (#000) : raccord sans couture avec le bas du hero. */
         .tunnel-section { position: relative; height: 320vh; }
         .tunnel-stage {
             position: sticky; top: 0; height: 100vh; height: 100svh;
-            overflow: hidden; background: #131313;
+            overflow: hidden; background: #000000;
             perspective: 1200px;
         }
-        .tunnel-bg {
-            position: absolute; inset: 0; opacity: .5;
-            background-image: radial-gradient(rgba(255,255,255,.14) 1px, transparent 1px);
-            background-size: 28px 28px;
-            -webkit-mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, #000 60%, transparent 100%);
-            mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, #000 60%, transparent 100%);
-        }
-        .tunnel-glow {
-            position: absolute; inset: 0;
-            background: radial-gradient(circle at center, rgba(255,77,0,.13) 0%, transparent 70%);
-        }
-        .tunnel-ring { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); border-radius: 9999px; }
-        .tunnel-ring-a { width: 48vmin; height: 48vmin; border: 1px solid rgba(255,77,0,.28); }
-        .tunnel-ring-b { width: 76vmin; height: 76vmin; border: 1px dashed rgba(255,255,255,.12); }
+        .tunnel-ring { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); border-radius: 9999px; pointer-events: none; }
+        .tunnel-ring-a { width: 48vmin; height: 48vmin; border: 1px solid rgba(255,77,0,.16); }
+        .tunnel-ring-b { width: 76vmin; height: 76vmin; border: 1px dashed rgba(255,255,255,.07); }
         .tunnel-copy {
             position: absolute; inset: 0; z-index: 1;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -325,7 +301,7 @@
         @media (prefers-reduced-motion: reduce) {
             .tunnel-section { height: auto; }
             .tunnel-stage { position: static; height: auto; perspective: none; overflow: visible; display: block; }
-            .tunnel-bg, .tunnel-glow, .tunnel-ring, .tunnel-hint { display: none; }
+            .tunnel-ring, .tunnel-hint { display: none; }
             .tunnel-copy { position: static; padding: 96px 24px 0; opacity: 1; }
             .tunnel-scene { position: static; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; padding: 44px 20px; max-width: 760px; margin: 0 auto; }
             .tunnel-card { position: static; width: 100% !important; opacity: 1; transform: none; }
@@ -449,7 +425,6 @@
             .reveal { opacity: 1; transform: none; }
             .letter { transform: none; }
             #site-header { animation: none; }
-            .strip-track { animation: none; }
             .arr { transition: none; }
             #intro, #intro-spacer { display: none; }
             #top .hero-logo, #top .hero-nav, #top .hero-actions, #top .hero-title, #top .hero-card { opacity: 1 !important; transform: none !important; }
@@ -582,13 +557,9 @@
     <header id="site-header" class="fixed top-0 left-0 z-50 w-full is-ghost">
         <div class="max-w-[1500px] mx-auto flex items-center justify-between gap-4 px-4 sm:px-8 h-16">
 
-            <!-- Logo (celui du hero : marque a. + aNIMA / STUDIO) -->
-            <a href="index.html" class="flex items-center gap-3 group" aria-label="ANIMA Studio — Accueil">
-                <span class="font-serif italic text-[26px] leading-none group-hover:text-star transition-colors">a<span class="text-star group-hover:text-white transition-colors">.</span></span>
-                <span class="leading-none">
-                    <span class="block font-serif italic text-[19px] tracking-tight">aNIMA</span>
-                    <span class="block font-mono text-[8.5px] uppercase tracking-[0.5em] text-white/55 mt-1">Studio</span>
-                </span>
+            <!-- Logo (identique au hero : logo blanc image, fond sombre partout) -->
+            <a href="index.html" class="flex items-center group" aria-label="ANIMA Studio — Accueil">
+                <img src="logo_blanc_web.png" alt="ANIMA Studio" class="h-11 w-auto" draggable="false">
             </a>
 
             <!-- Nav pilule (identique au hero) -->
@@ -663,39 +634,11 @@
         </section>
         <noscript><style>#top .hero-logo, #top .hero-nav, #top .hero-actions, #top .hero-title, #top .hero-card { opacity: 1 !important; transform: none !important; }</style></noscript>
 
-        <!-- ═══════════════ RUBAN PHOTOS DÉFILANT ═══════════════ -->
-        <div class="strip relative left-[calc(-50%+1rem)] sm:left-[calc(-50%+2rem)] w-screen" aria-hidden="true">
-            <div class="strip-track">
-                <div class="strip-half">
-                    <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=520&h=340&q=80" alt="" draggable="false">
-                    <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
-                    <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
-                    <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
-                    <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
-                    <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
-                    <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
-                    <img src="https://images.unsplash.com/photo-1529900748604-07564a03e7f6?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
-                </div>
-                <div class="strip-half">
-                    <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
-                    <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
-                    <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
-                    <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
-                    <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
-                    <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
-                    <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
-                    <img src="https://images.unsplash.com/photo-1529900748604-07564a03e7f6?auto=format&fit=crop&w=520&h=340&q=80" alt="" loading="lazy" draggable="false">
-                </div>
-            </div>
-        </div>
-
         <!-- ═══════════════ SECTION 01 — TUNNEL IMMERSIF (galerie 3D pilotée au scroll) ═══════════════ -->
         <section id="tunnel" class="tunnel-section">
             <div class="tunnel-stage">
 
-                <!-- Fond : grille de points + halo star + anneaux de profondeur -->
-                <div class="tunnel-bg" aria-hidden="true"></div>
-                <div class="tunnel-glow" aria-hidden="true"></div>
+                <!-- Fond noir pur + anneaux filaires très discrets (profondeur) -->
                 <div class="tunnel-ring tunnel-ring-a" aria-hidden="true"></div>
                 <div class="tunnel-ring tunnel-ring-b" aria-hidden="true"></div>
 
