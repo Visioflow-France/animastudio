@@ -226,7 +226,7 @@
             .hero-cards { display: none; }   /* aucune bulle sur mobile */
         }
 
-        /* ── Naissance du hero (après l'intro) ── */
+        /* ── Naissance du hero (à l'arrivée sur la page) ── */
         #top .hero-logo, #top .hero-nav, #top .hero-actions, #top .hero-title, #top .hero-cta, #top .hero-card {
             opacity: 0; transform: translateY(24px);
             transition: opacity .8s ease, transform .9s cubic-bezier(.16,1,.3,1);
@@ -555,43 +555,6 @@
         ::-webkit-scrollbar-track { background: #131313; }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.2); }
 
-        /* ═══ INTRO : zoom cinématique sur le point du logo, piloté au scroll ═══ */
-        #intro-spacer { height: 230vh; background: #131313; }
-        #intro {
-            position: fixed; inset: 0; z-index: 9999;
-            background: #ffffff; overflow: hidden; cursor: default;
-        }
-        #intro-img {
-            position: absolute; user-select: none; -webkit-user-drag: none;
-            pointer-events: none; will-change: transform;
-            transform: scale(1);
-            max-width: none;
-        }
-        #intro-dot {
-            position: absolute; left: 0; top: 0;
-            width: 0; height: 0;
-            border-radius: 50%; background: #000000;
-        }
-        #intro-hint {
-            position: absolute; left: 50%; bottom: 5vh; transform: translateX(-50%);
-            display: flex; flex-direction: column; align-items: center; gap: 14px;
-            font-family: 'IBM Plex Mono', monospace; font-size: 10px;
-            letter-spacing: .25em; text-transform: uppercase; color: #131313;
-            will-change: opacity;
-        }
-        #intro-hint .bar {
-            width: 1px; height: 48px; position: relative; overflow: hidden;
-            background: rgba(19,19,19,.18);
-        }
-        #intro-hint .bar::after {
-            content: ""; position: absolute; left: 0; top: -14px; width: 1px; height: 14px;
-            background: #131313; animation: hintSlide 1.6s cubic-bezier(.65,0,.35,1) infinite;
-        }
-        @keyframes hintSlide { to { top: 48px; } }
-
-        body.intro-active #site-header,
-        body.intro-active .letter { animation-play-state: paused; }
-
         /* Respect du reduced-motion */
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after { animation-duration: .001s !important; animation-iteration-count: 1 !important; transition-duration: .001s !important; }
@@ -599,131 +562,12 @@
             .letter { transform: none; }
             #site-header { animation: none; }
             .arr { transition: none; }
-            #intro, #intro-spacer { display: none; }
             #top .hero-logo, #top .hero-nav, #top .hero-actions, #top .hero-title, #top .hero-cta, #top .hero-card { opacity: 1 !important; transform: none !important; }
             .intro-section .intro-flood { display: none !important; }
         }
     </style>
 </head>
 <body class="bg-ink text-white antialiased min-h-screen flex flex-col">
-
-    <!-- ═══════════════ INTRO : le logo s'affiche, le scroll zoome sur le point noir ═══════════════ -->
-    <div id="intro-spacer" aria-hidden="true"></div>
-    <div id="intro" aria-hidden="true">
-        <img id="intro-img" src="logo_intro_4x.png" alt="" draggable="false" decoding="async">
-        <div id="intro-dot"></div>
-        <div id="intro-hint">
-            <span class="bar"></span>
-            <span>Scroll — entrez dans le studio</span>
-        </div>
-    </div>
-    <noscript><style>#intro, #intro-spacer { display: none !important; }</style></noscript>
-
-    <script>
-    (function () {
-        'use strict';
-        var intro   = document.getElementById('intro');
-        var spacer  = document.getElementById('intro-spacer');
-        var img     = document.getElementById('intro-img');
-        var dot     = document.getElementById('intro-dot');
-        var hint    = document.getElementById('intro-hint');
-
-        function killIntro() {
-            if (intro.parentNode)   intro.parentNode.removeChild(intro);
-            if (spacer.parentNode)  spacer.parentNode.removeChild(spacer);
-        }
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { killIntro(); return; }
-
-        var IMG_W = 7680, IMG_H = 4320;
-        var DOT_X = 4466, DOT_Y = 2353.5, DOT_R = 239;
-        var PAN_END = 0.25;
-
-        if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-        var html = document.documentElement;
-        html.style.scrollBehavior = 'auto';
-        window.scrollTo(0, 0);
-        document.body.classList.add('intro-active');
-
-        var vw = 0, vh = 0, px0 = 0, py0 = 0, rB = 1, sMax = 8, maxScroll = 1;
-
-        function measure() {
-            vw = document.documentElement.clientWidth; vh = window.innerHeight;
-            var fit = Math.min(vw / IMG_W, vh / IMG_H);
-            var w = IMG_W * fit, h = IMG_H * fit;
-            img.style.width  = w + 'px';
-            img.style.height = h + 'px';
-            img.style.left   = ((vw - w) / 2) + 'px';
-            img.style.top    = ((vh - h) / 2) + 'px';
-            var originX = DOT_X * fit, originY = DOT_Y * fit;
-            px0 = (vw - w) / 2 + originX;
-            py0 = (vh - h) / 2 + originY;
-            img.style.transformOrigin = originX + 'px ' + originY + 'px';
-            rB = DOT_R * fit;
-            sMax = Math.hypot(vw / 2, vh / 2) / rB * 1.06;
-            maxScroll = Math.max(1, spacer.offsetHeight - vh);
-        }
-
-        var smooth = function (t) { return t * t * (3 - 2 * t); };
-        var target = 0, cur = 0, done = false, rafId = 0, lastT = 0;
-
-        function apply() {
-            var s  = Math.pow(sMax, smooth(cur));
-            var ep = smooth(Math.min(cur / PAN_END, 1));
-            var tx = (vw / 2 - px0) * ep;
-            var ty = (vh / 2 - py0) * ep;
-            img.style.transform = 'translate3d(' + tx.toFixed(2) + 'px,' + ty.toFixed(2) + 'px,0) scale(' + s.toFixed(4) + ')';
-            var r  = rB * s * 1.01;
-            var cx = px0 + tx, cy = py0 + ty;
-            dot.style.width  = (2 * r).toFixed(1) + 'px';
-            dot.style.height = (2 * r).toFixed(1) + 'px';
-            dot.style.left   = (cx - r).toFixed(1) + 'px';
-            dot.style.top    = (cy - r).toFixed(1) + 'px';
-            hint.style.opacity = Math.max(0, 1 - cur * 7);
-        }
-
-        function tick(t) {
-            if (done) return;
-            var dt = lastT ? Math.min(0.05, (t - lastT) / 1000) : 0.016;
-            lastT = t;
-            cur += (target - cur) * (1 - Math.exp(-9 * dt));
-            if (target >= 1 && cur > 0.9985) { complete(); return; }
-            apply();
-            rafId = requestAnimationFrame(tick);
-        }
-
-        function readScroll() {
-            if (done) return;
-            target = Math.min(1, Math.max(0, (window.scrollY || 0) / maxScroll));
-        }
-
-        function complete() {
-            done = true;
-            cur = 1; apply();
-            cancelAnimationFrame(rafId);
-            window.removeEventListener('scroll', readScroll);
-            document.documentElement.style.overflow = 'hidden';
-            requestAnimationFrame(function () {
-                spacer.style.display = 'none';
-                window.scrollTo(0, 0);
-                document.body.classList.remove('intro-active');
-                intro.style.transition = 'opacity .9s cubic-bezier(.4,0,.2,1)';
-                intro.style.pointerEvents = 'none';
-                intro.style.opacity = '0';
-                document.dispatchEvent(new CustomEvent('anima:intro-done'));
-                setTimeout(function () {
-                    document.documentElement.style.overflow = '';
-                    document.documentElement.style.scrollBehavior = '';
-                    killIntro();
-                }, 950);
-            });
-        }
-
-        window.addEventListener('scroll', readScroll, { passive: true });
-        window.addEventListener('resize', function () { measure(); if (!done) apply(); });
-        measure(); readScroll(); apply();
-        rafId = requestAnimationFrame(tick);
-    })();
-    </script>
 
     <a href="#main" class="skip">Aller au contenu principal</a>
 
@@ -1298,8 +1142,11 @@
 
         // ── DOCK flottant : strictement lié à la visibilité de la barre du haut du hero ──
         // Tant que le logo, les liens, la loupe ou le MENU du hero sont visibles à l'écran, pas de dock.
-        // Dès qu'ils sortent entièrement du viewport (et que l'intro est terminée), le dock jaillit avec
-        // la chorégraphie complète ; si on remonte sur le hero, il disparaît — et se rejouera en redescendant.
+        // Dès qu'ils sortent entièrement du viewport, le dock jaillit avec la chorégraphie complète ;
+        // si on remonte sur le hero, il disparaît — et se rejouera en redescendant.
+        // Une bande d'hystérésis de 60px évite tout clignotement au passage du seuil : sur mobile, le
+        // déplacement au doigt et les variations de viewport (barre d'adresse) font osciller la mesure
+        // d'un pixel à l'autre, ce qui relançait l'animation en boucle à ce moment précis.
         (function () {
             const dock = document.getElementById('float-dock');
             if (!dock) return;
@@ -1307,30 +1154,31 @@
             const introSec = document.querySelector('.intro-section');
             const flood = introSec ? introSec.querySelector('.intro-flood') : null;
             const firstLight = document.getElementById('services');
+            const MARGE = 60; // il faut 60px de recul supplémentaire pour basculer d'un état à l'autre
 
-            function introActive() { return document.body.classList.contains('intro-active'); }
-
-            let heroBarVisible = true;
+            let shown = false;
             function sync() {
-                const shouldShow = heroBar && !heroBarVisible && !introActive();
-                if (shouldShow) {
+                if (!heroBar) return;
+                const bottom = heroBar.getBoundingClientRect().bottom;
+                if (!shown && bottom <= -MARGE) {
+                    shown = true;
                     dock.classList.add('is-in');
-                } else if (dock.classList.contains('is-in')) {
+                } else if (shown && bottom > 0) {
+                    shown = false;
                     dock.classList.remove('is-in'); // retire l'état : l'animation se rejouera à la prochaine apparition
                 }
             }
 
-            if (heroBar && 'IntersectionObserver' in window) {
-                new IntersectionObserver((entries) => {
-                    heroBarVisible = entries[0].isIntersecting;
-                    sync();
-                }, { threshold: 0 }).observe(heroBar);
-            } else {
-                heroBarVisible = false;
-                sync();
+            let syncTicking = false;
+            function requestSync() {
+                if (!syncTicking) {
+                    syncTicking = true;
+                    requestAnimationFrame(() => { syncTicking = false; sync(); });
+                }
             }
-            // La fin de l'intro remet la page en haut : réévaluer après son fondu (le dock ne doit pas y survivre)
-            document.addEventListener('anima:intro-done', () => setTimeout(sync, 1000));
+            window.addEventListener('scroll', requestSync, { passive: true });
+            window.addEventListener('resize', requestSync);
+            sync();
 
             // Thème : bulles blanches (icônes noires) sur fond sombre, bulles noires (icônes blanches) sur fond clair.
             // Deux signaux : le carré blanc de « Soyons honnêtes » recouvre-t-il déjà le point du dock (bas centré),
@@ -1361,15 +1209,11 @@
             updateDockZone();
         })();
 
-        // ── HERO : naissance après l'intro (le layout est 100% CSS fluide) ──
+        // ── HERO : naissance à l'arrivée sur la page (le layout est 100% CSS fluide) ──
         (function () {
             const sec = document.getElementById('top');
             const born = () => sec.classList.add('is-born');
-            if (document.body.classList.contains('intro-active')) {
-                document.addEventListener('anima:intro-done', () => setTimeout(born, 140));
-            } else {
-                born();
-            }
+            setTimeout(born, 80); // laisser un premier rendu pour que la cascade démarre visuellement
         })();
 
         // ── TUNNEL : galerie 3D scroll-pilotée ───────────────────────────
