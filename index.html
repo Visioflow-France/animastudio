@@ -298,17 +298,6 @@
         .tunnel-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .6s cubic-bezier(.16,1,.3,1); }
         .tunnel-card:hover { border-color: rgba(255,77,0,.8); }
         .tunnel-card:hover img { transform: scale(1.06); }
-        .tunnel-hint {
-            position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); z-index: 10;
-            display: flex; flex-direction: column; align-items: center; gap: 12px;
-            font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .3em; text-transform: uppercase; color: #697485;
-            pointer-events: none; will-change: opacity;
-        }
-        .tunnel-hint-bar { width: 1px; height: 44px; position: relative; overflow: hidden; background: rgba(255,255,255,.15); }
-        .tunnel-hint-bar::after {
-            content: ""; position: absolute; left: 0; top: -14px; width: 1px; height: 14px;
-            background: #FF4D00; animation: hintSlide 1.6s cubic-bezier(.65,0,.35,1) infinite;
-        }
         /* Mobile : piste plus courte, perspective réduite, cartes plus petites */
         @media (max-width: 767px) {
             .tunnel-section { height: 260vh; }
@@ -320,7 +309,6 @@
         @media (prefers-reduced-motion: reduce) {
             .tunnel-section { height: auto; }
             .tunnel-stage { position: static; height: auto; perspective: none; overflow: visible; display: block; }
-            .tunnel-hint { display: none; }
             .tunnel-copy { position: static; padding: 96px 24px 0; opacity: 1; }
             .tunnel-scene { position: static; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; padding: 44px 20px; max-width: 760px; margin: 0 auto; }
             .tunnel-card { position: static; width: 100% !important; opacity: 1; transform: none; }
@@ -671,11 +659,7 @@
                 <span class="sep" aria-hidden="true"></span>
                 <a href="services.html">Services</a>
                 <span class="sep" aria-hidden="true"></span>
-                <a href="apropos.html">À propos</a>
-                <span class="sep" aria-hidden="true"></span>
                 <a href="portfolio.html">Portfolio</a>
-                <span class="sep" aria-hidden="true"></span>
-                <a href="contact.html">Contact</a>
             </nav>
 
             <!-- Actions droite : recherche + MENU (identiques au hero) -->
@@ -707,7 +691,6 @@
                     <nav class="hero-nav" aria-label="Navigation principale">
                         <a href="#top">Accueil</a><i aria-hidden="true"></i>
                         <a href="services.html">Services</a><i aria-hidden="true"></i>
-                        <a href="apropos.html">À propos</a><i aria-hidden="true"></i>
                         <a href="portfolio.html">Portfolio</a>
                     </nav>
 
@@ -778,32 +761,6 @@
                     </figure>
                 </div>
 
-                <!-- Invite de scroll (s'efface dès le début du vol) -->
-                <div class="tunnel-hint" aria-hidden="true">
-                    <span>Défilez pour voler</span>
-                    <span class="tunnel-hint-bar"></span>
-                </div>
-
-            </div>
-        </section>
-
-        <!-- ═══════════════ SECTION 02 — EN UN COUP D'ŒIL ═══════════════ -->
-        <section class="border-t border-white/10">
-            <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-16 md:py-24">
-                <div class="grid grid-cols-1 md:grid-cols-3 md:divide-x divide-white/10">
-                    <div class="reveal py-8 md:py-0 md:pr-10">
-                        <span data-count="100" data-suffix="%" class="block font-sans font-light text-6xl md:text-7xl tracking-tight">0%</span>
-                        <span class="block mt-4 font-mono text-[11px] uppercase tracking-[0.2em] text-tint">Sur-mesure — chaque projet</span>
-                    </div>
-                    <div class="reveal py-8 md:py-0 md:px-10" style="transition-delay:.1s">
-                        <span data-count="24" data-suffix="H" class="block font-sans font-light text-6xl md:text-7xl tracking-tight">0H</span>
-                        <span class="block mt-4 font-mono text-[11px] uppercase tracking-[0.2em] text-tint">Réponse garantie</span>
-                    </div>
-                    <div class="reveal py-8 md:py-0 md:pl-10" style="transition-delay:.2s">
-                        <span class="block font-sans font-light text-6xl md:text-7xl tracking-tight">CH·FR</span>
-                        <span class="block mt-4 font-mono text-[11px] uppercase tracking-[0.2em] text-tint">Couverture suisse</span>
-                    </div>
-                </div>
             </div>
         </section>
 
@@ -994,9 +951,9 @@
                             <div class="pt-6 mt-6 border-t border-white/10">
                                 <span class="block text-[10px] uppercase tracking-[0.2em] text-tint mb-2">Estimation indicative</span>
                                 <span id="summary-total" class="block font-sans font-light text-4xl md:text-5xl tracking-tight text-white">0 CHF</span>
-                                <a href="contact.html" class="mt-6 block text-center font-mono text-[11px] uppercase tracking-[0.18em] border border-white/40 px-6 py-3.5 hover:bg-white hover:text-ink transition-colors rounded-none">
+                                <button type="button" onclick="openDrawer()" class="mt-6 w-full text-center font-mono text-[11px] uppercase tracking-[0.18em] border border-white/40 px-6 py-3.5 hover:bg-white hover:text-ink transition-colors rounded-none cursor-pointer">
                                     Valider &amp; réserver
-                                </a>
+                                </button>
                             </div>
                         </div>
 
@@ -1018,7 +975,7 @@
                         </button>
                         <div class="faq-panel"><div>
                             <p class="pb-6 pr-10 text-sm font-light leading-relaxed text-white/70 max-w-2xl">
-                                Un premier échange via la <a href="contact.html" class="underline decoration-white/30 hover:decoration-star hover:text-star transition-colors">page contact</a>,
+                                Un premier échange via le <button type="button" onclick="openDrawer()" class="underline decoration-white/30 hover:decoration-star hover:text-star transition-colors cursor-pointer">formulaire de réservation</button>,
                                 un brief détaillé sous 24h, puis une proposition de calendrier et de devis.
                                 Tout se valide en ligne, sans engagement.
                             </p>
@@ -1082,9 +1039,7 @@
                     <div class="flex flex-col gap-3 font-mono text-xs text-white/80">
                         <a href="index.html" class="hover:text-star transition-colors w-fit">Accueil</a>
                         <a href="services.html" class="hover:text-star transition-colors w-fit">Services</a>
-                        <a href="apropos.html" class="hover:text-star transition-colors w-fit">À propos</a>
                         <a href="portfolio.html" class="hover:text-star transition-colors w-fit">Portfolio</a>
-                        <a href="contact.html" class="hover:text-star transition-colors w-fit">Contact</a>
                     </div>
                 </div>
                 <div class="md:col-span-3">
@@ -1122,19 +1077,9 @@
                     <span class="font-serif italic text-[clamp(2.2rem,7vw,4.5rem)] leading-none group-hover:text-star group-hover:translate-x-3 transition-all duration-300">Services</span>
                     <span class="arr ml-auto text-tint group-hover:text-star transition-colors">→</span>
                 </a>
-                <a href="apropos.html" class="menu-link group flex items-baseline gap-5 sm:gap-8 py-2 border-b border-white/10">
+                <a href="portfolio.html" class="menu-link group flex items-baseline gap-5 sm:gap-8 py-2">
                     <span class="font-mono text-[11px] text-tint flex-none">03</span>
-                    <span class="font-serif italic text-[clamp(2.2rem,7vw,4.5rem)] leading-none group-hover:text-star group-hover:translate-x-3 transition-all duration-300">À propos</span>
-                    <span class="arr ml-auto text-tint group-hover:text-star transition-colors">→</span>
-                </a>
-                <a href="portfolio.html" class="menu-link group flex items-baseline gap-5 sm:gap-8 py-2 border-b border-white/10">
-                    <span class="font-mono text-[11px] text-tint flex-none">04</span>
                     <span class="font-serif italic text-[clamp(2.2rem,7vw,4.5rem)] leading-none group-hover:text-star group-hover:translate-x-3 transition-all duration-300">Portfolio</span>
-                    <span class="arr ml-auto text-tint group-hover:text-star transition-colors">→</span>
-                </a>
-                <a href="contact.html" class="menu-link group flex items-baseline gap-5 sm:gap-8 py-2">
-                    <span class="font-mono text-[11px] text-tint flex-none">05</span>
-                    <span class="font-serif italic text-[clamp(2.2rem,7vw,4.5rem)] leading-none group-hover:text-star group-hover:translate-x-3 transition-all duration-300">Contact</span>
                     <span class="arr ml-auto text-tint group-hover:text-star transition-colors">→</span>
                 </a>
             </nav>
@@ -1205,7 +1150,6 @@
                     <button type="submit" class="w-full bg-white text-ink font-bold uppercase tracking-[0.2em] rounded-none py-4 hover:bg-star hover:text-ink transition-colors">
                         Envoyer la demande
                     </button>
-                    <p class="text-tint text-center text-[10px] uppercase tracking-[0.15em]">ou via la <a href="contact.html" class="underline decoration-white/30 hover:decoration-star hover:text-star transition-colors">page contact complète</a></p>
                 </form>
 
                 <div id="form-success" class="hidden border border-white/15 rounded-none p-8 text-center">
@@ -1259,7 +1203,6 @@
             if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return; // repli statique CSS
 
             var copy  = section.querySelector('.tunnel-copy');
-            var hint  = section.querySelector('.tunnel-hint');
             var cards = Array.prototype.slice.call(section.querySelectorAll('.tunnel-card'));
             var finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
@@ -1335,7 +1278,6 @@
                 var t1 = clamp01(cur / 0.5), t2 = clamp01((cur - 0.5) / 0.5);
                 copy.style.transform = 'scale(' + (0.7 + 0.3 * t1 + 0.35 * t2).toFixed(4) + ')';
                 copy.style.opacity = ((0.25 + 0.75 * smoothstep(0, 0.12, cur)) * (1 - smoothstep(0.7, 0.85, cur))).toFixed(3);
-                hint.style.opacity = (1 - smoothstep(0, 0.12, cur)).toFixed(3);
             }
 
             function tick(now) {
@@ -1482,26 +1424,6 @@
             updateHeaderZone();
         })();
 
-        // ── Statistiques : compteur animé ────────────────────────────────
-        const cio = new IntersectionObserver((entries) => {
-            entries.forEach(e => {
-                if (!e.isIntersecting) return;
-                const el = e.target;
-                const target = parseInt(el.dataset.count, 10);
-                const suffix = el.dataset.suffix || '';
-                const t0 = performance.now(), dur = 1200;
-                const tick = (now) => {
-                    const p = Math.min((now - t0) / dur, 1);
-                    const eased = 1 - Math.pow(1 - p, 3);
-                    el.textContent = Math.round(target * eased) + suffix;
-                    if (p < 1) requestAnimationFrame(tick);
-                };
-                requestAnimationFrame(tick);
-                cio.unobserve(el);
-            });
-        }, { threshold: 0.5 });
-        document.querySelectorAll('[data-count]').forEach(el => cio.observe(el));
-
         // ── Estimateur ────────────────────────────────────────────────────
         let speedMultiplier = 1;
 
@@ -1553,6 +1475,17 @@
 
         function toggleDrawer() { drawerIsOpen() ? closeDrawer() : openDrawer(); }
 
+        // Lien entrant « ?service=xxx » (ex-pages services) : préselection du service + ouverture du drawer
+        (function () {
+            const key = new URLSearchParams(window.location.search).get('service');
+            if (!key) return;
+            const map = { photoshoots: 0, reseaux: 1, creation: 2, evenementiel: 3, global: 4 };
+            const sel = document.getElementById('f-service');
+            if (sel && map[key] !== undefined) sel.selectedIndex = map[key];
+            openDrawer();
+            history.replaceState(null, '', location.pathname);
+        })();
+
         // ── Overlay MENU ─────────────────────────────────────────────────
         const menuOverlay = document.getElementById('menu-overlay');
         function menuIsOpen() { return menuOverlay.classList.contains('open'); }
@@ -1579,9 +1512,7 @@
             { t: 'Gestion des Réseaux Sociaux', d: 'Stratégie & présence digitale',        u: 'services.html#reseaux-sociaux' },
             { t: 'Contenu Événementiel', d: 'Capturez l\'essence de vos événements',      u: 'services.html#evenementiel' },
             { t: 'Photoshoots',          d: 'Images éditoriales & direction artistique',   u: 'services.html#photoshoots' },
-            { t: 'À propos',             d: 'L\'histoire du studio & la méthode',          u: 'apropos.html' },
-            { t: 'Portfolio',            d: 'Réalisations sélectionnées',                  u: 'portfolio.html' },
-            { t: 'Contact',              d: 'Réserver un shoot / demander un devis',       u: 'contact.html' }
+            { t: 'Portfolio',            d: 'Réalisations sélectionnées',                  u: 'portfolio.html' }
         ];
 
         function searchIsOpen() { return searchOverlay.classList.contains('open'); }
