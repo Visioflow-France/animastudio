@@ -16,18 +16,18 @@ Contenu de marque issu du profil Instagram [@anima.studio.ch](https://instagram.
 
 Le hero de l'accueil (refait de zéro) combine :
 
-- **Fond** : `image de fond hero section.png` (version web : `hero_bg.jpg`) affichée **telle quelle** — plein cadre, **zéro flou, zéro modification** ;
+- **Fond** : `studio_minimaliste_16x9_1920x1080.png` sur ordinateur — affichée **telle quelle** en qualité maximale, image entière jamais rognée, marges fond noir — et `Studio futuriste bleu aux reflets symétriques.png` sur mobile, plein écran centré ;
 - **Logo** : `LOGO BLANC.png` (découpé au pixel : `logo_blanc_web.png`) en haut à gauche ;
 - **Navbar** : pilule **bordure blanche 2,5 px** (Accueil · Services · À propos · Portfolio) + loupe et MENU à droite ;
 - **Titre** : « Là où votre image prend vie. » en Playfair Display **romain** (pas d'italique), posé directement sur la photo sans panneau ;
-- **Boutons** : 4 rectangles à gauche avec les photos du dossier `image pour les boutons/` (versions web : `btn_*.jpg`) — arrondi doux 22 px, bordure blanche 2,5 px, titre aligné à gauche (limité à 44 % de la largeur, jamais au-delà du milieu), bouton flèche circulaire en bas à gauche.
+- **Bulle services** : une seule carte « Nos Services » à droite avec `bulle services.png` (version web : `btn_services.jpg`) — arrondi doux 22 px, bordure blanche 2,5 px, au ratio exact de son image (jamais rognée), titre en haut à gauche (limité à 44 % de la largeur), bouton flèche circulaire en bas à gauche ; **aucune bulle sur mobile** (CTA « Découvrir nos services » à la place).
 
-Le tout en HTML/CSS fluide (aucun flou nulle part), animé en cascade après l'intro, et responsive : colonne à gauche sur ordinateur, empilement natif sur mobile.
+Le tout en HTML/CSS fluide (aucun flou nulle part), animé en cascade au chargement, et responsive : colonne à gauche sur ordinateur, empilement natif sur mobile.
 
 | Page | Contenu |
 |---|---|
-| `index.html` | Accueil — intro zoom logo, hero image (nav pilule, titre, 4 cartes services), tunnel immersif (galerie 3D scroll-pilotée, fond noir pur), puis **grilles bento** : services, projets, estimateur interactif, FAQ |
-| `services.html` | Page **100 % bento** : en-tête grille (hero + stats + quote), les 4 services en grilles bento avec ancres `#creation-contenu`, `#reseaux-sociaux`, `#evenementiel`, `#photoshoots` (cibles des cartes du hero), renvoi estimateur |
+| `index.html` | Accueil — hero image (nav pilule, titre, bulle « Nos Services »), tunnel immersif (galerie 3D scroll-pilotée, fond noir pur), puis **grilles bento** : services, projets, estimateur interactif, FAQ |
+| `services.html` | Page **100 % bento** : en-tête grille (hero + stats + quote), les 4 services en grilles bento avec ancres `#creation-contenu`, `#reseaux-sociaux`, `#evenementiel`, `#photoshoots` (ancres directes), renvoi estimateur |
 | `apropos.html` | L'histoire du studio, les chiffres, la méthode en 4 jalons, manifeste |
 | `portfolio.html` | Page **100 % bento** : grille filtrable de 9 projets (tuile vedette 2×2 + tuiles image), filtres pilules (Mode & éditorial / Événementiel / Gastronomie / Digital), CTA |
 | `contact.html` | Formulaire complet (préselection du service via `?service=`), coordonnées, process |
