@@ -358,9 +358,9 @@
         .intro-line strong { color: #FF4D00; font-weight: inherit; }
         .intro-flood {
             position: absolute; top: 0; left: 0; z-index: 0;
-            width: 6000px; height: 6000px;
-            transform: scale(0); transform-origin: top left;
-            background: #ffffff; border-radius: 50%;
+            width: 27.5676rem; height: 27.5676rem;
+            transform: scale(0);
+            background: #ffffff; border-radius: 0 100vw 100vw 100vw;
             pointer-events: none; will-change: transform;
         }
         /* Repli statique (mouvement réduit ou sans JS) : les 4 phrases lues en bloc sur fond blanc */
@@ -1400,25 +1400,24 @@
 
             function measure() {
                 stackMax = (stack.children.length - 1) * stack.children[0].offsetHeight;
-                // diamètre suffisant pour couvrir l'écran, même en fin d'engagement (section défilée)
-                var d = Math.hypot(window.innerWidth, rail.offsetHeight) * 2.04;
-                flood.style.width = d + 'px';
-                flood.style.height = d + 'px';
             }
 
             function readScroll() {
                 var rect = rail.getBoundingClientRect();
                 var vh = window.innerHeight;
-                // 0 quand la fenêtre colle à 40vh, 1 quand elle se décolle
-                var p = clamp01((vh * 0.4 - rect.top) / (rect.height - vh * 0.6));
-                target.stack = -clamp01((p - 0.20) / 0.80) * stackMax;  // glissement des phrases
-                target.flood = clamp01((p - 0.20) / 0.52);              // poussée du cercle blanc
+                // 0 quand la fenêtre colle à 40vh, 1 quand elle se décolle (span réel du sticky)
+                var p = clamp01((vh * 0.4 - rect.top) / (rect.height - vh * 0.2));
+                target.stack = -clamp01((p - 0.20) / 0.55) * stackMax;  // glissement des phrases (fini à 75%)
+                target.flood = clamp01((p - 0.22) / 0.43);              // poussée du cercle (finie à 65%, quadratique)
                 target.ink = clamp01((p - 0.25) / 0.30);                // blanc → encre
             }
 
             function apply() {
                 stack.style.transform = 'translate3d(0,' + cur.stack.toFixed(1) + 'px,0)';
-                flood.style.transform = 'scale(' + cur.flood.toFixed(4) + ')';
+                // cercle inscrit d'un élément fixe scalé autour de son centre, comme l'original :
+                // rayon = 220.5 × scale, centre fixe près du coin haut-gauche
+                var scale = 30.5 * cur.flood * cur.flood;
+                flood.style.transform = 'scale(' + scale.toFixed(3) + ')';
                 var c = Math.round(255 + (19 - 255) * cur.ink);
                 stack.style.color = 'rgb(' + c + ',' + c + ',' + c + ')';
             }
@@ -1466,17 +1465,16 @@
                 if (!rail) return 1;
                 var rect = rail.getBoundingClientRect();
                 var vh = window.innerHeight;
-                return Math.min(1, Math.max(0, (vh * 0.4 - rect.top) / (rect.height - vh * 0.6)));
+                return Math.min(1, Math.max(0, (vh * 0.4 - rect.top) / (rect.height - vh * 0.2)));
             }
             function updateHeaderZone() {
                 ticking = false;
                 var p = introProgress();
                 var lightReached = lightZone && lightZone.getBoundingClientRect().top <= 0;
-                // nav/boutons : sombres dès que le blanc les couvre (cœur de l'écran d'abord)
-                headerEl.classList.toggle('header-dark', p > 0.46 || lightReached);
-                // logo : il reste blanc sur la cravate noire du cercle (bord gauche) tant que
-                // la section est visible ; il ne vire au noir qu'une fois la zone claire atteinte
-                headerEl.classList.toggle('header-logo-dark', lightReached);
+                // nav/boutons : sombres quand le blanc les recouvre (plus tardifs, ils sont sur la droite)
+                headerEl.classList.toggle('header-dark', p > 0.40 || lightReached);
+                // logo : le coin haut-gauche est recouvert dès le début de l'inondation
+                headerEl.classList.toggle('header-logo-dark', p > 0.27 || lightReached);
             }
             window.addEventListener('scroll', function () {
                 if (!ticking) { ticking = true; requestAnimationFrame(updateHeaderZone); }
