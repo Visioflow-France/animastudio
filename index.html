@@ -326,32 +326,50 @@
             .tunnel-card { position: static; width: 100% !important; opacity: 1; transform: none; }
         }
 
-        /* ═══ SECTION « SOYONS HONNÊTES, » — révélation au scroll (port vanilla de ScrollRevealText) ═══
-           Port 1:1 du composant React Framer Motion :
-           initial { opacity: 0, y: 30 } → whileInView { opacity: 1, y: 0 }
-           viewport { once: true, margin: -100px } · transition 0.8s cubic-bezier(.16,1,.3,1) */
-        .srt-section {
-            position: relative;
-            display: flex; align-items: center; justify-content: center;
-            height: 100vh; height: 100svh;
-            background: #000000;
-            overflow: hidden;
+        /* ═══ SECTION « SOYONS HONNÊTES, » — séquence sticky (port vanilla de karam-v6.webflow.io) ═══
+           Piste sticky de 270vh : les 4 phrases glissent en continu dans une fenêtre de 20vh collée à
+           40vh (chaque ligne est masquée en fondu haut/bas) pendant qu'un cercle blanc pousse du coin
+           haut-gauche et inonde la section ; le texte s'interpole du blanc vers l'encre dans le même
+           mouvement. Tout est piloté au scroll (scrub lissé), réversible. */
+        .intro-section { position: relative; z-index: 0; background: #000000; color: #ffffff; overflow: clip; }
+        .intro-rail { position: relative; height: 270vh; }
+        .intro-window {
+            position: sticky; top: 40vh; top: 40svh; height: 20vh; height: 20svh; z-index: 1;
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            overflow: hidden; text-align: center;
         }
-        .srt-title {
-            margin: 0; padding: 0 24px; text-align: center;
-            font-family: 'Instrument Serif', serif;
-            font-style: italic; font-weight: 400;
-            font-size: 3rem; line-height: 1;                 /* text-5xl */
-            /* dégradé identique : from-neutral-600 via-white to-neutral-500 */
-            background: linear-gradient(to right, #525252, #ffffff 50%, #a3a3a3);
-            -webkit-background-clip: text; background-clip: text;
-            color: transparent;
-            filter: drop-shadow(0 10px 20px rgba(255,255,255,.15));
-            opacity: 0; transform: translateY(30px);         /* initial */
-            transition: opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1);
+        .intro-stack { display: flex; flex-direction: column; will-change: transform; }
+        .intro-line {
+            flex: none; height: 20vh; height: 20svh;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            -webkit-mask-image: linear-gradient(rgba(0,0,0,0), #000 30%, #000 70%, rgba(0,0,0,0));
+                    mask-image: linear-gradient(rgba(0,0,0,0), #000 30%, #000 70%, rgba(0,0,0,0));
         }
-        @media (min-width: 768px) { .srt-title { font-size: 6rem; } } /* md:text-8xl */
-        .srt-title.is-inview { opacity: 1; transform: translateY(0); }
+        .intro-display {
+            font-family: 'Playfair Display', serif; font-weight: 400;
+            font-size: clamp(2.875rem, 5.892vw + 1.697rem, 7rem);
+            line-height: 1.1; letter-spacing: -0.03em;
+        }
+        .intro-h2 {
+            font-family: 'Playfair Display', serif; font-weight: 400;
+            font-size: clamp(2.5rem, 2.857vw + 1.929rem, 4.5rem);
+            line-height: 1.1; letter-spacing: -0.03em;
+        }
+        .intro-line strong { color: #FF4D00; font-weight: inherit; }
+        .intro-flood {
+            position: absolute; top: 0; left: 0; z-index: 0;
+            width: 6000px; height: 6000px;
+            transform: scale(0); transform-origin: top left;
+            background: #ffffff; border-radius: 50%;
+            pointer-events: none; will-change: transform;
+        }
+        /* Repli statique (mouvement réduit ou sans JS) : les 4 phrases lues en bloc sur fond blanc */
+        .intro-section.is-static { background: #ffffff; }
+        .intro-section.is-static .intro-rail { height: auto; }
+        .intro-section.is-static .intro-window { position: static; height: auto; overflow: visible; padding: 110px 24px 130px; }
+        .intro-section.is-static .intro-stack { transform: none !important; color: #131313 !important; gap: 54px; }
+        .intro-section.is-static .intro-line { height: auto; -webkit-mask-image: none; mask-image: none; }
+        .intro-section.is-static .intro-flood { display: none; }
 
         /* ═══ ZONE CLAIRE — tout ce qui suit « Soyons honnêtes, » passe sur fond blanc ═══
            Remappage des utilitaires Tailwind blancs → encre (#131313), sans toucher au HTML interne */
@@ -381,8 +399,8 @@
         /* ═══ HEADER en zone claire : logo noir (crossfade) + liens et boutons sombres ═══ */
         .header-logo-img { transition: opacity .4s ease; }
         .header-logo-img-dark { position: absolute; left: 0; top: 0; opacity: 0; transition: opacity .4s ease; }
-        #site-header.header-dark .header-logo-img { opacity: 0; }
-        #site-header.header-dark .header-logo-img-dark { opacity: 1; }
+        #site-header.header-logo-dark .header-logo-img { opacity: 0; }
+        #site-header.header-logo-dark .header-logo-img-dark { opacity: 1; }
         #site-header.header-dark .pill-nav a { color: rgba(19,19,19,.62); }
         #site-header.header-dark .pill-nav a:hover,
         #site-header.header-dark .pill-nav a[aria-current="page"] { color: #131313; }
@@ -512,7 +530,7 @@
             .arr { transition: none; }
             #intro, #intro-spacer { display: none; }
             #top .hero-logo, #top .hero-nav, #top .hero-actions, #top .hero-title, #top .hero-cta, #top .hero-card { opacity: 1 !important; transform: none !important; }
-            .srt-title { opacity: 1 !important; transform: none !important; }
+            .intro-section .intro-flood { display: none !important; }
         }
     </style>
 </head>
@@ -790,12 +808,30 @@
             </div>
         </section>
 
-        <!-- ═══════════════ SECTION « SOYONS HONNÊTES, » — révélation au scroll (port de ScrollRevealText) ═══════════════
-             Le pivot du site : noir plein écran ici, tout ce qui suit passe en blanc. -->
-        <section id="soyons-honnetes" class="srt-section" aria-labelledby="srt-title">
-            <h2 id="srt-title" class="srt-title">Soyons honnêtes,</h2>
+        <!-- ═══════════════ SECTION « SOYONS HONNÊTES, » — séquence sticky au scroll (port de karam-v6.webflow.io) ═══════════════
+             Les 4 phrases glissent dans la fenêtre sticky pendant qu'un cercle blanc inonde la section :
+             après cette séquence, tout le reste du site est blanc (et le header passe en logo noir). -->
+        <section id="soyons-honnetes" class="intro-section" aria-label="Introduction — Soyons honnêtes">
+            <div class="intro-rail">
+                <div class="intro-window">
+                    <div class="intro-stack">
+                        <div class="intro-line"><h2 id="intro-title" class="intro-display">Soyons honnêtes,</h2></div>
+                        <div class="intro-line"><p class="intro-h2">Si votre marque devait convaincre en <strong>5 secondes</strong>, y arriverait-elle ?</p></div>
+                        <div class="intro-line"><p class="intro-h2">La plupart des marques ne perdent pas face à la <strong>concurrence,</strong></p></div>
+                        <div class="intro-line"><p class="intro-display">Elles perdent face à <strong>l&rsquo;indifférence.</strong></p></div>
+                    </div>
+                </div>
+            </div>
+            <div class="intro-flood" aria-hidden="true"></div>
         </section>
-        <noscript><style>.srt-title { opacity: 1 !important; transform: none !important; }</style></noscript>
+        <noscript><style>
+            .intro-section { background: #ffffff !important; }
+            .intro-rail { height: auto !important; }
+            .intro-window { position: static !important; height: auto !important; overflow: visible !important; padding: 110px 24px 130px; }
+            .intro-stack { color: #131313 !important; gap: 54px; }
+            .intro-line { height: auto !important; -webkit-mask-image: none !important; mask-image: none !important; }
+            .intro-flood { display: none !important; }
+        </style></noscript>
 
         <!-- ═══════════════ SECTION 03 — SERVICES (aperçu → page Services) ═══════════════ -->
         <section id="services" class="zone-light border-t border-white/10 scroll-mt-24">
@@ -1340,34 +1376,107 @@
         };
         addEventListener('scroll', revealPassed, { passive: true });
 
-        // ── « Soyons honnêtes, » : révélation au scroll (port vanilla de Framer Motion whileInView) ──
+        // ── « Soyons honnêtes, » : séquence sticky au scroll (port vanilla de karam-v6.webflow.io) ──
+        // Pile de 4 phrases glissant dans la fenêtre sticky + cercle blanc qui inonde la section :
+        // tout est fonction du scroll (scrub lissé, réversible), comme le tunnel plus haut.
         (function () {
             'use strict';
-            var title = document.querySelector('.srt-title');
-            if (!title) return;
+            var section = document.querySelector('.intro-section');
+            if (!section) return;
+            var rail = section.querySelector('.intro-rail');
+            var stack = section.querySelector('.intro-stack');
+            var flood = section.querySelector('.intro-flood');
+            if (!rail || !stack || !flood) return;
+
             if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-                title.classList.add('is-inview');
+                section.classList.add('is-static'); // repli : les 4 phrases lues en bloc
                 return;
             }
-            var srt = new IntersectionObserver(function (entries) {
-                if (entries[0].isIntersecting) {
-                    title.classList.add('is-inview');
-                    srt.disconnect(); // viewport: { once: true }
-                }
-            }, { rootMargin: '-100px' }); // viewport: { margin: '-100px' }
-            srt.observe(title);
+
+            var clamp01 = function (x) { return Math.min(1, Math.max(0, x)); };
+            var stackMax = 0;
+            var target = { stack: 0, flood: 0, ink: 0 };
+            var cur = { stack: 0, flood: 0, ink: 0 };
+
+            function measure() {
+                stackMax = (stack.children.length - 1) * stack.children[0].offsetHeight;
+                // diamètre suffisant pour couvrir l'écran, même en fin d'engagement (section défilée)
+                var d = Math.hypot(window.innerWidth, rail.offsetHeight) * 2.04;
+                flood.style.width = d + 'px';
+                flood.style.height = d + 'px';
+            }
+
+            function readScroll() {
+                var rect = rail.getBoundingClientRect();
+                var vh = window.innerHeight;
+                // 0 quand la fenêtre colle à 40vh, 1 quand elle se décolle
+                var p = clamp01((vh * 0.4 - rect.top) / (rect.height - vh * 0.6));
+                target.stack = -clamp01((p - 0.20) / 0.80) * stackMax;  // glissement des phrases
+                target.flood = clamp01((p - 0.20) / 0.52);              // poussée du cercle blanc
+                target.ink = clamp01((p - 0.25) / 0.30);                // blanc → encre
+            }
+
+            function apply() {
+                stack.style.transform = 'translate3d(0,' + cur.stack.toFixed(1) + 'px,0)';
+                flood.style.transform = 'scale(' + cur.flood.toFixed(4) + ')';
+                var c = Math.round(255 + (19 - 255) * cur.ink);
+                stack.style.color = 'rgb(' + c + ',' + c + ',' + c + ')';
+            }
+
+            window.addEventListener('scroll', readScroll, { passive: true });
+            window.addEventListener('resize', function () { measure(); readScroll(); });
+            measure(); readScroll(); apply();
+
+            var running = false, rafId = 0, lastT = 0;
+            function tick(now) {
+                if (!running) return;
+                var dt = lastT ? Math.min(0.05, (now - lastT) / 1000) : 0.016;
+                lastT = now;
+                var k = 1 - Math.exp(-9 * dt);
+                cur.stack += (target.stack - cur.stack) * k;
+                cur.flood += (target.flood - cur.flood) * k;
+                cur.ink += (target.ink - cur.ink) * k;
+                apply();
+                rafId = requestAnimationFrame(tick);
+            }
+            function startLoop() {
+                if (running) return;
+                running = true; lastT = 0;
+                cur.stack = target.stack; cur.flood = target.flood; cur.ink = target.ink; // reprise nette
+                rafId = requestAnimationFrame(tick);
+            }
+            function stopLoop() { running = false; cancelAnimationFrame(rafId); }
+
+            new IntersectionObserver(function (entries) {
+                if (entries[0].isIntersecting) startLoop(); else stopLoop();
+            }, { rootMargin: '25% 0px 25% 0px' }).observe(section);
         })();
 
-        // ── Header : bascule logo noir + interface sombre dès que la zone claire atteint le haut de l'écran ──
+        // ── Header : bascule logo noir + interface sombre dès que le fond derrière lui est blanc ──
+        // Deux seuils : la nav/boutons basculent tôt (ils sont vite sur fond blanc), le logo bascule
+        // plus tard (il reste lisible en blanc sur la cravate noire du cercle jusqu'à la couverture).
         (function () {
             'use strict';
             var headerEl = document.getElementById('site-header');
             var lightZone = document.getElementById('services');
-            if (!headerEl || !lightZone) return;
+            var rail = document.querySelector('.intro-rail');
+            if (!headerEl) return;
             var ticking = false;
+            function introProgress() {
+                if (!rail) return 1;
+                var rect = rail.getBoundingClientRect();
+                var vh = window.innerHeight;
+                return Math.min(1, Math.max(0, (vh * 0.4 - rect.top) / (rect.height - vh * 0.6)));
+            }
             function updateHeaderZone() {
                 ticking = false;
-                headerEl.classList.toggle('header-dark', lightZone.getBoundingClientRect().top <= 0);
+                var p = introProgress();
+                var lightReached = lightZone && lightZone.getBoundingClientRect().top <= 0;
+                // nav/boutons : sombres dès que le blanc les couvre (cœur de l'écran d'abord)
+                headerEl.classList.toggle('header-dark', p > 0.46 || lightReached);
+                // logo : il reste blanc sur la cravate noire du cercle (bord gauche) tant que
+                // la section est visible ; il ne vire au noir qu'une fois la zone claire atteinte
+                headerEl.classList.toggle('header-logo-dark', lightReached);
             }
             window.addEventListener('scroll', function () {
                 if (!ticking) { ticking = true; requestAnimationFrame(updateHeaderZone); }
