@@ -1258,7 +1258,8 @@
 
     <!-- ═══════════════ DOCK FLOTTANT — actions rapides en bas d'écran (chorégraphie portée de tekiyo.eu) ═══════════════
          WhatsApp · Caméra (rendez-vous) · Contact (pilule centrale) · Recherche · Menu.
-         Apparaît une fois la loupe + MENU du hero sortis de l'écran, puis reste sur toute la page. -->
+         Apparaît avec l'animation uniquement quand la barre du haut du hero (liens, loupe, MENU)
+         n'est plus visible à l'écran ; disparaît de nouveau si on remonte dessus. -->
     <nav id="float-dock" aria-label="Actions rapides">
         <a class="dock-btn" href="https://wa.me/41790000000" target="_blank" rel="noopener noreferrer"
            aria-label="WhatsApp" style="--bx:120px; --br:90deg; --d:1.15s">
@@ -1295,30 +1296,41 @@
             header.classList.toggle('is-ghost', entries[0].isIntersecting);
         }, { threshold: 0.02 }).observe(heroSection);
 
-        // ── DOCK flottant : jaillit quand la loupe + MENU du hero quittent l'écran, puis reste ──
+        // ── DOCK flottant : strictement lié à la visibilité de la barre du haut du hero ──
+        // Tant que le logo, les liens, la loupe ou le MENU du hero sont visibles à l'écran, pas de dock.
+        // Dès qu'ils sortent entièrement du viewport (et que l'intro est terminée), le dock jaillit avec
+        // la chorégraphie complète ; si on remonte sur le hero, il disparaît — et se rejouera en redescendant.
         (function () {
             const dock = document.getElementById('float-dock');
             if (!dock) return;
-            const heroActions = document.querySelector('#top .hero-actions');
+            const heroBar = document.querySelector('#top .hero-bar');
             const introSec = document.querySelector('.intro-section');
             const flood = introSec ? introSec.querySelector('.intro-flood') : null;
             const firstLight = document.getElementById('services');
-            let shown = false;
 
-            function showDock() {
-                if (shown) return;
-                shown = true;
-                dock.classList.add('is-in');
+            function introActive() { return document.body.classList.contains('intro-active'); }
+
+            let heroBarVisible = true;
+            function sync() {
+                const shouldShow = heroBar && !heroBarVisible && !introActive();
+                if (shouldShow) {
+                    dock.classList.add('is-in');
+                } else if (dock.classList.contains('is-in')) {
+                    dock.classList.remove('is-in'); // retire l'état : l'animation se rejouera à la prochaine apparition
+                }
             }
 
-            // Apparition : dès que les boutons du haut ne sont plus visibles (une fois apparu, il reste sur toute la page)
-            if (heroActions && 'IntersectionObserver' in window) {
+            if (heroBar && 'IntersectionObserver' in window) {
                 new IntersectionObserver((entries) => {
-                    if (!entries[0].isIntersecting) showDock();
-                }, { threshold: 0 }).observe(heroActions);
+                    heroBarVisible = entries[0].isIntersecting;
+                    sync();
+                }, { threshold: 0 }).observe(heroBar);
             } else {
-                showDock();
+                heroBarVisible = false;
+                sync();
             }
+            // La fin de l'intro remet la page en haut : réévaluer après son fondu (le dock ne doit pas y survivre)
+            document.addEventListener('anima:intro-done', () => setTimeout(sync, 1000));
 
             // Thème : bulles blanches (icônes noires) sur fond sombre, bulles noires (icônes blanches) sur fond clair.
             // Deux signaux : le carré blanc de « Soyons honnêtes » recouvre-t-il déjà le point du dock (bas centré),
