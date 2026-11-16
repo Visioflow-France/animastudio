@@ -149,8 +149,6 @@
             pointer-events: none;
         }
 
-        /* CTA « Découvrir nos services » : visible uniquement sur mobile */
-        .hero-cta { display: none; }
         .hero-cards { width: min(460px, 34vw); flex: none; }
 
         /* Bulle unique : au ratio exact de son image (1671×941), qui reste donc entièrement visible */
@@ -192,9 +190,10 @@
             .hero-logo img { height: 60px; }
             .h-search { width: 46px; height: 46px; }
             .h-menu { height: 46px; padding: 0 20px; font-size: 11.5px; }
-            /* Titre + CTA centrés, posés vers 38% de la hauteur de l'écran */
+            /* Titre centré, posé vers le bas-milieu (~60%) : le décor de l'image
+               (scène, néons, plantes) reste entièrement visible au-dessus */
             .hero-body {
-                position: absolute; top: 38%; left: 50%; transform: translateX(-50%);
+                position: absolute; top: 60%; left: 50%; transform: translateX(-50%);
                 width: 100%;
                 flex-direction: column; align-items: center; justify-content: flex-start;
                 padding: 0;
@@ -203,31 +202,15 @@
                 font-size: 2rem; line-height: 1.2;
                 max-width: 90%; padding: 0; margin: 0;
                 text-align: center;
+                filter: none;                            /* pas d'ombre sombre sur les lettres */
             }
-            .hero-title::before { inset: -36px -24px; }
-
-            /* CTA minimaliste — remplace la carte « Nos Services » sur petit écran */
-            .hero-cta {
-                display: inline-flex; align-items: center; gap: 10px;
-                margin-top: 24px;
-                padding: 13px 28px;
-                border: 1px solid rgba(255,255,255,0.6);
-                border-radius: 9999px;
-                background: rgba(255,255,255,0.08);
-                -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
-                font-family: 'IBM Plex Mono', monospace;
-                font-size: 11px; letter-spacing: .2em; text-indent: .2em; text-transform: uppercase;
-                color: #FFFFFF; text-decoration: none;
-                transition: background .25s ease, color .25s ease;
-            }
-            .hero-cta:hover, .hero-cta:focus-visible { background: #FFFFFF; color: #131313; }
-            .hero-cta:focus-visible { outline: 2px solid #FF4D00; outline-offset: 3px; }
+            .hero-title::before { display: none; }       /* pas de calque sombre derrière le titre */
 
             .hero-cards { display: none; }   /* aucune bulle sur mobile */
         }
 
         /* ── Naissance du hero (à l'arrivée sur la page) ── */
-        #top .hero-logo, #top .hero-nav, #top .hero-actions, #top .hero-title, #top .hero-cta, #top .hero-card {
+        #top .hero-logo, #top .hero-nav, #top .hero-actions, #top .hero-title, #top .hero-card {
             opacity: 0; transform: translateY(24px);
             transition: opacity .8s ease, transform .9s cubic-bezier(.16,1,.3,1);
         }
@@ -236,26 +219,12 @@
         #top.is-born .hero-actions { opacity: 1; transform: none; transition-delay: .20s; }
         #top.is-born .hero-title   { opacity: 1; transform: none; transition-delay: .28s; }
         #top.is-born .hero-card    { opacity: 1; transform: none; transition-delay: .40s; }
-        #top.is-born .hero-cta     { opacity: 1; transform: none; transition-delay: .48s; }
 
-        /* Header invisible tant que le hero (qui porte sa propre nav) est à l'écran */
+        /* Header invisible tant que le hero (qui porte sa propre nav) est à l'écran ;
+           une fois le hero dépassé il ne montre que le logo (les liens et bulles du hero
+           sont partis avec lui, et le dock flottant du bas reprend recherche + menu) */
         #site-header { transition: opacity .4s ease, transform .4s ease, background-color .35s ease, border-color .35s ease; }
         #site-header.is-ghost { opacity: 0; transform: translateY(-100%); pointer-events: none; }
-
-        /* Nav du header : liens simples, sans bande */
-        .pill-nav a {
-            position: relative;
-            padding: .45rem .85rem;
-            font-size: 12.5px; letter-spacing: .08em;
-            color: rgba(255,255,255,.6);
-            transition: color .25s ease;
-            white-space: nowrap;
-        }
-        .pill-nav a:hover { color: #fff; }
-        .pill-nav a[aria-current="page"] { color: #fff; }
-        .pill-nav .sep { width: 1px; height: 12px; background: rgba(255,255,255,.15); flex: none; transition: background .25s ease; }
-
-        /* Header sticky : aucune bande — logo et liens posés directement sur les sections */
 
         /* Héro : lettres révélées en cascade */
         .wrap-l { display: inline-block; overflow: hidden; vertical-align: bottom; padding-bottom: .06em; }
@@ -517,14 +486,6 @@
         .header-logo-img-dark { position: absolute; left: 0; top: 0; opacity: 0; transition: opacity .4s ease; }
         #site-header.header-logo-dark .header-logo-img { opacity: 0; }
         #site-header.header-logo-dark .header-logo-img-dark { opacity: 1; }
-        #site-header.header-dark .pill-nav a { color: rgba(19,19,19,.62); }
-        #site-header.header-dark .pill-nav a:hover,
-        #site-header.header-dark .pill-nav a[aria-current="page"] { color: #131313; }
-        #site-header.header-dark .pill-nav .sep { background: rgba(19,19,19,.16); }
-        #site-header.header-dark .header-search-btn { color: #131313; border-color: rgba(19,19,19,.28); }
-        #site-header.header-dark .header-search-btn:hover { border-color: #131313; background: rgba(19,19,19,.08); }
-        #site-header.header-dark .header-menu-btn { color: #131313; border-color: rgba(19,19,19,.32); }
-        #site-header.header-dark .header-menu-btn:hover { background: #131313; color: #ffffff; }
 
         /* Entrée du header au chargement */
         #site-header { animation: headerIn .8s cubic-bezier(.16,1,.3,1) both; }
@@ -691,7 +652,7 @@
             .letter { transform: none; }
             #site-header { animation: none; }
             .arr { transition: none; }
-            #top .hero-logo, #top .hero-nav, #top .hero-actions, #top .hero-title, #top .hero-cta, #top .hero-card { opacity: 1 !important; transform: none !important; }
+            #top .hero-logo, #top .hero-nav, #top .hero-actions, #top .hero-title, #top .hero-card { opacity: 1 !important; transform: none !important; }
             .intro-section .intro-flood { display: none !important; }
         }
     </style>
@@ -700,9 +661,11 @@
 
     <a href="#main" class="skip">Aller au contenu principal</a>
 
-    <!-- ═══════════════ HEADER — invisible tant que le hero (qui porte sa propre nav dans l'image) est à l'écran ═══════════════ -->
+    <!-- ═══════════════ HEADER — invisible tant que le hero (qui porte sa propre nav dans l'image) est à l'écran.
+         Une fois le hero dépassé, il n'affiche que le logo : liens et bulles (menu / loupe) restent
+         dans le hero en haut de page, et le dock flottant en bas reprend recherche + menu au scroll. ═══════════════ -->
     <header id="site-header" class="fixed top-0 left-0 z-50 w-full is-ghost">
-        <div class="max-w-[1560px] mx-auto flex items-center justify-between gap-4 px-[18px] pt-4 pb-2 md:px-10 md:pt-6 md:pb-3">
+        <div class="max-w-[1560px] mx-auto flex items-center gap-4 px-[18px] pt-4 pb-2 md:px-10 md:pt-6 md:pb-3">
 
             <!-- Logo (identique au hero : logo blanc image, fond sombre partout) — version noire superposée pour la zone claire -->
             <a href="index.html" class="relative flex items-center group" aria-label="ANIMA Studio — Accueil">
@@ -710,26 +673,6 @@
                 <img src="logo_noir_web.png" alt="" aria-hidden="true" class="header-logo-img-dark h-[60px] w-auto md:h-[84px]" draggable="false">
             </a>
 
-            <!-- Nav pilule (identique au hero) -->
-            <nav class="pill-nav hidden md:flex items-center gap-1" aria-label="Navigation principale">
-                <a href="index.html" aria-current="page">Accueil</a>
-                <span class="sep" aria-hidden="true"></span>
-                <a href="services.html">Services</a>
-                <span class="sep" aria-hidden="true"></span>
-                <a href="portfolio.html">Portfolio</a>
-            </nav>
-
-            <!-- Actions droite : recherche + MENU (identiques au hero) -->
-            <div class="flex items-center gap-3">
-                <button onclick="toggleSearch()" aria-label="Rechercher sur le site" class="header-search-btn w-10 h-10 rounded-full border border-white/25 hover:border-white hover:bg-white/10 transition-colors grid place-items-center">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-                        <circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.5" y2="16.5"></line>
-                    </svg>
-                </button>
-                <button onclick="toggleMenu()" class="header-menu-btn font-mono text-[11px] uppercase tracking-[0.25em] border border-white/30 hover:bg-white hover:text-ink transition-colors rounded-full px-5 py-2.5">
-                    Menu
-                </button>
-            </div>
         </div>
     </header>
 
@@ -763,7 +706,6 @@
 
                 <div class="hero-body">
                     <h1 class="hero-title">Là où votre<br>image prend vie.</h1>
-                    <a class="hero-cta" href="services.html">Découvrir nos services</a>
 
                     <div class="hero-cards">
                         <a class="hero-card" href="services.html">
@@ -776,7 +718,7 @@
 
             </div>
         </section>
-        <noscript><style>#top .hero-logo, #top .hero-nav, #top .hero-actions, #top .hero-title, #top .hero-cta, #top .hero-card { opacity: 1 !important; transform: none !important; }</style></noscript>
+        <noscript><style>#top .hero-logo, #top .hero-nav, #top .hero-actions, #top .hero-title, #top .hero-card { opacity: 1 !important; transform: none !important; }</style></noscript>
 
         <!-- ═══════════════ SECTION 01 — TUNNEL IMMERSIF (galerie 3D pilotée au scroll) ═══════════════ -->
         <section id="tunnel" class="tunnel-section">
@@ -1577,8 +1519,6 @@
                 ticking = false;
                 var p = introProgress();
                 var lightReached = lightZone && lightZone.getBoundingClientRect().top <= 0;
-                // nav/boutons : sombres quand le blanc les recouvre (plus tardifs, ils sont sur la droite)
-                headerEl.classList.toggle('header-dark', p > 0.38 || lightReached);
                 // logo : le coin haut-gauche est recouvert dès les premiers pixels du carré blanc
                 headerEl.classList.toggle('header-logo-dark', p > 0.27 || lightReached);
             }

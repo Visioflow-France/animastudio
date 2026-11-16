@@ -59,6 +59,18 @@
         #site-header { animation: headerIn .8s cubic-bezier(.16,1,.3,1) both; background: transparent; }
         @keyframes headerIn { from { transform: translateY(-100%); } }
 
+        /* Au scroll : liens et bulles s'effacent, seul le logo reste en haut */
+        .pill-nav, .header-actions {
+            visibility: visible;
+            transition: opacity .35s ease, transform .35s ease, visibility 0s linear 0s;
+        }
+        #site-header.header-min .pill-nav,
+        #site-header.header-min .header-actions {
+            opacity: 0; transform: translateY(-10px);
+            pointer-events: none; visibility: hidden;
+            transition: opacity .35s ease, transform .35s ease, visibility 0s linear .35s;
+        }
+
         .arr { display: inline-block; transition: transform .3s ease; }
         a:hover .arr, button:hover .arr { transform: translate(3px, -3px); }
 
@@ -216,7 +228,7 @@
                 <a href="portfolio.html">Portfolio</a>
             </nav>
 
-            <div class="flex items-center gap-3">
+            <div class="header-actions flex items-center gap-3">
                 <button onclick="toggleSearch()" aria-label="Rechercher sur le site" class="header-search-btn w-10 h-10 rounded-full border transition-colors grid place-items-center">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
                         <circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.5" y2="16.5"></line>
@@ -543,6 +555,21 @@
                 if (el.getBoundingClientRect().top < innerHeight * 0.9) el.classList.add('visible');
             });
         }, { passive: true });
+
+        // ── Header au scroll : liens et bulles s'effacent, seul le logo reste en haut ──
+        (function () {
+            const headerEl = document.getElementById('site-header');
+            if (!headerEl) return;
+            let ticking = false;
+            function update() {
+                ticking = false;
+                headerEl.classList.toggle('header-min', window.scrollY > 60);
+            }
+            window.addEventListener('scroll', function () {
+                if (!ticking) { ticking = true; requestAnimationFrame(update); }
+            }, { passive: true });
+            update();
+        })();
 
         // ── Overlay MENU ─────────────────────────────────────────────────
         const menuOverlay = document.getElementById('menu-overlay');
