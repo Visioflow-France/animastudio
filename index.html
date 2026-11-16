@@ -358,10 +358,9 @@
         .intro-line strong { color: #FF4D00; font-weight: inherit; }
         .intro-flood {
             position: absolute; top: 0; left: 0; z-index: 0;
-            width: 27.5676rem; height: 27.5676rem;
-            transform: scale(0);
+            width: 0; height: 0;
             background: #ffffff; border-radius: 0 100vw 100vw 100vw;
-            pointer-events: none; will-change: transform;
+            pointer-events: none;
         }
         /* Repli statique (mouvement réduit ou sans JS) : les 4 phrases lues en bloc sur fond blanc */
         .intro-section.is-static { background: #ffffff; }
@@ -1394,7 +1393,7 @@
             }
 
             var clamp01 = function (x) { return Math.min(1, Math.max(0, x)); };
-            var stackMax = 0;
+            var stackMax = 0, floodMax = 13450; // taille max du carré blanc (≈ 30.5 × 441px, comme l'original)
             var target = { stack: 0, flood: 0, ink: 0 };
             var cur = { stack: 0, flood: 0, ink: 0 };
 
@@ -1408,16 +1407,17 @@
                 // 0 quand la fenêtre colle à 40vh, 1 quand elle se décolle (span réel du sticky)
                 var p = clamp01((vh * 0.4 - rect.top) / (rect.height - vh * 0.2));
                 target.stack = -clamp01((p - 0.20) / 0.55) * stackMax;  // glissement des phrases (fini à 75%)
-                target.flood = clamp01((p - 0.22) / 0.43);              // poussée du cercle (finie à 65%, quadratique)
+                target.flood = clamp01((p - 0.22) / 0.43);              // poussée du carré blanc (finie à 65%, quadratique)
                 target.ink = clamp01((p - 0.25) / 0.30);                // blanc → encre
             }
 
             function apply() {
                 stack.style.transform = 'translate3d(0,' + cur.stack.toFixed(1) + 'px,0)';
-                // cercle inscrit d'un élément fixe scalé autour de son centre, comme l'original :
-                // rayon = 220.5 × scale, centre fixe près du coin haut-gauche
-                var scale = 30.5 * cur.flood * cur.flood;
-                flood.style.transform = 'scale(' + scale.toFixed(3) + ')';
+                // carré blanc ancré au coin haut-gauche : il naît SUR le coin, grandit en diagonale
+                // (rayon 100vw contraint par le CSS = cercle inscrit, comme l'original)
+                var s = Math.round(floodMax * cur.flood * cur.flood);
+                flood.style.width = s + 'px';
+                flood.style.height = s + 'px';
                 var c = Math.round(255 + (19 - 255) * cur.ink);
                 stack.style.color = 'rgb(' + c + ',' + c + ',' + c + ')';
             }
@@ -1472,8 +1472,8 @@
                 var p = introProgress();
                 var lightReached = lightZone && lightZone.getBoundingClientRect().top <= 0;
                 // nav/boutons : sombres quand le blanc les recouvre (plus tardifs, ils sont sur la droite)
-                headerEl.classList.toggle('header-dark', p > 0.40 || lightReached);
-                // logo : le coin haut-gauche est recouvert dès le début de l'inondation
+                headerEl.classList.toggle('header-dark', p > 0.38 || lightReached);
+                // logo : le coin haut-gauche est recouvert dès les premiers pixels du carré blanc
                 headerEl.classList.toggle('header-logo-dark', p > 0.27 || lightReached);
             }
             window.addEventListener('scroll', function () {
