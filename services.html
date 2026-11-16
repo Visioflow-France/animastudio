@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Services — ANIMA Studio | Création de contenu, réseaux sociaux, événements, photoshoots</title>
     <meta name="description" content="Les services ANIMA Studio : création de contenu, gestion des réseaux sociaux, contenu événementiel et photoshoots. Des contenus qui racontent votre histoire. Lausanne · Genève · Suisse.">
-    <meta name="theme-color" content="#131313">
+    <meta name="theme-color" content="#f5f5f7">
     <meta property="og:title" content="Services — ANIMA Studio">
     <meta property="og:description" content="Création de contenu, réseaux sociaux, événements & photoshoots.">
     <meta property="og:type" content="website">
@@ -13,10 +13,10 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Google Fonts : Instrument Serif, Inter, IBM Plex Mono -->
+    <!-- Google Fonts : Instrument Serif (wordmark), Inter (base), IBM Plex Mono (labels overlays), Sora + DM Sans (cartes bento) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&family=Sora:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
@@ -35,25 +35,28 @@
 
     <style>
         html { scroll-behavior: smooth; }
-        body { background-color: #131313; color: #FFFFFF; font-family: 'Inter', sans-serif; font-weight: 300; }
+        /* Page entière en zone claire bento : fond blanc, encre sombre */
+        body { background-color: #ffffff; color: #131313; font-family: 'Inter', sans-serif; font-weight: 300; }
         ::selection { background: #FF4D00; color: #131313; }
 
         .skip { position: absolute; left: -9999px; top: 0; z-index: 100; }
-        .skip:focus { left: 16px; top: 16px; padding: 8px 16px; background: #fff; color: #131313; font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: .15em; }
+        .skip:focus { left: 16px; top: 16px; padding: 8px 16px; background: #131313; color: #fff; font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: .15em; }
 
-        /* Nav pilule */
-        /* Nav du header : liens simples, sans bande */
+        /* Nav du header — posée sur fond clair : liens et séparateurs sombres */
         .pill-nav a {
             position: relative; padding: .45rem .85rem;
-            font-size: 12.5px; letter-spacing: .08em; color: rgba(255,255,255,.6);
+            font-size: 12.5px; letter-spacing: .08em; color: rgba(19,19,19,.62);
             transition: color .25s ease; white-space: nowrap;
         }
-        .pill-nav a:hover { color: #fff; }
-        .pill-nav a[aria-current="page"] { color: #fff; }
-        .pill-nav .sep { width: 1px; height: 12px; background: rgba(255,255,255,.15); flex: none; }
+        .pill-nav a:hover { color: #131313; }
+        .pill-nav a[aria-current="page"] { color: #131313; }
+        .pill-nav .sep { width: 1px; height: 12px; background: rgba(19,19,19,.16); flex: none; }
+        .header-search-btn { color: #131313; border-color: rgba(19,19,19,.28); }
+        .header-search-btn:hover { border-color: #131313; background: rgba(19,19,19,.08); }
+        .header-menu-btn { color: #131313; border-color: rgba(19,19,19,.32); }
+        .header-menu-btn:hover { background: #131313; color: #ffffff; }
 
-        /* Header sticky : aucune bande — logo et liens posés directement sur les sections */
-        #site-header { animation: headerIn .8s cubic-bezier(.16,1,.3,1) both; }
+        #site-header { animation: headerIn .8s cubic-bezier(.16,1,.3,1) both; background: transparent; }
         @keyframes headerIn { from { transform: translateY(-100%); } }
 
         .arr { display: inline-block; transition: transform .3s ease; }
@@ -61,6 +64,95 @@
 
         .reveal { opacity: 0; transform: translateY(48px); transition: opacity .9s ease, transform .9s cubic-bezier(.16,1,.3,1); }
         .reveal.visible { opacity: 1; transform: none; }
+
+        .star-spin { display: inline-block; transform-origin: 50% 54%; animation: spin 18s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ═══ BENTO GRID — design system « apple-bento-grid » (thème clair, adapté web) ═══
+           Règles zero-gap du skill : gap de 6px exactement, jamais align-items:start (les cartes
+           remplissent leur cellule), aucune cellule vide. Tokens : fond #f5f5f7, cartes #ffffff,
+           texte #1d1d1f/#86868b/#aeaeb2, pills #f0f0f2. Accents (3 max) : #FF4D00 (marque),
+           #00b4d8, #34d399. Typo cartes : Sora (titres, nombres) · DM Sans (corps). */
+        .bento-section { background: #f5f5f7; }
+        .bento-outer { max-width: 1280px; margin: 0 auto; padding: 76px 24px; }
+        .bento {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            grid-auto-rows: minmax(190px, auto);
+            gap: 6px;                                  /* 6px — jamais 8px */
+        }
+        .bento .card {
+            background: #ffffff; border-radius: 18px;
+            box-shadow: 0 1px 8px rgba(0,0,0,.05);
+            padding: 20px 22px;
+            display: flex; flex-direction: column; justify-content: center;
+            position: relative; overflow: hidden; min-width: 0; text-align: left;
+        }
+        a.card { color: inherit; text-decoration: none; }
+        a.card:hover { box-shadow: 0 8px 24px rgba(0,0,0,.09); }
+        .bento .c2 { grid-column: span 2; }
+        .bento .c3 { grid-column: span 3; }
+        .bento .c4 { grid-column: 1 / -1; }
+        .bento .r2 { grid-row: span 2; }
+        .bento .num   { font-family:'Sora',sans-serif; font-weight:800; letter-spacing:-.03em; line-height:1; }
+        .bento .label { font-family:'DM Sans',sans-serif; font-weight:500; color:#86868b; line-height:1.3; }
+        .bento .label strong { color:#1d1d1f; font-weight:600; }
+        /* HERO */
+        .bento .b-hero { padding: 26px; }
+        .b-hero::before {
+            content:''; position:absolute; top:0; left:0; right:0; height:4px;
+            background: linear-gradient(90deg, #FF4D00, #ff9a6b, #FF4D00);
+            border-radius: 18px 18px 0 0;
+        }
+        .b-eyebrow { font-family:'DM Sans',sans-serif; font-size:12px; font-weight:600; color:#FF4D00; text-transform:uppercase; letter-spacing:.09em; margin-bottom:12px; }
+        .b-tagline, .b-subtag { font-family:'Sora',sans-serif; font-weight:700; letter-spacing:-.03em; line-height:1.14; font-size:clamp(23px,2.3vw,33px); color:#1d1d1f; }
+        .b-subtag { color:#86868b; }
+        .b-desc { font-family:'DM Sans',sans-serif; font-size:14px; color:#86868b; line-height:1.55; margin-top:12px; max-width:48ch; }
+        .b-date { font-family:'DM Sans',sans-serif; font-size:12px; font-weight:500; color:#aeaeb2; margin-top:14px; }
+        .b-date .arr { color:#FF4D00; }
+        /* CATEGORY */
+        .b-cat-num { font-family:'DM Sans',sans-serif; font-size:11px; font-weight:600; color:#aeaeb2; margin-bottom:8px; }
+        .category-name { font-family:'Sora',sans-serif; font-size:17px; font-weight:700; letter-spacing:-.01em; margin-bottom:5px; color:#1d1d1f; }
+        .category-focus { font-family:'DM Sans',sans-serif; font-size:12.5px; font-weight:500; color:#86868b; margin-bottom:12px; }
+        .pills-wrap { display:flex; flex-wrap:wrap; }
+        .pill { display:inline-block; font-family:'DM Sans',sans-serif; font-size:10px; font-weight:600; color:#6e6e73; background:#f0f0f2; border-radius:100px; padding:3px 9px; margin:2px 2px 2px 0; white-space:nowrap; }
+        /* BADGE */
+        .badge-pill { display:inline-flex; align-items:center; gap:6px; background:#f0f0f2; border-radius:100px; padding:4px 12px; margin-bottom:10px; width:fit-content; }
+        .badge-pill span { font-family:'DM Sans',sans-serif; font-size:11px; font-weight:600; color:#6e6e73; }
+        .badge-num { font-family:'Sora',sans-serif; font-size:34px; font-weight:800; letter-spacing:-.03em; color:#FF4D00; }
+        .badge-lbl { font-family:'DM Sans',sans-serif; font-size:11px; color:#86868b; margin-top:4px; }
+        /* QUOTE */
+        .bento .b-quote { background:#1d1d1f; padding:24px 28px; }
+        .quote-text { font-family:'Sora',sans-serif; font-size:clamp(16px,1.6vw,21px); font-weight:600; color:#fff; letter-spacing:-.01em; line-height:1.4; }
+        .quote-text em { color:#00b4d8; font-style:normal; }
+        /* IMAGE */
+        .bento .b-img { padding:0; }
+        .b-img-fill { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:transform .6s cubic-bezier(.16,1,.3,1); }
+        .b-img::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg,rgba(8,8,10,0) 46%,rgba(8,8,10,.74) 100%); }
+        .b-img-cap { position:absolute; z-index:2; left:20px; right:20px; bottom:16px; display:flex; flex-direction:column; gap:3px; }
+        .b-cap-title { font-family:'Sora',sans-serif; font-size:15px; font-weight:600; color:#fff; letter-spacing:-.01em; }
+        .b-cap-link { font-family:'DM Sans',sans-serif; font-size:12px; font-weight:600; color:rgba(255,255,255,.85); }
+        .b-cap-link .arr { color:#FF4D00; }
+        a.b-img:hover .b-img-fill { transform:scale(1.045); }
+        /* Boutons pilule */
+        .b-btn { display:inline-flex; justify-content:center; align-items:center; gap:8px; background:#1d1d1f; color:#fff; border:0; border-radius:100px; padding:12px 22px; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:700; text-decoration:none; margin-top:16px; width:fit-content; transition:transform .2s ease, box-shadow .2s ease; }
+        .b-btn:hover { transform:translateY(-1px); box-shadow:0 8px 20px rgba(0,0,0,.18); }
+        .b-cta { margin-top:16px; width:100%; display:inline-flex; justify-content:center; align-items:center; gap:8px; background:#fff; color:#1d1d1f; border:0; border-radius:100px; padding:12px 22px; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:700; text-decoration:none; transition:transform .2s ease, box-shadow .2s ease; }
+        .b-cta:hover { transform:translateY(-1px); box-shadow:0 8px 20px rgba(0,0,0,.3); }
+        /* Ancres pilule */
+        .b-anchors { display:flex; flex-wrap:wrap; margin-top:14px; }
+        .b-anchor { display:inline-block; font-family:'DM Sans',sans-serif; font-size:11px; font-weight:600; color:#6e6e73; background:#f0f0f2; border-radius:100px; padding:6px 14px; margin:3px 4px 0 0; transition:background .2s ease, color .2s ease; }
+        a.b-anchor:hover { background:#1d1d1f; color:#fff; }
+        @media (max-width:1023px) {
+            .bento { grid-template-columns:repeat(2, minmax(0,1fr)); }
+            .bento .c3, .bento .c4 { grid-column:span 2; }
+            .bento-outer { padding:60px 20px; }
+        }
+        @media (max-width:639px) {
+            .bento { grid-auto-rows:minmax(168px,auto); }
+            .bento .c2 { grid-column:span 2; }
+            .bento-outer { padding:52px 14px; }
+        }
 
         /* Overlay MENU */
         #menu-overlay {
@@ -94,12 +186,9 @@
         .search-result { transition: background .2s ease, border-color .2s ease; }
         .search-result:hover, .search-result.is-cursor { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.25); }
 
-        .star-spin { display: inline-block; transform-origin: 50% 54%; animation: spin 18s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #131313; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.2); }
+        ::-webkit-scrollbar-track { background: #f5f5f7; }
+        ::-webkit-scrollbar-thumb { background: rgba(0,0,0,.22); }
 
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after { animation-duration: .001s !important; animation-iteration-count: 1 !important; transition-duration: .001s !important; }
@@ -108,15 +197,15 @@
         }
     </style>
 </head>
-<body class="bg-ink text-white antialiased min-h-screen flex flex-col">
+<body class="antialiased min-h-screen flex flex-col">
 
     <a href="#main" class="skip">Aller au contenu principal</a>
 
-    <!-- ═══════════════ HEADER ═══════════════ -->
+    <!-- ═══════════════ HEADER (fond clair : logo noir) ═══════════════ -->
     <header id="site-header" class="sticky top-0 z-50 w-full">
         <div class="max-w-[1560px] mx-auto flex items-center justify-between gap-4 px-[18px] pt-4 pb-2 md:px-10 md:pt-6 md:pb-3">
             <a href="index.html" class="flex items-center group" aria-label="ANIMA Studio — Accueil">
-                <img src="logo_blanc_web.png" alt="ANIMA Studio" class="h-[60px] w-auto md:h-[84px]" draggable="false">
+                <img src="logo_noir_web.png" alt="ANIMA Studio" class="h-[60px] w-auto md:h-[84px]" draggable="false">
             </a>
 
             <nav class="pill-nav hidden md:flex items-center gap-1" aria-label="Navigation principale">
@@ -128,12 +217,12 @@
             </nav>
 
             <div class="flex items-center gap-3">
-                <button onclick="toggleSearch()" aria-label="Rechercher sur le site" class="w-10 h-10 rounded-full border border-white/25 hover:border-white hover:bg-white/10 transition-colors grid place-items-center">
+                <button onclick="toggleSearch()" aria-label="Rechercher sur le site" class="header-search-btn w-10 h-10 rounded-full border transition-colors grid place-items-center">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
                         <circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.5" y2="16.5"></line>
                     </svg>
                 </button>
-                <button onclick="toggleMenu()" class="font-mono text-[11px] uppercase tracking-[0.25em] border border-white/30 hover:bg-white hover:text-ink transition-colors rounded-full px-5 py-2.5">
+                <button onclick="toggleMenu()" class="header-menu-btn font-mono text-[11px] uppercase tracking-[0.25em] transition-colors rounded-full px-5 py-2.5">
                     Menu
                 </button>
             </div>
@@ -142,191 +231,248 @@
 
     <main id="main" class="flex-grow">
 
-        <!-- ═══════════════ EN-TÊTE DE PAGE ═══════════════ -->
-        <section class="border-b border-white/10">
-            <div class="max-w-[1400px] mx-auto px-4 sm:px-8 pt-16 pb-14 md:pt-24 md:pb-20">
-                <h1 class="font-serif font-normal leading-[1.02] tracking-[-0.01em] text-[clamp(2.6rem,6vw,5.4rem)] max-w-4xl">
-                    Des contenus qui <em class="italic text-star">donnent vie</em> à vos idées.
-                </h1>
-                <p class="mt-7 text-base md:text-lg font-light leading-relaxed text-white/70 max-w-2xl">
-                    Quatre expertises complémentaires, une même exigence : imaginer et créer des
-                    contenus qui racontent votre histoire et révèlent votre identité.
-                </p>
+        <!-- ═══════════════ EN-TÊTE DE PAGE — grille bento ═══════════════ -->
+        <section class="bento-section" style="padding-top:64px">
+            <div class="bento-outer" style="padding-top:28px">
+                <div class="bento">
 
-                <!-- Ancres rapides (reprennent les 4 cartes du hero) -->
-                <div class="mt-10 flex flex-wrap gap-3 font-mono text-[11px] uppercase tracking-[0.15em]">
-                    <a href="#creation-contenu" class="border border-white/25 hover:border-white hover:bg-white hover:text-ink transition-colors rounded-full px-5 py-2.5">01 — Création de Contenu</a>
-                    <a href="#reseaux-sociaux" class="border border-white/25 hover:border-white hover:bg-white hover:text-ink transition-colors rounded-full px-5 py-2.5">02 — Réseaux Sociaux</a>
-                    <a href="#evenementiel" class="border border-white/25 hover:border-white hover:bg-white hover:text-ink transition-colors rounded-full px-5 py-2.5">03 — Contenu Événementiel</a>
-                    <a href="#photoshoots" class="border border-white/25 hover:border-white hover:bg-white hover:text-ink transition-colors rounded-full px-5 py-2.5">04 — Photoshoots</a>
+                    <!-- HERO 3 col -->
+                    <div class="card b-hero c3 reveal">
+                        <div class="b-eyebrow">Services</div>
+                        <div class="b-tagline">Des contenus qui donnent vie</div>
+                        <div class="b-subtag">à vos idées.</div>
+                        <div class="b-anchors">
+                            <a href="#creation-contenu" class="b-anchor">01 — Création de Contenu</a>
+                            <a href="#reseaux-sociaux" class="b-anchor">02 — Réseaux Sociaux</a>
+                            <a href="#evenementiel" class="b-anchor">03 — Contenu Événementiel</a>
+                            <a href="#photoshoots" class="b-anchor">04 — Photoshoots</a>
+                        </div>
+                    </div>
+
+                    <!-- STAT -->
+                    <div class="card reveal" style="transition-delay:.08s">
+                        <div class="num" style="font-size:44px;color:#FF4D00;margin-bottom:4px">4</div>
+                        <div class="label" style="font-size:13px">expertises <strong>complémentaires</strong>, une même exigence</div>
+                    </div>
+
+                    <!-- QUOTE -->
+                    <div class="card b-quote c3 reveal" style="transition-delay:.16s">
+                        <p class="quote-text">Chaque marque a une histoire — <em>nous la mettons en images.</em></p>
+                    </div>
+
+                    <!-- BADGE -->
+                    <div class="card reveal" style="transition-delay:.24s">
+                        <div class="badge-pill"><span>Réponse</span></div>
+                        <div class="badge-num" style="color:#00b4d8">24h</div>
+                        <div class="badge-lbl">délai de brief garanti</div>
+                    </div>
+
                 </div>
             </div>
         </section>
 
         <!-- ═══════════════ 01 — CRÉATION DE CONTENU ═══════════════ -->
-        <section id="creation-contenu" class="border-b border-white/10 scroll-mt-24">
-            <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-16 md:py-24 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
-                <div class="lg:col-span-7">
-                    <h2 class="reveal font-sans font-normal text-3xl sm:text-4xl md:text-5xl leading-[1.08] tracking-tight">Vidéos, photos, formats courts pour sublimer votre marque.</h2>
-                    <p class="reveal mt-7 text-base md:text-lg font-light leading-relaxed text-white/70 max-w-2xl">
-                        De la plateforme Instagram au site web, nous produisons des contenus qui marquent :
+        <section id="creation-contenu" class="bento-section scroll-mt-24">
+            <div class="bento-outer" style="padding-top:0">
+                <div class="bento">
+
+                    <div class="card b-img c2 r2 reveal">
+                        <img class="b-img-fill" src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1200&q=80" alt="Tournage d'un format court en studio" loading="lazy">
+                        <div class="b-img-cap">
+                            <span class="b-cap-title">/ 01 — Création de contenu</span>
+                            <span class="b-cap-link">Formats courts &amp; contenus de marque</span>
+                        </div>
+                    </div>
+
+                    <div class="card c2 reveal" style="transition-delay:.08s">
+                        <div class="category-name" style="color:#FF4D00;font-size:20px">Création de contenu</div>
+                        <p class="b-desc" style="margin-top:8px">De la plateforme Instagram au site web, nous produisons des contenus qui marquent :
                         Reels immersifs, photographies de marque, snacks content haute fréquence et brand assets
-                        prêts à diffuser. Chaque format est pensé pour votre audience et votre identité.
-                    </p>
-                    <ul class="reveal mt-9 pt-7 border-t border-white/10 font-mono text-xs leading-loose text-white/80 space-y-2 max-w-xl">
-                        <li>— Reels / TikTok shorts immersifs</li>
-                        <li>— Photographie de marque &amp; campagnes digitales</li>
-                        <li>— Brand assets, motion snippets &amp; habillages</li>
-                        <li>— Adaptation multi-formats (feed, stories, vertical)</li>
-                    </ul>
-                    <div class="reveal mt-9 flex flex-wrap items-center gap-8">
-                        <span class="font-mono text-[11px] uppercase tracking-[0.2em] text-tint">Pack Reels / vidéos — <span class="text-white">dès 1&#8239;800&#8239;CHF</span></span>
-                        <a href="index.html?service=creation" class="font-mono text-[11px] uppercase tracking-[0.18em] border border-white/40 px-6 py-3.5 hover:bg-white hover:text-ink transition-colors rounded-none">
-                            Demander un devis <span class="arr">↗</span>
-                        </a>
+                        prêts à diffuser. Chaque format est pensé pour votre audience et votre identité.</p>
+                        <div class="pills-wrap" style="margin-top:12px">
+                            <span class="pill">Reels / TikTok shorts</span><span class="pill">Photographie de marque</span><span class="pill">Brand assets &amp; motion</span><span class="pill">Multi-formats</span>
+                        </div>
                     </div>
-                </div>
-                <div class="lg:col-span-5 reveal" style="transition-delay:.15s">
-                    <div class="aspect-[4/5] overflow-hidden bg-[#1d1d1d] border border-white/10">
-                        <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1000&q=80" alt="Tournage d'un format court en studio" loading="lazy" class="w-full h-full object-cover">
+
+                    <div class="card reveal" style="transition-delay:.16s">
+                        <div class="badge-pill"><span>Pack Reels / vidéos</span></div>
+                        <div class="badge-num">1&#8239;800</div>
+                        <div class="badge-lbl">CHF — dès</div>
                     </div>
+
+                    <div class="card b-quote reveal" style="transition-delay:.24s">
+                        <p class="quote-text" style="font-size:16px">Des formats pensés <em>pour votre audience.</em></p>
+                        <a href="index.html?service=creation" class="b-cta">Demander un devis <span class="arr">↗</span></a>
+                    </div>
+
                 </div>
             </div>
         </section>
 
         <!-- ═══════════════ 02 — RÉSEAUX SOCIAUX ═══════════════ -->
-        <section id="reseaux-sociaux" class="border-b border-white/10 scroll-mt-24">
-            <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-16 md:py-24 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
-                <div class="lg:col-span-5 reveal order-2 lg:order-1">
-                    <div class="aspect-[4/5] overflow-hidden bg-[#1d1d1d] border border-white/10">
-                        <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1000&q=80" alt="Direction artistique d'un feed Instagram" loading="lazy" class="w-full h-full object-cover">
+        <section id="reseaux-sociaux" class="bento-section scroll-mt-24">
+            <div class="bento-outer" style="padding-top:0">
+                <div class="bento">
+
+                    <div class="card b-img c2 r2 reveal">
+                        <img class="b-img-fill" src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1200&q=80" alt="Direction artistique d'un feed Instagram" loading="lazy">
+                        <div class="b-img-cap">
+                            <span class="b-cap-title">/ 02 — Réseaux sociaux</span>
+                            <span class="b-cap-link">Présence digitale pilotée de A à Z</span>
+                        </div>
                     </div>
-                </div>
-                <div class="lg:col-span-7 order-1 lg:order-2">
-                    <h2 class="reveal font-sans font-normal text-3xl sm:text-4xl md:text-5xl leading-[1.08] tracking-tight">Stratégie et accompagnement pour une présence digitale forte.</h2>
-                    <p class="reveal mt-7 text-base md:text-lg font-light leading-relaxed text-white/70 max-w-2xl">
-                        Nous pilotons votre présence Instagram &amp; TikTok de A à Z : audit, ligne éditoriale,
+
+                    <div class="card c2 reveal" style="transition-delay:.08s">
+                        <div class="category-name" style="color:#00b4d8;font-size:20px">Gestion des réseaux sociaux</div>
+                        <p class="b-desc" style="margin-top:8px">Nous pilotons votre présence Instagram &amp; TikTok de A à Z : audit, ligne éditoriale,
                         curation de feed, copywriting ciblé, planification et analyse de performance.
-                        Vous vous concentrez sur votre métier — votre communauté grandit.
-                    </p>
-                    <ul class="reveal mt-9 pt-7 border-t border-white/10 font-mono text-xs leading-loose text-white/80 space-y-2 max-w-xl">
-                        <li>— Stratégie de contenu &amp; feed aesthetics</li>
-                        <li>— Copywriting, hashtags &amp; planification</li>
-                        <li>— Community management &amp; modération</li>
-                        <li>— Analyse de performance &amp; reporting mensuel</li>
-                    </ul>
-                    <div class="reveal mt-9 flex flex-wrap items-center gap-8">
-                        <span class="font-mono text-[11px] uppercase tracking-[0.2em] text-tint">Accompagnement mensuel — <span class="text-white">dès 2&#8239;200&#8239;CHF / mois</span></span>
-                        <a href="index.html?service=reseaux" class="font-mono text-[11px] uppercase tracking-[0.18em] border border-white/40 px-6 py-3.5 hover:bg-white hover:text-ink transition-colors rounded-none">
-                            Demander un devis <span class="arr">↗</span>
-                        </a>
+                        Vous vous concentrez sur votre métier — votre communauté grandit.</p>
+                        <div class="pills-wrap" style="margin-top:12px">
+                            <span class="pill">Stratégie de contenu</span><span class="pill">Copywriting &amp; hashtags</span><span class="pill">Community management</span><span class="pill">Reporting mensuel</span>
+                        </div>
                     </div>
+
+                    <div class="card reveal" style="transition-delay:.16s">
+                        <div class="badge-pill"><span>Accompagnement mensuel</span></div>
+                        <div class="badge-num" style="color:#00b4d8">2&#8239;200</div>
+                        <div class="badge-lbl">CHF / mois — dès</div>
+                    </div>
+
+                    <div class="card b-quote reveal" style="transition-delay:.24s">
+                        <p class="quote-text" style="font-size:16px">Votre communauté <em>grandit,</em> votre métier reste le vôtre.</p>
+                        <a href="index.html?service=reseaux" class="b-cta">Demander un devis <span class="arr">↗</span></a>
+                    </div>
+
                 </div>
             </div>
         </section>
 
         <!-- ═══════════════ 03 — CONTENU ÉVÉNEMENTIEL ═══════════════ -->
-        <section id="evenementiel" class="border-b border-white/10 scroll-mt-24">
-            <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-16 md:py-24 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
-                <div class="lg:col-span-7">
-                    <h2 class="reveal font-sans font-normal text-3xl sm:text-4xl md:text-5xl leading-[1.08] tracking-tight">Capturez l'essence de vos événements.</h2>
-                    <p class="reveal mt-7 text-base md:text-lg font-light leading-relaxed text-white/70 max-w-2xl">
-                        Galas, lancements, soirées privées ou festivals : nous couvrons vos événements en
+        <section id="evenementiel" class="bento-section scroll-mt-24">
+            <div class="bento-outer" style="padding-top:0">
+                <div class="bento">
+
+                    <div class="card b-img c2 r2 reveal">
+                        <img class="b-img-fill" src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1200&q=80" alt="Couverture d'un gala privé" loading="lazy">
+                        <div class="b-img-cap">
+                            <span class="b-cap-title">/ 03 — Contenu événementiel</span>
+                            <span class="b-cap-link">Capturez l'essence de vos événements</span>
+                        </div>
+                    </div>
+
+                    <div class="card c2 reveal" style="transition-delay:.08s">
+                        <div class="category-name" style="color:#34d399;font-size:20px">Contenu événementiel</div>
+                        <p class="b-desc" style="margin-top:8px">Galas, lancements, soirées privées ou festivals : nous couvrons vos événements en
                         temps réel avec une équipe discrète et un œil éditorial. Photos, Reels « dans le moment »
-                        et aftermovie soigné pour prolonger l'expérience bien après la dernière lumière.
-                    </p>
-                    <ul class="reveal mt-9 pt-7 border-t border-white/10 font-mono text-xs leading-loose text-white/80 space-y-2 max-w-xl">
-                        <li>— Couverture photo &amp; vidéo en temps réel</li>
-                        <li>— Reels / stories « live » pour vos communautés</li>
-                        <li>— Aftermovie &amp; film institutionnel</li>
-                        <li>— Portraits d'invités &amp; images officielles</li>
-                    </ul>
-                    <div class="reveal mt-9 flex flex-wrap items-center gap-8">
-                        <span class="font-mono text-[11px] uppercase tracking-[0.2em] text-tint">Couverture — <span class="text-white">sur devis, dès 1&#8239;500&#8239;CHF</span></span>
-                        <a href="index.html?service=evenementiel" class="font-mono text-[11px] uppercase tracking-[0.18em] border border-white/40 px-6 py-3.5 hover:bg-white hover:text-ink transition-colors rounded-none">
-                            Demander un devis <span class="arr">↗</span>
-                        </a>
+                        et aftermovie soigné pour prolonger l'expérience bien après la dernière lumière.</p>
+                        <div class="pills-wrap" style="margin-top:12px">
+                            <span class="pill">Couverture photo &amp; vidéo</span><span class="pill">Reels « live »</span><span class="pill">Aftermovie &amp; film</span><span class="pill">Portraits d'invités</span>
+                        </div>
                     </div>
-                </div>
-                <div class="lg:col-span-5 reveal" style="transition-delay:.15s">
-                    <div class="aspect-[4/5] overflow-hidden bg-[#1d1d1d] border border-white/10">
-                        <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1000&q=80" alt="Couverture d'un gala privé" loading="lazy" class="w-full h-full object-cover">
+
+                    <div class="card reveal" style="transition-delay:.16s">
+                        <div class="badge-pill"><span>Couverture</span></div>
+                        <div class="badge-num" style="color:#34d399">1&#8239;500</div>
+                        <div class="badge-lbl">CHF — sur devis, dès</div>
                     </div>
+
+                    <div class="card b-quote reveal" style="transition-delay:.24s">
+                        <p class="quote-text" style="font-size:16px">L'expérience se prolonge <em>bien après la dernière lumière.</em></p>
+                        <a href="index.html?service=evenementiel" class="b-cta">Demander un devis <span class="arr">↗</span></a>
+                    </div>
+
                 </div>
             </div>
         </section>
 
         <!-- ═══════════════ 04 — PHOTOSHOOTS ═══════════════ -->
-        <section id="photoshoots" class="border-b border-white/10 scroll-mt-24">
-            <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-16 md:py-24 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
-                <div class="lg:col-span-5 reveal order-2 lg:order-1">
-                    <div class="aspect-[4/5] overflow-hidden bg-[#1d1d1d] border border-white/10">
-                        <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1000&q=80" alt="Photoshoot éditorial mode" loading="lazy" class="w-full h-full object-cover">
+        <section id="photoshoots" class="bento-section scroll-mt-24">
+            <div class="bento-outer" style="padding-top:0">
+                <div class="bento">
+
+                    <div class="card b-img c2 r2 reveal">
+                        <img class="b-img-fill" src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1200&q=80" alt="Photoshoot éditorial mode" loading="lazy">
+                        <div class="b-img-cap">
+                            <span class="b-cap-title">/ 04 — Photoshoots</span>
+                            <span class="b-cap-link">Des images qui révèlent votre identité</span>
+                        </div>
                     </div>
-                </div>
-                <div class="lg:col-span-7 order-1 lg:order-2">
-                    <h2 class="reveal font-sans font-normal text-3xl sm:text-4xl md:text-5xl leading-[1.08] tracking-tight">Des images soignées qui révèlent votre identité.</h2>
-                    <p class="reveal mt-7 text-base md:text-lg font-light leading-relaxed text-white/70 max-w-2xl">
-                        Lookbooks, portraits, produits, lieux &amp; architecture : chaque shooting est une pièce
+
+                    <div class="card c2 reveal" style="transition-delay:.08s">
+                        <div class="category-name" style="color:#FF4D00;font-size:20px">Photoshoots &amp; direction artistique</div>
+                        <p class="b-desc" style="margin-top:8px">Lookbooks, portraits, produits, lieux &amp; architecture : chaque shooting est une pièce
                         de direction artistique. Moodboard, casting, lumière, retouche et color grading —
-                        nous livrons des images qui durent.
-                    </p>
-                    <ul class="reveal mt-9 pt-7 border-t border-white/10 font-mono text-xs leading-loose text-white/80 space-y-2 max-w-xl">
-                        <li>— Campagnes lookbook &amp; mode</li>
-                        <li>— Portraits &amp; images de marque (team, fondateurs)</li>
-                        <li>— Photographie de lieux &amp; architecture</li>
-                        <li>— Retouche &amp; color grading haut de gamme</li>
-                    </ul>
-                    <div class="reveal mt-9 flex flex-wrap items-center gap-8">
-                        <span class="font-mono text-[11px] uppercase tracking-[0.2em] text-tint">Shoot éditorial — <span class="text-white">dès 1&#8239;500&#8239;CHF</span></span>
-                        <a href="index.html?service=photoshoots" class="font-mono text-[11px] uppercase tracking-[0.18em] border border-white/40 px-6 py-3.5 hover:bg-white hover:text-ink transition-colors rounded-none">
-                            Réserver un shoot <span class="arr">↗</span>
-                        </a>
+                        nous livrons des images qui durent.</p>
+                        <div class="pills-wrap" style="margin-top:12px">
+                            <span class="pill">Lookbook &amp; mode</span><span class="pill">Portraits de marque</span><span class="pill">Lieux &amp; architecture</span><span class="pill">Color grading</span>
+                        </div>
                     </div>
+
+                    <div class="card reveal" style="transition-delay:.16s">
+                        <div class="badge-pill"><span>Shoot éditorial</span></div>
+                        <div class="badge-num">1&#8239;500</div>
+                        <div class="badge-lbl">CHF — dès</div>
+                    </div>
+
+                    <div class="card b-quote reveal" style="transition-delay:.24s">
+                        <p class="quote-text" style="font-size:16px">Chaque shooting est <em>une pièce de direction artistique.</em></p>
+                        <a href="index.html?service=photoshoots" class="b-cta">Réserver un shoot <span class="arr">↗</span></a>
+                    </div>
+
                 </div>
             </div>
         </section>
 
         <!-- ═══════════════ ESTIMATEUR — RENVOI ═══════════════ -->
-        <section class="border-b border-white/10">
-            <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-16 md:py-24 text-center">
-                <h2 class="reveal font-serif font-normal text-3xl sm:text-4xl md:text-5xl leading-[1.08] tracking-tight max-w-2xl mx-auto">Estimez votre projet <em class="italic text-star">en direct.</em></h2>
-                <a href="index.html#estimateur" class="reveal mt-10 inline-block font-mono text-[11px] uppercase tracking-[0.18em] border border-white/40 px-8 py-4 hover:bg-white hover:text-ink transition-colors rounded-none">
-                    Ouvrir l'estimateur <span class="arr">↗</span>
-                </a>
+        <section class="bento-section" style="padding-bottom:24px">
+            <div class="bento-outer" style="padding-top:0">
+                <div class="bento">
+
+                    <div class="card b-hero c2 reveal">
+                        <div class="b-eyebrow">Estimateur</div>
+                        <div class="b-tagline">Estimez votre projet</div>
+                        <div class="b-subtag">en direct.</div>
+                        <a href="index.html#estimateur" class="b-btn">Ouvrir l'estimateur <span class="arr">↗</span></a>
+                    </div>
+
+                    <div class="card b-quote c2 reveal" style="transition-delay:.08s">
+                        <p class="quote-text">Un devis ferme après <em>un brief détaillé sous 24h.</em></p>
+                    </div>
+
+                </div>
             </div>
         </section>
 
     </main>
 
     <!-- ═══════════════ FOOTER ═══════════════ -->
-    <footer class="border-t border-white/10">
+    <footer class="border-t" style="background:#ffffff;border-color:rgba(19,19,19,.08)">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-14">
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-white/10">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b" style="border-color:rgba(19,19,19,.1)">
                 <div class="md:col-span-6">
-                    <a href="index.html" class="font-serif italic text-4xl inline-block">Anima<span class="star-spin not-italic font-sans font-light text-star text-2xl ml-1">✦</span></a>
-                    <p class="mt-5 text-sm font-light leading-relaxed text-white/70 max-w-sm">
+                    <a href="index.html" class="font-serif italic text-4xl inline-block" style="color:#131313">Anima<span class="star-spin not-italic font-sans font-light text-star text-2xl ml-1">✦</span></a>
+                    <p class="mt-5 text-sm font-light leading-relaxed max-w-sm" style="color:rgba(19,19,19,.7)">
                         Studio de création digitale — pour les marques, les lieux et les événements,
                         en Suisse et à l'international.
                     </p>
                 </div>
                 <div class="md:col-span-3">
-                    <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-tint mb-5">Menu</p>
-                    <div class="flex flex-col gap-3 font-mono text-xs text-white/80">
+                    <p class="font-mono text-[10px] uppercase tracking-[0.2em] mb-5" style="color:#697485">Menu</p>
+                    <div class="flex flex-col gap-3 font-mono text-xs" style="color:rgba(19,19,19,.8)">
                         <a href="index.html" class="hover:text-star transition-colors w-fit">Accueil</a>
                         <a href="services.html" class="hover:text-star transition-colors w-fit">Services</a>
                         <a href="portfolio.html" class="hover:text-star transition-colors w-fit">Portfolio</a>
                     </div>
                 </div>
                 <div class="md:col-span-3">
-                    <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-tint mb-5">Suivre</p>
-                    <div class="flex flex-col gap-3 font-mono text-xs text-white/80">
+                    <p class="font-mono text-[10px] uppercase tracking-[0.2em] mb-5" style="color:#697485">Suivre</p>
+                    <div class="flex flex-col gap-3 font-mono text-xs" style="color:rgba(19,19,19,.8)">
                         <a href="https://instagram.com/anima.studio.ch" target="_blank" rel="noopener noreferrer" class="hover:text-star transition-colors w-fit">Instagram <span class="arr">↗</span> @anima.studio.ch</a>
                         <a href="mailto:contact@anima.studio.ch" class="hover:text-star transition-colors w-fit">contact@anima.studio.ch</a>
                     </div>
                 </div>
             </div>
-            <div class="pt-8 flex flex-col sm:flex-row justify-between gap-3 font-mono text-[10px] uppercase tracking-[0.2em] text-tint">
+            <div class="pt-8 flex flex-col sm:flex-row justify-between gap-3 font-mono text-[10px] uppercase tracking-[0.2em]" style="color:#697485">
                 <span>© 2026 Anima Studio CH — Tous droits réservés</span>
                 <span>Lausanne — Genève — Suisse</span>
             </div>
@@ -337,23 +483,23 @@
     <div id="menu-overlay" role="dialog" aria-modal="true" aria-label="Menu de navigation" aria-hidden="true">
         <div class="h-full flex flex-col max-w-[1400px] mx-auto px-4 sm:px-8 pt-6 pb-10">
             <div class="flex items-center justify-between h-16">
-                <span class="font-serif italic text-2xl">Anima<span class="text-star">✦</span></span>
-                <button onclick="toggleMenu()" aria-label="Fermer le menu" class="w-10 h-10 rounded-full border border-white/30 hover:bg-white hover:text-ink transition-colors grid place-items-center font-mono">✕</button>
+                <span class="font-serif italic text-2xl text-white">Anima<span class="text-star">✦</span></span>
+                <button onclick="toggleMenu()" aria-label="Fermer le menu" class="w-10 h-10 rounded-full border border-white/30 hover:bg-white hover:text-ink transition-colors grid place-items-center font-mono text-white">✕</button>
             </div>
             <nav class="flex-1 flex flex-col justify-center gap-1 sm:gap-2" aria-label="Menu">
                 <a href="index.html" class="menu-link group flex items-baseline gap-5 sm:gap-8 py-2 border-b border-white/10">
                     <span class="font-mono text-[11px] text-tint flex-none">01</span>
-                    <span class="font-serif italic text-[clamp(2.2rem,7vw,4.5rem)] leading-none group-hover:text-star group-hover:translate-x-3 transition-all duration-300">Accueil</span>
+                    <span class="font-serif italic text-[clamp(2.2rem,7vw,4.5rem)] leading-none text-white group-hover:text-star group-hover:translate-x-3 transition-all duration-300">Accueil</span>
                     <span class="arr ml-auto text-tint group-hover:text-star transition-colors">→</span>
                 </a>
                 <a href="services.html" class="menu-link group flex items-baseline gap-5 sm:gap-8 py-2 border-b border-white/10">
                     <span class="font-mono text-[11px] text-tint flex-none">02</span>
-                    <span class="font-serif italic text-[clamp(2.2rem,7vw,4.5rem)] leading-none group-hover:text-star group-hover:translate-x-3 transition-all duration-300">Services</span>
+                    <span class="font-serif italic text-[clamp(2.2rem,7vw,4.5rem)] leading-none text-white group-hover:text-star group-hover:translate-x-3 transition-all duration-300">Services</span>
                     <span class="arr ml-auto text-tint group-hover:text-star transition-colors">→</span>
                 </a>
                 <a href="portfolio.html" class="menu-link group flex items-baseline gap-5 sm:gap-8 py-2">
                     <span class="font-mono text-[11px] text-tint flex-none">03</span>
-                    <span class="font-serif italic text-[clamp(2.2rem,7vw,4.5rem)] leading-none group-hover:text-star group-hover:translate-x-3 transition-all duration-300">Portfolio</span>
+                    <span class="font-serif italic text-[clamp(2.2rem,7vw,4.5rem)] leading-none text-white group-hover:text-star group-hover:translate-x-3 transition-all duration-300">Portfolio</span>
                     <span class="arr ml-auto text-tint group-hover:text-star transition-colors">→</span>
                 </a>
             </nav>
@@ -377,7 +523,7 @@
                 </svg>
                 <input id="search-input" type="text" placeholder="Rechercher un service, une page, une info…" autocomplete="off"
                        class="w-full bg-transparent outline-none text-xl sm:text-2xl font-light placeholder:text-white/35 text-white" aria-label="Champ de recherche">
-                <button onclick="toggleSearch()" aria-label="Fermer" class="font-mono text-[10px] uppercase tracking-[0.2em] border border-white/25 rounded-full px-3 py-1.5 hover:bg-white hover:text-ink transition-colors flex-none">Esc</button>
+                <button onclick="toggleSearch()" aria-label="Fermer" class="font-mono text-[10px] uppercase tracking-[0.2em] border border-white/25 rounded-full px-3 py-1.5 hover:bg-white hover:text-ink transition-colors flex-none text-white">Esc</button>
             </div>
             <div id="search-results" class="mt-4 divide-y divide-white/8 border border-white/10 bg-[#161619]/90 backdrop-blur-xl rounded-2xl overflow-hidden max-h-[46vh] overflow-y-auto" role="listbox" aria-label="Résultats de recherche"></div>
             <p class="mt-4 font-mono text-[10px] uppercase tracking-[0.2em] text-tint">↑↓ naviguer · ↵ ouvrir · / rechercher depuis n'importe quelle page</p>

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio — ANIMA Studio | Réalisations sélectionnées</title>
     <meta name="description" content="Le portfolio ANIMA Studio : lookbooks éditoriaux, couvertures d'événements, curation Instagram et shootings — Lausanne, Genève, Zurich.">
-    <meta name="theme-color" content="#131313">
+    <meta name="theme-color" content="#f5f5f7">
     <meta property="og:title" content="Portfolio — ANIMA Studio">
     <meta property="og:description" content="Réalisations sélectionnées — mode, événementiel, gastronomie, digital.">
     <meta property="og:type" content="website">
@@ -13,10 +13,10 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Google Fonts : Instrument Serif, Inter, IBM Plex Mono -->
+    <!-- Google Fonts : Instrument Serif (wordmark), Inter (base), IBM Plex Mono (labels overlays), Sora + DM Sans (cartes bento) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&family=Sora:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
@@ -35,24 +35,28 @@
 
     <style>
         html { scroll-behavior: smooth; }
-        body { background-color: #131313; color: #FFFFFF; font-family: 'Inter', sans-serif; font-weight: 300; }
+        /* Page entière en zone claire bento : fond blanc, encre sombre */
+        body { background-color: #ffffff; color: #131313; font-family: 'Inter', sans-serif; font-weight: 300; }
         ::selection { background: #FF4D00; color: #131313; }
 
         .skip { position: absolute; left: -9999px; top: 0; z-index: 100; }
-        .skip:focus { left: 16px; top: 16px; padding: 8px 16px; background: #fff; color: #131313; font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: .15em; }
+        .skip:focus { left: 16px; top: 16px; padding: 8px 16px; background: #131313; color: #fff; font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: .15em; }
 
-        /* Nav du header : liens simples, sans bande */
+        /* Nav du header — posée sur fond clair : liens et séparateurs sombres */
         .pill-nav a {
             position: relative; padding: .45rem .85rem;
-            font-size: 12.5px; letter-spacing: .08em; color: rgba(255,255,255,.6);
+            font-size: 12.5px; letter-spacing: .08em; color: rgba(19,19,19,.62);
             transition: color .25s ease; white-space: nowrap;
         }
-        .pill-nav a:hover { color: #fff; }
-        .pill-nav a[aria-current="page"] { color: #fff; }
-        .pill-nav .sep { width: 1px; height: 12px; background: rgba(255,255,255,.15); flex: none; }
+        .pill-nav a:hover { color: #131313; }
+        .pill-nav a[aria-current="page"] { color: #131313; }
+        .pill-nav .sep { width: 1px; height: 12px; background: rgba(19,19,19,.16); flex: none; }
+        .header-search-btn { color: #131313; border-color: rgba(19,19,19,.28); }
+        .header-search-btn:hover { border-color: #131313; background: rgba(19,19,19,.08); }
+        .header-menu-btn { color: #131313; border-color: rgba(19,19,19,.32); }
+        .header-menu-btn:hover { background: #131313; color: #ffffff; }
 
-        /* Header sticky : aucune bande — logo et liens posés directement sur les sections */
-        #site-header { animation: headerIn .8s cubic-bezier(.16,1,.3,1) both; }
+        #site-header { animation: headerIn .8s cubic-bezier(.16,1,.3,1) both; background: transparent; }
         @keyframes headerIn { from { transform: translateY(-100%); } }
 
         .arr { display: inline-block; transition: transform .3s ease; }
@@ -61,14 +65,90 @@
         .reveal { opacity: 0; transform: translateY(48px); transition: opacity .9s ease, transform .9s cubic-bezier(.16,1,.3,1); }
         .reveal.visible { opacity: 1; transform: none; }
 
-        /* Filtres portfolio */
-        .filter-btn { transition: background .25s ease, color .25s ease, border-color .25s ease; }
-        .filter-btn.is-active { background: #fff; color: #131313; border-color: #fff; }
+        .star-spin { display: inline-block; transform-origin: 50% 54%; animation: spin 18s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
+        /* ═══ BENTO GRID — design system « apple-bento-grid » (thème clair, adapté web) ═══
+           Règles zero-gap du skill : gap de 6px exactement, jamais align-items:start (les cartes
+           remplissent leur cellule), aucune cellule vide. Tokens : fond #f5f5f7, cartes #ffffff,
+           texte #1d1d1f/#86868b/#aeaeb2, pills #f0f0f2. Accents (3 max) : #FF4D00 (marque),
+           #00b4d8, #34d399. Typo cartes : Sora (titres, nombres) · DM Sans (corps). */
+        .bento-section { background: #f5f5f7; }
+        .bento-outer { max-width: 1280px; margin: 0 auto; padding: 76px 24px; }
+        .bento {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            grid-auto-rows: minmax(190px, auto);
+            gap: 6px;                                  /* 6px — jamais 8px */
+        }
+        .bento .card {
+            background: #ffffff; border-radius: 18px;
+            box-shadow: 0 1px 8px rgba(0,0,0,.05);
+            padding: 20px 22px;
+            display: flex; flex-direction: column; justify-content: center;
+            position: relative; overflow: hidden; min-width: 0; text-align: left;
+        }
+        a.card { color: inherit; text-decoration: none; }
+        a.card:hover { box-shadow: 0 8px 24px rgba(0,0,0,.09); }
+        .bento .c2 { grid-column: span 2; }
+        .bento .c3 { grid-column: span 3; }
+        .bento .c4 { grid-column: 1 / -1; }
+        .bento .r2 { grid-row: span 2; }
+        .bento .num   { font-family:'Sora',sans-serif; font-weight:800; letter-spacing:-.03em; line-height:1; }
+        .bento .label { font-family:'DM Sans',sans-serif; font-weight:500; color:#86868b; line-height:1.3; }
+        .bento .label strong { color:#1d1d1f; font-weight:600; }
+        /* HERO */
+        .bento .b-hero { padding: 26px; }
+        .b-hero::before {
+            content:''; position:absolute; top:0; left:0; right:0; height:4px;
+            background: linear-gradient(90deg, #FF4D00, #ff9a6b, #FF4D00);
+            border-radius: 18px 18px 0 0;
+        }
+        .b-eyebrow { font-family:'DM Sans',sans-serif; font-size:12px; font-weight:600; color:#FF4D00; text-transform:uppercase; letter-spacing:.09em; margin-bottom:12px; }
+        .b-tagline, .b-subtag { font-family:'Sora',sans-serif; font-weight:700; letter-spacing:-.03em; line-height:1.14; font-size:clamp(23px,2.3vw,33px); color:#1d1d1f; }
+        .b-subtag { color:#86868b; }
+        .b-desc { font-family:'DM Sans',sans-serif; font-size:14px; color:#86868b; line-height:1.55; margin-top:12px; max-width:48ch; }
+        .b-date { font-family:'DM Sans',sans-serif; font-size:12px; font-weight:500; color:#aeaeb2; margin-top:14px; }
+        .b-date .arr { color:#FF4D00; }
+        /* QUOTE */
+        .bento .b-quote { background:#1d1d1f; padding:24px 28px; }
+        .quote-text { font-family:'Sora',sans-serif; font-size:clamp(16px,1.6vw,21px); font-weight:600; color:#fff; letter-spacing:-.01em; line-height:1.4; }
+        .quote-text em { color:#00b4d8; font-style:normal; }
+        /* IMAGE */
+        .bento .b-img { padding:0; }
+        .b-img-fill { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:transform .6s cubic-bezier(.16,1,.3,1); }
+        .b-img::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg,rgba(8,8,10,0) 46%,rgba(8,8,10,.74) 100%); }
+        .b-img-cap { position:absolute; z-index:2; left:20px; right:20px; bottom:16px; display:flex; flex-direction:column; gap:3px; }
+        .b-cap-title { font-family:'Sora',sans-serif; font-size:15px; font-weight:600; color:#fff; letter-spacing:-.01em; }
+        .b-cap-cat { font-family:'DM Sans',sans-serif; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.08em; color:rgba(255,255,255,.75); }
+        .b-cap-link { font-family:'DM Sans',sans-serif; font-size:12px; font-weight:600; color:rgba(255,255,255,.85); }
+        .b-cap-link .arr { color:#FF4D00; }
+        a.b-img:hover .b-img-fill { transform:scale(1.045); }
+        /* Tuiles projets : rangées plus basses */
+        .bento-projects { grid-auto-rows:226px; }
+        /* Filtres pilule */
+        .filter-btn { font-family:'DM Sans',sans-serif; font-size:12px; font-weight:600; color:#6e6e73; background:#ffffff; border:1px solid #e3e3e8; border-radius:100px; padding:9px 18px; cursor:pointer; transition:background .25s ease, color .25s ease, border-color .25s ease; }
+        .filter-btn:hover { border-color:#1d1d1f; color:#1d1d1f; }
+        .filter-btn.is-active { background:#1d1d1f; color:#ffffff; border-color:#1d1d1f; }
         /* Cartes projet : apparition / disparition au filtrage */
         .project { transition: opacity .45s ease, transform .45s cubic-bezier(.16,1,.3,1); }
         .project.is-hidden { opacity: 0; transform: scale(.96); pointer-events: none; position: absolute; visibility: hidden; }
+        /* Boutons pilule */
+        .b-btn { display:inline-flex; justify-content:center; align-items:center; gap:8px; background:#1d1d1f; color:#fff; border:0; border-radius:100px; padding:12px 22px; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:700; text-decoration:none; margin-top:16px; width:fit-content; transition:transform .2s ease, box-shadow .2s ease; }
+        .b-btn:hover { transform:translateY(-1px); box-shadow:0 8px 20px rgba(0,0,0,.18); }
+        @media (max-width:1023px) {
+            .bento { grid-template-columns:repeat(2, minmax(0,1fr)); }
+            .bento .c3, .bento .c4 { grid-column:span 2; }
+            .bento-outer { padding:60px 20px; }
+        }
+        @media (max-width:639px) {
+            .bento { grid-auto-rows:minmax(168px,auto); }
+            .bento .c2 { grid-column:span 2; }
+            .bento-outer { padding:52px 14px; }
+            .bento-projects { grid-auto-rows:180px; }
+        }
 
+        /* Overlay MENU */
         #menu-overlay {
             position: fixed; inset: 0; z-index: 90;
             background: rgba(10,10,11,.97);
@@ -87,6 +167,7 @@
         #menu-overlay.open .menu-link:nth-child(4) { transition-delay: .26s; }
         #menu-overlay.open .menu-link:nth-child(5) { transition-delay: .32s; }
 
+        /* Overlay RECHERCHE */
         #search-overlay {
             position: fixed; inset: 0; z-index: 90;
             background: rgba(10,10,11,.94);
@@ -99,12 +180,9 @@
         .search-result { transition: background .2s ease, border-color .2s ease; }
         .search-result:hover, .search-result.is-cursor { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.25); }
 
-        .star-spin { display: inline-block; transform-origin: 50% 54%; animation: spin 18s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #131313; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.2); }
+        ::-webkit-scrollbar-track { background: #f5f5f7; }
+        ::-webkit-scrollbar-thumb { background: rgba(0,0,0,.22); }
 
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after { animation-duration: .001s !important; animation-iteration-count: 1 !important; transition-duration: .001s !important; }
@@ -113,15 +191,15 @@
         }
     </style>
 </head>
-<body class="bg-ink text-white antialiased min-h-screen flex flex-col">
+<body class="antialiased min-h-screen flex flex-col">
 
     <a href="#main" class="skip">Aller au contenu principal</a>
 
-    <!-- ═══════════════ HEADER ═══════════════ -->
+    <!-- ═══════════════ HEADER (fond clair : logo noir) ═══════════════ -->
     <header id="site-header" class="sticky top-0 z-50 w-full">
         <div class="max-w-[1560px] mx-auto flex items-center justify-between gap-4 px-[18px] pt-4 pb-2 md:px-10 md:pt-6 md:pb-3">
             <a href="index.html" class="flex items-center group" aria-label="ANIMA Studio — Accueil">
-                <img src="logo_blanc_web.png" alt="ANIMA Studio" class="h-[60px] w-auto md:h-[84px]" draggable="false">
+                <img src="logo_noir_web.png" alt="ANIMA Studio" class="h-[60px] w-auto md:h-[84px]" draggable="false">
             </a>
 
             <nav class="pill-nav hidden md:flex items-center gap-1" aria-label="Navigation principale">
@@ -133,12 +211,12 @@
             </nav>
 
             <div class="flex items-center gap-3">
-                <button onclick="toggleSearch()" aria-label="Rechercher sur le site" class="w-10 h-10 rounded-full border border-white/25 hover:border-white hover:bg-white/10 transition-colors grid place-items-center">
+                <button onclick="toggleSearch()" aria-label="Rechercher sur le site" class="header-search-btn w-10 h-10 rounded-full border transition-colors grid place-items-center">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
                         <circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.5" y2="16.5"></line>
                     </svg>
                 </button>
-                <button onclick="toggleMenu()" class="font-mono text-[11px] uppercase tracking-[0.25em] border border-white/30 hover:bg-white hover:text-ink transition-colors rounded-full px-5 py-2.5">
+                <button onclick="toggleMenu()" class="header-menu-btn font-mono text-[11px] uppercase tracking-[0.25em] transition-colors rounded-full px-5 py-2.5">
                     Menu
                 </button>
             </div>
@@ -147,170 +225,173 @@
 
     <main id="main" class="flex-grow">
 
-        <!-- ═══════════════ EN-TÊTE DE PAGE + FILTRES ═══════════════ -->
-        <section class="border-b border-white/10">
-            <div class="max-w-[1400px] mx-auto px-4 sm:px-8 pt-16 pb-12 md:pt-24 md:pb-16">
-                <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
-                    <h1 class="font-serif font-normal leading-[1.02] tracking-[-0.01em] text-[clamp(2.6rem,6vw,5.4rem)]">
-                        Réalisations <em class="italic text-star">sélectionnées.</em>
-                    </h1>
-                    <a href="https://instagram.com/anima.studio.ch" target="_blank" rel="noopener noreferrer" class="font-mono text-[11px] uppercase tracking-[0.18em] text-tint hover:text-white transition-colors w-fit">
-                        @anima.studio.ch <span class="arr">↗</span>
-                    </a>
+        <!-- ═══════════════ EN-TÊTE DE PAGE — grille bento + filtres ═══════════════ -->
+        <section class="bento-section" style="padding-top:64px">
+            <div class="bento-outer" style="padding-top:28px;padding-bottom:44px">
+                <div class="bento" style="margin-bottom:26px">
+
+                    <!-- HERO 3 col -->
+                    <div class="card b-hero c3 reveal">
+                        <div class="b-eyebrow">Portfolio</div>
+                        <div class="b-tagline">Réalisations sélectionnées.</div>
+                        <div class="b-date"><a href="https://instagram.com/anima.studio.ch" target="_blank" rel="noopener noreferrer" style="color:#6e6e73;font-weight:600;text-decoration:none">@anima.studio.ch <span class="arr">↗</span></a> — plus d'images sur Instagram</div>
+                    </div>
+
+                    <!-- STAT -->
+                    <div class="card reveal" style="transition-delay:.08s">
+                        <div class="num" style="font-size:44px;color:#FF4D00;margin-bottom:4px">9</div>
+                        <div class="label" style="font-size:13px">projets présentés — <strong>4 univers</strong></div>
+                    </div>
+
                 </div>
 
-                <!-- Filtres -->
-                <div class="mt-10 flex flex-wrap gap-2.5 font-mono text-[11px] uppercase tracking-[0.15em]" role="group" aria-label="Filtrer les projets">
-                    <button class="filter-btn is-active border border-white/40 rounded-full px-5 py-2.5" data-filter="all" onclick="setFilter('all', this)">Tous</button>
-                    <button class="filter-btn border border-white/25 hover:border-white rounded-full px-5 py-2.5" data-filter="mode" onclick="setFilter('mode', this)">Mode &amp; éditorial</button>
-                    <button class="filter-btn border border-white/25 hover:border-white rounded-full px-5 py-2.5" data-filter="evenement" onclick="setFilter('evenement', this)">Événementiel</button>
-                    <button class="filter-btn border border-white/25 hover:border-white rounded-full px-5 py-2.5" data-filter="gastro" onclick="setFilter('gastro', this)">Gastronomie</button>
-                    <button class="filter-btn border border-white/25 hover:border-white rounded-full px-5 py-2.5" data-filter="digital" onclick="setFilter('digital', this)">Digital</button>
+                <!-- Filtres (pilules du design system) -->
+                <div class="flex flex-wrap gap-2.5 reveal" role="group" aria-label="Filtrer les projets">
+                    <button class="filter-btn is-active" data-filter="all" onclick="setFilter('all', this)">Tous</button>
+                    <button class="filter-btn" data-filter="mode" onclick="setFilter('mode', this)">Mode &amp; éditorial</button>
+                    <button class="filter-btn" data-filter="evenement" onclick="setFilter('evenement', this)">Événementiel</button>
+                    <button class="filter-btn" data-filter="gastro" onclick="setFilter('gastro', this)">Gastronomie</button>
+                    <button class="filter-btn" data-filter="digital" onclick="setFilter('digital', this)">Digital</button>
                 </div>
             </div>
         </section>
 
-        <!-- ═══════════════ GRILLE PROJETS ═══════════════ -->
-        <section class="border-b border-white/10">
-            <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-14 md:py-20">
-                <div id="project-grid" class="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- ═══════════════ GRILLE BENTO PROJETS ═══════════════ -->
+        <section class="bento-section">
+            <div class="bento-outer" style="padding-top:0;padding-bottom:64px">
+                <div id="project-grid" class="bento bento-projects relative">
 
-                    <a href="https://instagram.com/anima.studio.ch" target="_blank" rel="noopener noreferrer" class="project reveal group block border border-white/15 hover:border-white transition-colors overflow-hidden" data-cat="mode">
-                        <div class="aspect-[4/5] overflow-hidden bg-[#1d1d1d]">
-                            <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1000&q=80" alt="Lookbook éditorial — mode" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-                        </div>
-                        <div class="border-t border-white/15 p-4 flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.15em]">
-                            <span class="text-white">Lookbook éditorial — Genève</span>
-                            <span class="text-tint group-hover:text-star transition-colors">2026 <span class="arr">↗</span></span>
+                    <!-- VEDETTE 2×2 -->
+                    <a href="https://instagram.com/anima.studio.ch" target="_blank" rel="noopener noreferrer" class="project card b-img c2 r2 reveal" data-cat="mode">
+                        <img class="b-img-fill" src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1200&q=80" alt="Lookbook éditorial — mode" loading="lazy">
+                        <div class="b-img-cap">
+                            <span class="b-cap-cat">Mode &amp; éditorial</span>
+                            <span class="b-cap-title" style="font-size:19px">Lookbook éditorial — Genève</span>
+                            <span class="b-cap-link">2026 · Voir sur Instagram <span class="arr">↗</span></span>
                         </div>
                     </a>
 
-                    <a href="https://instagram.com/anima.studio.ch" target="_blank" rel="noopener noreferrer" class="project reveal group block border border-white/15 hover:border-white transition-colors overflow-hidden" data-cat="gastro" style="transition-delay:.05s">
-                        <div class="aspect-[4/5] overflow-hidden bg-[#1d1d1d]">
-                            <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1000&q=80" alt="Curation Instagram — gastronomie" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-                        </div>
-                        <div class="border-t border-white/15 p-4 flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.15em]">
-                            <span class="text-white">Curation Instagram — Lausanne</span>
-                            <span class="text-tint group-hover:text-star transition-colors">2026 <span class="arr">↗</span></span>
+                    <a href="https://instagram.com/anima.studio.ch" target="_blank" rel="noopener noreferrer" class="project card b-img reveal" data-cat="gastro" style="transition-delay:.05s">
+                        <img class="b-img-fill" src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80" alt="Curation Instagram — gastronomie" loading="lazy">
+                        <div class="b-img-cap">
+                            <span class="b-cap-cat">Gastronomie</span>
+                            <span class="b-cap-title">Curation Instagram — Lausanne</span>
                         </div>
                     </a>
 
-                    <a href="https://instagram.com/anima.studio.ch" target="_blank" rel="noopener noreferrer" class="project reveal group block border border-white/15 hover:border-white transition-colors overflow-hidden" data-cat="evenement" style="transition-delay:.1s">
-                        <div class="aspect-[4/5] overflow-hidden bg-[#1d1d1d]">
-                            <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1000&q=80" alt="Gala privé — couverture" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-                        </div>
-                        <div class="border-t border-white/15 p-4 flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.15em]">
-                            <span class="text-white">Gala privé — Zurich</span>
-                            <span class="text-tint group-hover:text-star transition-colors">2026 <span class="arr">↗</span></span>
+                    <a href="https://instagram.com/anima.studio.ch" target="_blank" rel="noopener noreferrer" class="project card b-img reveal" data-cat="evenement" style="transition-delay:.1s">
+                        <img class="b-img-fill" src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=800&q=80" alt="Gala privé — couverture" loading="lazy">
+                        <div class="b-img-cap">
+                            <span class="b-cap-cat">Événementiel</span>
+                            <span class="b-cap-title">Gala privé — Zurich</span>
                         </div>
                     </a>
 
-                    <a href="https://instagram.com/anima.studio.ch" target="_blank" rel="noopener noreferrer" class="project reveal group block border border-white/15 hover:border-white transition-colors overflow-hidden" data-cat="evenement">
-                        <div class="aspect-[4/5] overflow-hidden bg-[#1d1d1d]">
-                            <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1000&q=80" alt="Festival — aftermovie" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-                        </div>
-                        <div class="border-t border-white/15 p-4 flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.15em]">
-                            <span class="text-white">Festival — aftermovie</span>
-                            <span class="text-tint group-hover:text-star transition-colors">2026 <span class="arr">↗</span></span>
+                    <a href="https://instagram.com/anima.studio.ch" target="_blank" rel="noopener noreferrer" class="project card b-img reveal" data-cat="evenement">
+                        <img class="b-img-fill" src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=800&q=80" alt="Festival — aftermovie" loading="lazy">
+                        <div class="b-img-cap">
+                            <span class="b-cap-cat">Événementiel</span>
+                            <span class="b-cap-title">Festival — aftermovie</span>
                         </div>
                     </a>
 
-                    <a href="https://instagram.com/anima.studio.ch" target="_blank" rel="noopener noreferrer" class="project reveal group block border border-white/15 hover:border-white transition-colors overflow-hidden" data-cat="gastro" style="transition-delay:.05s">
-                        <div class="aspect-[4/5] overflow-hidden bg-[#1d1d1d]">
-                            <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1000&q=80" alt="Table gastronomique — shootings menus" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-                        </div>
-                        <div class="border-t border-white/15 p-4 flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.15em]">
-                            <span class="text-white">Maison gastronomique — Lausanne</span>
-                            <span class="text-tint group-hover:text-star transition-colors">2026 <span class="arr">↗</span></span>
+                    <a href="https://instagram.com/anima.studio.ch" target="_blank" rel="noopener noreferrer" class="project card b-img reveal" data-cat="gastro" style="transition-delay:.05s">
+                        <img class="b-img-fill" src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=800&q=80" alt="Table gastronomique — shootings menus" loading="lazy">
+                        <div class="b-img-cap">
+                            <span class="b-cap-cat">Gastronomie</span>
+                            <span class="b-cap-title">Maison gastronomique — Lausanne</span>
                         </div>
                     </a>
 
-                    <a href="https://instagram.com/anima.studio.ch" target="_blank" rel="noopener noreferrer" class="project reveal group block border border-white/15 hover:border-white transition-colors overflow-hidden" data-cat="mode" style="transition-delay:.1s">
-                        <div class="aspect-[4/5] overflow-hidden bg-[#1d1d1d]">
-                            <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1000&q=80" alt="Campagne retail — direction artistique" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-                        </div>
-                        <div class="border-t border-white/15 p-4 flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.15em]">
-                            <span class="text-white">Campagne retail — Genève</span>
-                            <span class="text-tint group-hover:text-star transition-colors">2026 <span class="arr">↗</span></span>
+                    <a href="https://instagram.com/anima.studio.ch" target="_blank" rel="noopener noreferrer" class="project card b-img reveal" data-cat="mode" style="transition-delay:.1s">
+                        <img class="b-img-fill" src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=800&q=80" alt="Campagne retail — direction artistique" loading="lazy">
+                        <div class="b-img-cap">
+                            <span class="b-cap-cat">Mode &amp; éditorial</span>
+                            <span class="b-cap-title">Campagne retail — Genève</span>
                         </div>
                     </a>
 
-                    <a href="https://instagram.com/anima.studio.ch" target="_blank" rel="noopener noreferrer" class="project reveal group block border border-white/15 hover:border-white transition-colors overflow-hidden" data-cat="evenement">
-                        <div class="aspect-[4/5] overflow-hidden bg-[#1d1d1d]">
-                            <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1000&q=80" alt="Soirée de lancement — Reels live" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-                        </div>
-                        <div class="border-t border-white/15 p-4 flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.15em]">
-                            <span class="text-white">Lancement — Reels live</span>
-                            <span class="text-tint group-hover:text-star transition-colors">2026 <span class="arr">↗</span></span>
+                    <a href="https://instagram.com/anima.studio.ch" target="_blank" rel="noopener noreferrer" class="project card b-img reveal" data-cat="evenement">
+                        <img class="b-img-fill" src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=800&q=80" alt="Soirée de lancement — Reels live" loading="lazy">
+                        <div class="b-img-cap">
+                            <span class="b-cap-cat">Événementiel</span>
+                            <span class="b-cap-title">Lancement — Reels live</span>
                         </div>
                     </a>
 
-                    <a href="https://instagram.com/anima.studio.ch" target="_blank" rel="noopener noreferrer" class="project reveal group block border border-white/15 hover:border-white transition-colors overflow-hidden" data-cat="digital" style="transition-delay:.05s">
-                        <div class="aspect-[4/5] overflow-hidden bg-[#1d1d1d]">
-                            <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1000&q=80" alt="Brand assets — e-commerce" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-                        </div>
-                        <div class="border-t border-white/15 p-4 flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.15em]">
-                            <span class="text-white">Brand assets — e-commerce</span>
-                            <span class="text-tint group-hover:text-star transition-colors">2026 <span class="arr">↗</span></span>
+                    <a href="https://instagram.com/anima.studio.ch" target="_blank" rel="noopener noreferrer" class="project card b-img reveal" data-cat="digital" style="transition-delay:.05s">
+                        <img class="b-img-fill" src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=800&q=80" alt="Brand assets — e-commerce" loading="lazy">
+                        <div class="b-img-cap">
+                            <span class="b-cap-cat">Digital</span>
+                            <span class="b-cap-title">Brand assets — e-commerce</span>
                         </div>
                     </a>
 
-                    <a href="https://instagram.com/anima.studio.ch" target="_blank" rel="noopener noreferrer" class="project reveal group block border border-white/15 hover:border-white transition-colors overflow-hidden" data-cat="digital" style="transition-delay:.1s">
-                        <div class="aspect-[4/5] overflow-hidden bg-[#1d1d1d]">
-                            <img src="https://images.unsplash.com/photo-1529900748604-07564a03e7f6?auto=format&fit=crop&w=1000&q=80" alt="Café — identité visuelle sociale" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-                        </div>
-                        <div class="border-t border-white/15 p-4 flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.15em]">
-                            <span class="text-white">Identité sociale — Café, Lausanne</span>
-                            <span class="text-tint group-hover:text-star transition-colors">2026 <span class="arr">↗</span></span>
+                    <a href="https://instagram.com/anima.studio.ch" target="_blank" rel="noopener noreferrer" class="project card b-img reveal" data-cat="digital" style="transition-delay:.1s">
+                        <img class="b-img-fill" src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=800&q=80" alt="Café — identité visuelle sociale" loading="lazy">
+                        <div class="b-img-cap">
+                            <span class="b-cap-cat">Digital</span>
+                            <span class="b-cap-title">Identité sociale — Café, Lausanne</span>
                         </div>
                     </a>
 
                 </div>
 
-                <p id="empty-state" class="hidden mt-6 font-mono text-xs text-tint">Aucun projet dans cette catégorie pour l'instant.</p>
+                <p id="empty-state" class="hidden mt-6 font-mono text-xs" style="color:#86868b">Aucun projet dans cette catégorie pour l'instant.</p>
             </div>
         </section>
 
         <!-- ═══════════════ CTA ═══════════════ -->
-        <section class="border-b border-white/10">
-            <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-16 md:py-24 text-center">
-                <h2 class="reveal font-serif font-normal text-3xl sm:text-4xl md:text-5xl leading-[1.08] tracking-tight max-w-2xl mx-auto">Votre projet mérite <em class="italic text-star">sa place ici.</em></h2>
-                <a href="index.html" class="reveal mt-10 inline-block font-mono text-[11px] uppercase tracking-[0.18em] border border-white/40 px-8 py-4 hover:bg-white hover:text-ink transition-colors rounded-none">
-                    Démarrer un projet <span class="arr">↗</span>
-                </a>
+        <section class="bento-section" style="padding-bottom:24px">
+            <div class="bento-outer" style="padding-top:0">
+                <div class="bento">
+
+                    <div class="card b-hero c2 reveal">
+                        <div class="b-eyebrow">Prochain projet</div>
+                        <div class="b-tagline">Votre projet mérite</div>
+                        <div class="b-subtag">sa place ici.</div>
+                        <a href="index.html" class="b-btn">Démarrer un projet <span class="arr">↗</span></a>
+                    </div>
+
+                    <div class="card b-quote c2 reveal" style="transition-delay:.08s">
+                        <p class="quote-text">Chaque collaboration commence par <em>une conversation.</em></p>
+                        <div class="b-date" style="color:rgba(255,255,255,.5);margin-top:12px">contact@anima.studio.ch — Lausanne · Genève</div>
+                    </div>
+
+                </div>
             </div>
         </section>
 
     </main>
 
     <!-- ═══════════════ FOOTER ═══════════════ -->
-    <footer class="border-t border-white/10">
+    <footer class="border-t" style="background:#ffffff;border-color:rgba(19,19,19,.08)">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-14">
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-white/10">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b" style="border-color:rgba(19,19,19,.1)">
                 <div class="md:col-span-6">
-                    <a href="index.html" class="font-serif italic text-4xl inline-block">Anima<span class="star-spin not-italic font-sans font-light text-star text-2xl ml-1">✦</span></a>
-                    <p class="mt-5 text-sm font-light leading-relaxed text-white/70 max-w-sm">
+                    <a href="index.html" class="font-serif italic text-4xl inline-block" style="color:#131313">Anima<span class="star-spin not-italic font-sans font-light text-star text-2xl ml-1">✦</span></a>
+                    <p class="mt-5 text-sm font-light leading-relaxed max-w-sm" style="color:rgba(19,19,19,.7)">
                         Studio de création digitale — pour les marques, les lieux et les événements,
                         en Suisse et à l'international.
                     </p>
                 </div>
                 <div class="md:col-span-3">
-                    <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-tint mb-5">Menu</p>
-                    <div class="flex flex-col gap-3 font-mono text-xs text-white/80">
+                    <p class="font-mono text-[10px] uppercase tracking-[0.2em] mb-5" style="color:#697485">Menu</p>
+                    <div class="flex flex-col gap-3 font-mono text-xs" style="color:rgba(19,19,19,.8)">
                         <a href="index.html" class="hover:text-star transition-colors w-fit">Accueil</a>
                         <a href="services.html" class="hover:text-star transition-colors w-fit">Services</a>
                         <a href="portfolio.html" class="hover:text-star transition-colors w-fit">Portfolio</a>
                     </div>
                 </div>
                 <div class="md:col-span-3">
-                    <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-tint mb-5">Suivre</p>
-                    <div class="flex flex-col gap-3 font-mono text-xs text-white/80">
+                    <p class="font-mono text-[10px] uppercase tracking-[0.2em] mb-5" style="color:#697485">Suivre</p>
+                    <div class="flex flex-col gap-3 font-mono text-xs" style="color:rgba(19,19,19,.8)">
                         <a href="https://instagram.com/anima.studio.ch" target="_blank" rel="noopener noreferrer" class="hover:text-star transition-colors w-fit">Instagram <span class="arr">↗</span> @anima.studio.ch</a>
                         <a href="mailto:contact@anima.studio.ch" class="hover:text-star transition-colors w-fit">contact@anima.studio.ch</a>
                     </div>
                 </div>
             </div>
-            <div class="pt-8 flex flex-col sm:flex-row justify-between gap-3 font-mono text-[10px] uppercase tracking-[0.2em] text-tint">
+            <div class="pt-8 flex flex-col sm:flex-row justify-between gap-3 font-mono text-[10px] uppercase tracking-[0.2em]" style="color:#697485">
                 <span>© 2026 Anima Studio CH — Tous droits réservés</span>
                 <span>Lausanne — Genève — Suisse</span>
             </div>
@@ -321,23 +402,23 @@
     <div id="menu-overlay" role="dialog" aria-modal="true" aria-label="Menu de navigation" aria-hidden="true">
         <div class="h-full flex flex-col max-w-[1400px] mx-auto px-4 sm:px-8 pt-6 pb-10">
             <div class="flex items-center justify-between h-16">
-                <span class="font-serif italic text-2xl">Anima<span class="text-star">✦</span></span>
-                <button onclick="toggleMenu()" aria-label="Fermer le menu" class="w-10 h-10 rounded-full border border-white/30 hover:bg-white hover:text-ink transition-colors grid place-items-center font-mono">✕</button>
+                <span class="font-serif italic text-2xl text-white">Anima<span class="text-star">✦</span></span>
+                <button onclick="toggleMenu()" aria-label="Fermer le menu" class="w-10 h-10 rounded-full border border-white/30 hover:bg-white hover:text-ink transition-colors grid place-items-center font-mono text-white">✕</button>
             </div>
             <nav class="flex-1 flex flex-col justify-center gap-1 sm:gap-2" aria-label="Menu">
                 <a href="index.html" class="menu-link group flex items-baseline gap-5 sm:gap-8 py-2 border-b border-white/10">
                     <span class="font-mono text-[11px] text-tint flex-none">01</span>
-                    <span class="font-serif italic text-[clamp(2.2rem,7vw,4.5rem)] leading-none group-hover:text-star group-hover:translate-x-3 transition-all duration-300">Accueil</span>
+                    <span class="font-serif italic text-[clamp(2.2rem,7vw,4.5rem)] leading-none text-white group-hover:text-star group-hover:translate-x-3 transition-all duration-300">Accueil</span>
                     <span class="arr ml-auto text-tint group-hover:text-star transition-colors">→</span>
                 </a>
                 <a href="services.html" class="menu-link group flex items-baseline gap-5 sm:gap-8 py-2 border-b border-white/10">
                     <span class="font-mono text-[11px] text-tint flex-none">02</span>
-                    <span class="font-serif italic text-[clamp(2.2rem,7vw,4.5rem)] leading-none group-hover:text-star group-hover:translate-x-3 transition-all duration-300">Services</span>
+                    <span class="font-serif italic text-[clamp(2.2rem,7vw,4.5rem)] leading-none text-white group-hover:text-star group-hover:translate-x-3 transition-all duration-300">Services</span>
                     <span class="arr ml-auto text-tint group-hover:text-star transition-colors">→</span>
                 </a>
                 <a href="portfolio.html" class="menu-link group flex items-baseline gap-5 sm:gap-8 py-2">
                     <span class="font-mono text-[11px] text-tint flex-none">03</span>
-                    <span class="font-serif italic text-[clamp(2.2rem,7vw,4.5rem)] leading-none group-hover:text-star group-hover:translate-x-3 transition-all duration-300">Portfolio</span>
+                    <span class="font-serif italic text-[clamp(2.2rem,7vw,4.5rem)] leading-none text-white group-hover:text-star group-hover:translate-x-3 transition-all duration-300">Portfolio</span>
                     <span class="arr ml-auto text-tint group-hover:text-star transition-colors">→</span>
                 </a>
             </nav>
@@ -361,7 +442,7 @@
                 </svg>
                 <input id="search-input" type="text" placeholder="Rechercher un service, une page, une info…" autocomplete="off"
                        class="w-full bg-transparent outline-none text-xl sm:text-2xl font-light placeholder:text-white/35 text-white" aria-label="Champ de recherche">
-                <button onclick="toggleSearch()" aria-label="Fermer" class="font-mono text-[10px] uppercase tracking-[0.2em] border border-white/25 rounded-full px-3 py-1.5 hover:bg-white hover:text-ink transition-colors flex-none">Esc</button>
+                <button onclick="toggleSearch()" aria-label="Fermer" class="font-mono text-[10px] uppercase tracking-[0.2em] border border-white/25 rounded-full px-3 py-1.5 hover:bg-white hover:text-ink transition-colors flex-none text-white">Esc</button>
             </div>
             <div id="search-results" class="mt-4 divide-y divide-white/8 border border-white/10 bg-[#161619]/90 backdrop-blur-xl rounded-2xl overflow-hidden max-h-[46vh] overflow-y-auto" role="listbox" aria-label="Résultats de recherche"></div>
             <p class="mt-4 font-mono text-[10px] uppercase tracking-[0.2em] text-tint">↑↓ naviguer · ↵ ouvrir · / rechercher depuis n'importe quelle page</p>
