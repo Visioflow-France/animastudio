@@ -253,7 +253,7 @@
         }
         .pill-nav a:hover { color: #fff; }
         .pill-nav a[aria-current="page"] { color: #fff; }
-        .pill-nav .sep { width: 1px; height: 12px; background: rgba(255,255,255,.15); flex: none; }
+        .pill-nav .sep { width: 1px; height: 12px; background: rgba(255,255,255,.15); flex: none; transition: background .25s ease; }
 
         /* Header sticky : aucune bande — logo et liens posés directement sur les sections */
 
@@ -325,6 +325,72 @@
             .tunnel-scene { position: static; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; padding: 44px 20px; max-width: 760px; margin: 0 auto; }
             .tunnel-card { position: static; width: 100% !important; opacity: 1; transform: none; }
         }
+
+        /* ═══ SECTION « SOYONS HONNÊTES, » — révélation au scroll (port vanilla de ScrollRevealText) ═══
+           Port 1:1 du composant React Framer Motion :
+           initial { opacity: 0, y: 30 } → whileInView { opacity: 1, y: 0 }
+           viewport { once: true, margin: -100px } · transition 0.8s cubic-bezier(.16,1,.3,1) */
+        .srt-section {
+            position: relative;
+            display: flex; align-items: center; justify-content: center;
+            height: 100vh; height: 100svh;
+            background: #000000;
+            overflow: hidden;
+        }
+        .srt-title {
+            margin: 0; padding: 0 24px; text-align: center;
+            font-family: 'Instrument Serif', serif;
+            font-style: italic; font-weight: 400;
+            font-size: 3rem; line-height: 1;                 /* text-5xl */
+            /* dégradé identique : from-neutral-600 via-white to-neutral-500 */
+            background: linear-gradient(to right, #525252, #ffffff 50%, #a3a3a3);
+            -webkit-background-clip: text; background-clip: text;
+            color: transparent;
+            filter: drop-shadow(0 10px 20px rgba(255,255,255,.15));
+            opacity: 0; transform: translateY(30px);         /* initial */
+            transition: opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1);
+        }
+        @media (min-width: 768px) { .srt-title { font-size: 6rem; } } /* md:text-8xl */
+        .srt-title.is-inview { opacity: 1; transform: translateY(0); }
+
+        /* ═══ ZONE CLAIRE — tout ce qui suit « Soyons honnêtes, » passe sur fond blanc ═══
+           Remappage des utilitaires Tailwind blancs → encre (#131313), sans toucher au HTML interne */
+        .zone-light { background: #ffffff; color: #131313; }
+        .zone-light .text-white { color: #131313; }
+        .zone-light .text-white\/70 { color: rgba(19,19,19,.7); }
+        .zone-light .text-white\/80 { color: rgba(19,19,19,.8); }
+        .zone-light .text-white\/85 { color: rgba(19,19,19,.85); }
+        .zone-light .border-white\/10 { border-color: rgba(19,19,19,.12); }
+        .zone-light .border-white\/15 { border-color: rgba(19,19,19,.16); }
+        .zone-light .border-white\/20 { border-color: rgba(19,19,19,.22); }
+        .zone-light .border-white\/40 { border-color: rgba(19,19,19,.4); }
+        .zone-light .border-white { border-color: #131313; }
+        .zone-light .divide-white\/10 > :not([hidden]) ~ :not([hidden]) { border-color: rgba(19,19,19,.12); }
+        .zone-light .hover\:border-white:hover { border-color: #131313; }
+        .zone-light .hover\:text-white:hover { color: #131313; }
+        .zone-light .decoration-white\/40 { text-decoration-color: rgba(19,19,19,.4); }
+        .zone-light .decoration-white\/30 { text-decoration-color: rgba(19,19,19,.3); }
+        .zone-light .bg-\[\#1d1d1d\] { background-color: #ececec; }
+        .zone-light .speed-btn.is-active { background: #131313; color: #ffffff; border-color: #131313; }
+        .zone-light .bg-white { background-color: #131313; color: #ffffff; }
+        .zone-light .hover\:bg-white:hover { background-color: #131313; color: #ffffff; }
+        .zone-light input[type="range"] { accent-color: #131313; }
+        .zone-light input[type="checkbox"].est-check { border-color: rgba(19,19,19,.42); }
+        .zone-light input[type="checkbox"].est-check:checked { border-color: #131313; }
+
+        /* ═══ HEADER en zone claire : logo noir (crossfade) + liens et boutons sombres ═══ */
+        .header-logo-img { transition: opacity .4s ease; }
+        .header-logo-img-dark { position: absolute; left: 0; top: 0; opacity: 0; transition: opacity .4s ease; }
+        #site-header.header-dark .header-logo-img { opacity: 0; }
+        #site-header.header-dark .header-logo-img-dark { opacity: 1; }
+        #site-header.header-dark .pill-nav a { color: rgba(19,19,19,.62); }
+        #site-header.header-dark .pill-nav a:hover,
+        #site-header.header-dark .pill-nav a[aria-current="page"] { color: #131313; }
+        #site-header.header-dark .pill-nav .sep { background: rgba(19,19,19,.16); }
+        #site-header.header-dark .header-search-btn { color: #131313; border-color: rgba(19,19,19,.28); }
+        #site-header.header-dark .header-search-btn:hover { border-color: #131313; background: rgba(19,19,19,.08); }
+        #site-header.header-dark .header-menu-btn { color: #131313; border-color: rgba(19,19,19,.32); }
+        #site-header.header-dark .header-menu-btn:hover { background: #131313; color: #ffffff; }
 
         /* Entrée du header au chargement */
         #site-header { animation: headerIn .8s cubic-bezier(.16,1,.3,1) both; }
@@ -446,6 +512,7 @@
             .arr { transition: none; }
             #intro, #intro-spacer { display: none; }
             #top .hero-logo, #top .hero-nav, #top .hero-actions, #top .hero-title, #top .hero-cta, #top .hero-card { opacity: 1 !important; transform: none !important; }
+            .srt-title { opacity: 1 !important; transform: none !important; }
         }
     </style>
 </head>
@@ -575,9 +642,10 @@
     <header id="site-header" class="fixed top-0 left-0 z-50 w-full is-ghost">
         <div class="max-w-[1560px] mx-auto flex items-center justify-between gap-4 px-[18px] pt-4 pb-2 md:px-10 md:pt-6 md:pb-3">
 
-            <!-- Logo (identique au hero : logo blanc image, fond sombre partout) -->
-            <a href="index.html" class="flex items-center group" aria-label="ANIMA Studio — Accueil">
-                <img src="logo_blanc_web.png" alt="ANIMA Studio" class="h-[60px] w-auto md:h-[84px]" draggable="false">
+            <!-- Logo (identique au hero : logo blanc image, fond sombre partout) — version noire superposée pour la zone claire -->
+            <a href="index.html" class="relative flex items-center group" aria-label="ANIMA Studio — Accueil">
+                <img src="logo_blanc_web.png" alt="ANIMA Studio" class="header-logo-img h-[60px] w-auto md:h-[84px]" draggable="false">
+                <img src="logo_noir_web.png" alt="" aria-hidden="true" class="header-logo-img-dark h-[60px] w-auto md:h-[84px]" draggable="false">
             </a>
 
             <!-- Nav pilule (identique au hero) -->
@@ -595,12 +663,12 @@
 
             <!-- Actions droite : recherche + MENU (identiques au hero) -->
             <div class="flex items-center gap-3">
-                <button onclick="toggleSearch()" aria-label="Rechercher sur le site" class="w-10 h-10 rounded-full border border-white/25 hover:border-white hover:bg-white/10 transition-colors grid place-items-center">
+                <button onclick="toggleSearch()" aria-label="Rechercher sur le site" class="header-search-btn w-10 h-10 rounded-full border border-white/25 hover:border-white hover:bg-white/10 transition-colors grid place-items-center">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
                         <circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.5" y2="16.5"></line>
                     </svg>
                 </button>
-                <button onclick="toggleMenu()" class="font-mono text-[11px] uppercase tracking-[0.25em] border border-white/30 hover:bg-white hover:text-ink transition-colors rounded-full px-5 py-2.5">
+                <button onclick="toggleMenu()" class="header-menu-btn font-mono text-[11px] uppercase tracking-[0.25em] border border-white/30 hover:bg-white hover:text-ink transition-colors rounded-full px-5 py-2.5">
                     Menu
                 </button>
             </div>
@@ -722,8 +790,15 @@
             </div>
         </section>
 
+        <!-- ═══════════════ SECTION « SOYONS HONNÊTES, » — révélation au scroll (port de ScrollRevealText) ═══════════════
+             Le pivot du site : noir plein écran ici, tout ce qui suit passe en blanc. -->
+        <section id="soyons-honnetes" class="srt-section" aria-labelledby="srt-title">
+            <h2 id="srt-title" class="srt-title">Soyons honnêtes,</h2>
+        </section>
+        <noscript><style>.srt-title { opacity: 1 !important; transform: none !important; }</style></noscript>
+
         <!-- ═══════════════ SECTION 03 — SERVICES (aperçu → page Services) ═══════════════ -->
-        <section id="services" class="border-t border-white/10 scroll-mt-24">
+        <section id="services" class="zone-light border-t border-white/10 scroll-mt-24">
             <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-16 md:py-24">
                 <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10 md:mb-14">
                     <div class="reveal">
@@ -777,7 +852,7 @@
         </section>
 
         <!-- ═══════════════ SECTION 04 — PROJETS (aperçu → page Portfolio) ═══════════════ -->
-        <section id="projets" class="border-t border-white/10 scroll-mt-24">
+        <section id="projets" class="zone-light border-t border-white/10 scroll-mt-24">
             <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-16 md:py-24">
                 <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10 md:mb-14">
                     <div class="reveal">
@@ -821,7 +896,7 @@
         </section>
 
         <!-- ═══════════════ SECTION 05 — ESTIMATEUR ═══════════════ -->
-        <section id="estimateur" class="border-t border-white/10 scroll-mt-24">
+        <section id="estimateur" class="zone-light border-t border-white/10 scroll-mt-24">
             <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-16 md:py-24">
                 <h2 class="reveal font-sans font-normal text-3xl sm:text-4xl md:text-5xl leading-[1.1] tracking-tight mb-10 md:mb-14 max-w-2xl">Calculez votre devis en direct.</h2>
 
@@ -896,7 +971,7 @@
         </section>
 
         <!-- ═══════════════ SECTION 06 — FAQ ═══════════════ -->
-        <section id="faq" class="border-t border-white/10 scroll-mt-24">
+        <section id="faq" class="zone-light border-t border-white/10 scroll-mt-24">
             <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-16 md:py-24">
                 <h2 class="reveal font-sans font-normal text-3xl sm:text-4xl md:text-5xl leading-[1.1] tracking-tight mb-10 md:mb-14">Questions fréquentes.</h2>
 
@@ -957,7 +1032,7 @@
     </main>
 
     <!-- ═══════════════ FOOTER ═══════════════ -->
-    <footer class="border-t border-white/10">
+    <footer class="zone-light border-t border-white/10">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-14">
             <div class="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-white/10">
                 <div class="md:col-span-6">
@@ -1264,6 +1339,41 @@
             });
         };
         addEventListener('scroll', revealPassed, { passive: true });
+
+        // ── « Soyons honnêtes, » : révélation au scroll (port vanilla de Framer Motion whileInView) ──
+        (function () {
+            'use strict';
+            var title = document.querySelector('.srt-title');
+            if (!title) return;
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                title.classList.add('is-inview');
+                return;
+            }
+            var srt = new IntersectionObserver(function (entries) {
+                if (entries[0].isIntersecting) {
+                    title.classList.add('is-inview');
+                    srt.disconnect(); // viewport: { once: true }
+                }
+            }, { rootMargin: '-100px' }); // viewport: { margin: '-100px' }
+            srt.observe(title);
+        })();
+
+        // ── Header : bascule logo noir + interface sombre dès que la zone claire atteint le haut de l'écran ──
+        (function () {
+            'use strict';
+            var headerEl = document.getElementById('site-header');
+            var lightZone = document.getElementById('services');
+            if (!headerEl || !lightZone) return;
+            var ticking = false;
+            function updateHeaderZone() {
+                ticking = false;
+                headerEl.classList.toggle('header-dark', lightZone.getBoundingClientRect().top <= 0);
+            }
+            window.addEventListener('scroll', function () {
+                if (!ticking) { ticking = true; requestAnimationFrame(updateHeaderZone); }
+            }, { passive: true });
+            updateHeaderZone();
+        })();
 
         // ── Statistiques : compteur animé ────────────────────────────────
         const cio = new IntersectionObserver((entries) => {
