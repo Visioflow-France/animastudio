@@ -255,9 +255,7 @@
         .pill-nav a[aria-current="page"] { color: #fff; }
         .pill-nav .sep { width: 1px; height: 12px; background: rgba(255,255,255,.15); flex: none; }
 
-        /* Header sticky : transparent puis fond flouté au scroll */
-        #site-header { border-bottom: 1px solid transparent; transition: background-color .35s ease, border-color .35s ease, backdrop-filter .35s ease; }
-        #site-header.is-scrolled { background: rgba(19,19,19,.9); backdrop-filter: blur(12px); border-bottom-color: rgba(255,255,255,.1); }
+        /* Header sticky : aucune bande — logo et liens posés directement sur les sections */
 
         /* Héro : lettres révélées en cascade */
         .wrap-l { display: inline-block; overflow: hidden; vertical-align: bottom; padding-bottom: .06em; }
@@ -276,23 +274,18 @@
             overflow: hidden; background: #000000;
             perspective: 1200px;
         }
-        .tunnel-ring { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); border-radius: 9999px; pointer-events: none; }
-        .tunnel-ring-a { width: 48vmin; height: 48vmin; border: 1px solid rgba(255,77,0,.16); }
-        .tunnel-ring-b { width: 76vmin; height: 76vmin; border: 1px dashed rgba(255,255,255,.07); }
         .tunnel-copy {
             position: absolute; inset: 0; z-index: 1;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             text-align: center; padding: 0 24px; pointer-events: none;
             will-change: transform, opacity;
         }
-        .tunnel-kicker { margin: 0 0 22px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .25em; text-transform: uppercase; color: #697485; }
         .tunnel-title {
             margin: 0; font-family: 'Inter', sans-serif; font-weight: 300;
             font-size: clamp(38px, 6vw, 84px); line-height: 1.02; letter-spacing: -.02em;
             background: linear-gradient(to bottom, #ffffff, rgba(255,255,255,.45));
             -webkit-background-clip: text; background-clip: text; color: transparent;
         }
-        .tunnel-sub { margin: 18px 0 0; max-width: 42ch; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 300; color: rgba(255,255,255,.6); }
         .tunnel-scene { position: absolute; inset: 0; transform-style: preserve-3d; pointer-events: none; }
         .tunnel-card {
             position: absolute; left: 50%; top: 50%; z-index: 2;
@@ -303,13 +296,6 @@
             opacity: 0; will-change: transform, opacity; pointer-events: auto;
         }
         .tunnel-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .6s cubic-bezier(.16,1,.3,1); }
-        .tunnel-card figcaption {
-            position: absolute; inset: 0; display: flex; align-items: flex-end; padding: 14px 16px;
-            background: linear-gradient(to top, rgba(0,0,0,.82), rgba(0,0,0,.12) 48%, rgba(0,0,0,0));
-            font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase;
-            color: rgba(255,255,255,.95); line-height: 1.5;
-        }
-        .tunnel-card .idx { color: #FF4D00; margin-right: 8px; }
         .tunnel-card:hover { border-color: rgba(255,77,0,.8); }
         .tunnel-card:hover img { transform: scale(1.06); }
         .tunnel-hint {
@@ -323,30 +309,21 @@
             content: ""; position: absolute; left: 0; top: -14px; width: 1px; height: 14px;
             background: #FF4D00; animation: hintSlide 1.6s cubic-bezier(.65,0,.35,1) infinite;
         }
-        .tunnel-cta {
-            position: absolute; inset: 0; z-index: 11;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
-            opacity: 0; pointer-events: none; will-change: opacity, transform;
-        }
-        .tunnel-cta > * { pointer-events: none; }
-        .tunnel-cta.is-on > * { pointer-events: auto; }
         /* Mobile : piste plus courte, perspective réduite, cartes plus petites */
         @media (max-width: 767px) {
             .tunnel-section { height: 260vh; }
             .tunnel-stage { perspective: 900px; }
             .tunnel-card { width: 150px; border-radius: 14px; }
             .tunnel-title { font-size: clamp(34px, 9.5vw, 48px); }
-            .tunnel-sub { font-size: 12px; }
         }
         /* Reduced-motion : repli statique en grille (le JS ne démarre pas) */
         @media (prefers-reduced-motion: reduce) {
             .tunnel-section { height: auto; }
             .tunnel-stage { position: static; height: auto; perspective: none; overflow: visible; display: block; }
-            .tunnel-ring, .tunnel-hint { display: none; }
+            .tunnel-hint { display: none; }
             .tunnel-copy { position: static; padding: 96px 24px 0; opacity: 1; }
             .tunnel-scene { position: static; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; padding: 44px 20px; max-width: 760px; margin: 0 auto; }
             .tunnel-card { position: static; width: 100% !important; opacity: 1; transform: none; }
-            .tunnel-cta { position: static; opacity: 1; padding: 8px 24px 96px; }
         }
 
         /* Entrée du header au chargement */
@@ -680,54 +657,39 @@
         <section id="tunnel" class="tunnel-section">
             <div class="tunnel-stage">
 
-                <!-- Fond noir pur + anneaux filaires très discrets (profondeur) -->
-                <div class="tunnel-ring tunnel-ring-a" aria-hidden="true"></div>
-                <div class="tunnel-ring tunnel-ring-b" aria-hidden="true"></div>
-
                 <!-- Typographie centrale : s'approche puis s'efface au fil du vol -->
                 <div class="tunnel-copy">
-                    <p class="tunnel-kicker">[ 01 — Galerie ]</p>
                     <h2 class="tunnel-title">Traversez<br>nos univers.</h2>
-                    <p class="tunnel-sub">Faites défiler — chaque image traversée est un projet signé ANIMA.</p>
                 </div>
 
                 <!-- Couloir 3D : 9 cartes en spirale d'angle d'or (pilotées en JS plus bas) -->
                 <div class="tunnel-scene" aria-hidden="true">
                     <figure class="tunnel-card">
                         <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=640&h=800&q=75" alt="" decoding="async">
-                        <figcaption><span class="idx">01</span>Lookbook — Genève</figcaption>
                     </figure>
                     <figure class="tunnel-card">
                         <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=640&h=800&q=75" alt="" decoding="async">
-                        <figcaption><span class="idx">02</span>Campagne mode — Lausanne</figcaption>
                     </figure>
                     <figure class="tunnel-card">
                         <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=640&h=800&q=75" alt="" decoding="async">
-                        <figcaption><span class="idx">03</span>Food stories — Carouge</figcaption>
                     </figure>
                     <figure class="tunnel-card">
                         <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=640&h=800&q=75" alt="" decoding="async">
-                        <figcaption><span class="idx">04</span>Aftermovie — Festival</figcaption>
                     </figure>
                     <figure class="tunnel-card">
                         <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=640&h=800&q=75" alt="" decoding="async">
-                        <figcaption><span class="idx">05</span>Gala privé — Zurich</figcaption>
                     </figure>
                     <figure class="tunnel-card">
                         <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=640&h=800&q=75" alt="" decoding="async">
-                        <figcaption><span class="idx">06</span>Menu signature</figcaption>
                     </figure>
                     <figure class="tunnel-card">
                         <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=640&h=800&q=75" alt="" decoding="async">
-                        <figcaption><span class="idx">07</span>Lancement de marque</figcaption>
                     </figure>
                     <figure class="tunnel-card">
                         <img src="https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=640&h=800&q=75" alt="" decoding="async">
-                        <figcaption><span class="idx">08</span>Conférence — SwissTech</figcaption>
                     </figure>
                     <figure class="tunnel-card">
                         <img src="https://images.unsplash.com/photo-1470337458703-46ad1756a187?auto=format&fit=crop&w=640&h=800&q=75" alt="" decoding="async">
-                        <figcaption><span class="idx">09</span>Cocktails &amp; lifestyle</figcaption>
                     </figure>
                 </div>
 
@@ -737,23 +699,12 @@
                     <span class="tunnel-hint-bar"></span>
                 </div>
 
-                <!-- CTA de fin de vol : apparaît quand le couloir est traversé -->
-                <div class="tunnel-cta">
-                    <button onclick="toggleDrawer()" class="font-mono text-[11px] uppercase tracking-[0.18em] border border-white/40 px-6 py-4 hover:bg-white hover:text-ink transition-colors rounded-none">
-                        Réserver un shoot
-                    </button>
-                    <a href="portfolio.html" class="font-mono text-[11px] uppercase tracking-[0.18em] text-white underline decoration-white/40 underline-offset-8 hover:decoration-star hover:text-star transition-colors">
-                        ou voir tout le portfolio <span class="arr">↗</span>
-                    </a>
-                </div>
-
             </div>
         </section>
 
         <!-- ═══════════════ SECTION 02 — EN UN COUP D'ŒIL ═══════════════ -->
         <section class="border-t border-white/10">
             <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-16 md:py-24">
-                <p class="reveal font-mono text-[11px] sm:text-xs uppercase tracking-[0.25em] text-tint mb-10 md:mb-14">[ Anima en un coup d'œil ]</p>
                 <div class="grid grid-cols-1 md:grid-cols-3 md:divide-x divide-white/10">
                     <div class="reveal py-8 md:py-0 md:pr-10">
                         <span data-count="100" data-suffix="%" class="block font-sans font-light text-6xl md:text-7xl tracking-tight">0%</span>
@@ -776,7 +727,6 @@
             <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-16 md:py-24">
                 <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10 md:mb-14">
                     <div class="reveal">
-                        <p class="font-mono text-[11px] sm:text-xs uppercase tracking-[0.25em] text-tint mb-6 md:mb-8">[ 02 — Nos services ]</p>
                         <h2 class="font-sans font-normal text-3xl sm:text-4xl md:text-5xl leading-[1.1] tracking-tight">Ce que nous faisons.</h2>
                     </div>
                     <a href="services.html" class="reveal font-mono text-[11px] uppercase tracking-[0.18em] text-tint hover:text-white transition-colors">
@@ -831,7 +781,6 @@
             <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-16 md:py-24">
                 <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10 md:mb-14">
                     <div class="reveal">
-                        <p class="font-mono text-[11px] sm:text-xs uppercase tracking-[0.25em] text-tint mb-6 md:mb-8">[ 03 — Projets choisis ]</p>
                         <h2 class="font-sans font-normal text-3xl sm:text-4xl md:text-5xl leading-[1.1] tracking-tight">Réalisations sélectionnées.</h2>
                     </div>
                     <a href="portfolio.html" class="reveal font-mono text-[11px] uppercase tracking-[0.18em] text-tint hover:text-white transition-colors">
@@ -874,7 +823,6 @@
         <!-- ═══════════════ SECTION 05 — ESTIMATEUR ═══════════════ -->
         <section id="estimateur" class="border-t border-white/10 scroll-mt-24">
             <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-16 md:py-24">
-                <p class="reveal font-mono text-[11px] sm:text-xs uppercase tracking-[0.25em] text-tint mb-6 md:mb-8">[ 04 — Estimateur ]</p>
                 <h2 class="reveal font-sans font-normal text-3xl sm:text-4xl md:text-5xl leading-[1.1] tracking-tight mb-10 md:mb-14 max-w-2xl">Calculez votre devis en direct.</h2>
 
                 <div class="reveal border border-white/15 rounded-none p-6 sm:p-10">
@@ -950,7 +898,6 @@
         <!-- ═══════════════ SECTION 06 — FAQ ═══════════════ -->
         <section id="faq" class="border-t border-white/10 scroll-mt-24">
             <div class="max-w-[1400px] mx-auto px-4 sm:px-8 py-16 md:py-24">
-                <p class="reveal font-mono text-[11px] sm:text-xs uppercase tracking-[0.25em] text-tint mb-6 md:mb-8">[ 05 — FAQ ]</p>
                 <h2 class="reveal font-sans font-normal text-3xl sm:text-4xl md:text-5xl leading-[1.1] tracking-tight mb-10 md:mb-14">Questions fréquentes.</h2>
 
                 <div class="reveal border-t border-white/10">
@@ -1177,13 +1124,8 @@
         const header = document.getElementById('site-header');
         const heroSection = document.getElementById('top');
         new IntersectionObserver((entries) => {
-            const heroVisible = entries[0].isIntersecting;
-            header.classList.toggle('is-ghost', heroVisible);
-            header.classList.toggle('is-scrolled', !heroVisible && window.scrollY > 8);
+            header.classList.toggle('is-ghost', entries[0].isIntersecting);
         }, { threshold: 0.02 }).observe(heroSection);
-        addEventListener('scroll', () => {
-            header.classList.toggle('is-scrolled', !header.classList.contains('is-ghost') && window.scrollY > 8);
-        }, { passive: true });
 
         // ── HERO : naissance après l'intro (le layout est 100% CSS fluide) ──
         (function () {
@@ -1208,7 +1150,6 @@
 
             var copy  = section.querySelector('.tunnel-copy');
             var hint  = section.querySelector('.tunnel-hint');
-            var cta   = section.querySelector('.tunnel-cta');
             var cards = Array.prototype.slice.call(section.querySelectorAll('.tunnel-card'));
             var finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
@@ -1285,11 +1226,6 @@
                 copy.style.transform = 'scale(' + (0.7 + 0.3 * t1 + 0.35 * t2).toFixed(4) + ')';
                 copy.style.opacity = ((0.25 + 0.75 * smoothstep(0, 0.12, cur)) * (1 - smoothstep(0.7, 0.85, cur))).toFixed(3);
                 hint.style.opacity = (1 - smoothstep(0, 0.12, cur)).toFixed(3);
-
-                var ctaOp = smoothstep(0.86, 0.97, cur);
-                cta.style.opacity = ctaOp.toFixed(3);
-                cta.style.transform = 'translateY(' + ((1 - ctaOp) * 26).toFixed(1) + 'px)';
-                cta.classList.toggle('is-on', ctaOp > 0.4);
             }
 
             function tick(now) {
