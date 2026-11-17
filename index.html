@@ -120,97 +120,77 @@
         }
         .h-menu:hover { background: #FFFFFF; color: #131313; }
 
-        /* ── Corps : titre (romain, sans flou derrière) à gauche + bulle « Nos Services » à droite ── */
+        /* ── Corps : bloc de phrases minimal centré, ancré en bas (comme une affiche) ──
+           Calqué sur la référence : titre court en Inter médium à chasse serrée, sous-titre
+           fin et légèrement transparent, deux pilules bordées, petit lien en dessous. */
         .hero-body {
-            flex: 1; display: flex; flex-direction: row;
-            align-items: flex-end; justify-content: space-between;
-            gap: 48px; padding-top: 40px; min-height: 0;
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: flex-end;
+            text-align: center; padding: 40px 0 4px; min-height: 0;
         }
         .hero-title {
             position: relative;
-            margin: 0; padding-bottom: 0;       /* bas du titre aligné sur le bas de la carte « Nos Services » */
-            max-width: 550px;
-            font-family: 'Playfair Display', serif;
-            font-weight: 400; font-style: normal;
-            font-size: clamp(46px, 4.6vw, 80px);
-            line-height: 1.06; letter-spacing: -0.02em;
-            /* dégradé éditorial sur les lettres ; drop-shadow remplace text-shadow
-               (incompatible avec background-clip: text) */
-            background: linear-gradient(180deg, #FFFFFF 0%, #E2DCD5 100%);
-            -webkit-background-clip: text; background-clip: text;
-            color: transparent;
-            filter: drop-shadow(0 4px 24px rgba(0, 0, 0, 0.75));
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: clamp(28px, 3.4vw, 52px);
+            line-height: 1.14; letter-spacing: -0.035em;
+            color: #FFFFFF;
+            text-shadow: 0 2px 26px rgba(0, 0, 0, 0.6);
         }
-        /* calque de profondeur doux, uniquement derrière la zone du titre */
+        /* calque de profondeur doux, uniquement derrière le bloc de phrases */
         .hero-title::before {
             content: ""; position: absolute; z-index: -1;
-            inset: -48px -64px -56px -40px;
-            background: radial-gradient(ellipse closest-side at 38% 55%, rgba(0,0,0,.6), rgba(0,0,0,0) 95%);
+            inset: -60px -72px -48px;
+            background: radial-gradient(ellipse closest-side at 50% 58%, rgba(0,0,0,.55), rgba(0,0,0,0) 95%);
             pointer-events: none;
         }
-
-        .hero-cards { width: min(460px, 34vw); flex: none; }
-
-        /* Bulle unique : au ratio exact de son image (1671×941), qui reste donc entièrement visible */
-        .hero-card {
-            position: relative; display: block; aspect-ratio: 1671 / 941;
-            border: 2.5px solid #FFFFFF; border-radius: 22px; overflow: hidden;
-            text-decoration: none; background: #141210;
+        .hero-sub {
+            margin: 14px auto 0; max-width: 54ch;
+            font-family: 'Inter', sans-serif; font-weight: 300;
+            font-size: clamp(13.5px, 1.1vw, 15.5px);
+            line-height: 1.6; letter-spacing: -0.005em;
+            color: rgba(255,255,255,.82);
+            text-wrap: balance;
+            text-shadow: 0 1px 16px rgba(0,0,0,.55);
         }
-        .hero-card img {
-            position: absolute; inset: 0; width: 100%; height: 100%;
-            object-fit: cover;
-            transition: transform .6s cubic-bezier(.16,1,.3,1);
-        }
-        .hero-card::before {
-            content: ""; position: absolute; inset: 0; z-index: 1;
-            background: linear-gradient(90deg, rgba(8,7,6,.58), rgba(8,7,6,.14) 52%, rgba(8,7,6,0));
-        }
-        .hero-card b {
-            position: absolute; z-index: 2; left: 24px; top: 20px;
-            max-width: 44%;                              /* le texte ne dépasse jamais le milieu */
-            font-family: 'Inter', sans-serif; font-weight: 500;
-            font-size: 19px; line-height: 1.25; color: #FFFFFF;
-        }
-        .hero-card .go {
-            position: absolute; z-index: 2; left: 24px; bottom: 16px;
-            width: 40px; height: 40px; border-radius: 999px;
-            border: 2px solid #FFFFFF; background: rgba(8,7,6,.28);
-            display: grid; place-items: center;
-            color: #FFFFFF; font-size: 17px; line-height: 1;
+        .hero-cta-row { display: flex; align-items: center; gap: 12px; margin-top: 28px; }
+        .hero-pill {
+            display: inline-flex; align-items: center; justify-content: center;
+            height: 44px; padding: 0 26px; border-radius: 999px;
+            border: 1.5px solid rgba(255,255,255,.9); background: rgba(15,13,12,.32);
+            font-family: 'Inter', sans-serif; font-weight: 500; font-size: 14px; letter-spacing: -.01em;
+            color: #FFFFFF; text-decoration: none;
             transition: background .25s ease, color .25s ease;
         }
-        .hero-card:hover img { transform: scale(1.045); }
-        .hero-card:hover .go { background: #FFFFFF; color: #131313; }
-        .hero-card:focus-visible { outline: 2px solid #FF4D00; outline-offset: 3px; }
+        .hero-pill:hover { background: #FFFFFF; color: #131313; border-color: #FFFFFF; }
+        .hero-pill:focus-visible, .hero-more:focus-visible { outline: 2px solid #FF4D00; outline-offset: 3px; }
+        .hero-more {
+            margin-top: 26px;
+            font-family: 'Inter', sans-serif; font-weight: 400; font-size: 13.5px; letter-spacing: -.01em;
+            color: #FFFFFF; opacity: .92; text-decoration: none;
+            text-shadow: 0 1px 14px rgba(0,0,0,.5);
+        }
+        .hero-more:hover { opacity: 1; text-decoration: underline; text-underline-offset: 4px; }
 
-        /* ── Mobile ── */
+        /* ── Mobile : mêmes phrases, centrées et ancrées en bas ── */
         @media (max-width: 767px) {
-            .hero-inner { padding: 16px 18px 26px; }
+            .hero-inner { padding: 16px 18px 30px; }
             .hero-logo img { height: 60px; }
             .h-search { width: 46px; height: 46px; }
             .h-menu { height: 46px; padding: 0 20px; font-size: 11.5px; }
-            /* Titre centré, posé vers le bas-milieu (~60%) : le décor de l'image
-               (scène, néons, plantes) reste entièrement visible au-dessus */
-            .hero-body {
-                position: absolute; top: 60%; left: 50%; transform: translateX(-50%);
-                width: 100%;
-                flex-direction: column; align-items: center; justify-content: flex-start;
-                padding: 0;
-            }
-            .hero-title {
-                font-size: 2rem; line-height: 1.2;
-                max-width: 90%; padding: 0; margin: 0;
-                text-align: center;
-                filter: none;                            /* pas d'ombre sombre sur les lettres */
-            }
-            .hero-title::before { display: none; }       /* pas de calque sombre derrière le titre */
-
-            .hero-cards { display: none; }   /* aucune bulle sur mobile */
+            .hero-body { padding: 26px 0 6px; }
+            .hero-title { font-size: clamp(26px, 7.6vw, 34px); text-shadow: none; }
+            .hero-title::before { display: none; }   /* le dégradé d'ombrage du fond suffit */
+            .hero-sub { font-size: 13.5px; max-width: 88%; }
+            .hero-cta-row { margin-top: 22px; gap: 10px; }
+            .hero-pill { height: 42px; padding: 0 20px; font-size: 13px; }
+            .hero-more { margin-top: 20px; font-size: 12.5px; }
         }
 
         /* ── Naissance du hero (à l'arrivée sur la page) ── */
-        #top .hero-logo, #top .hero-nav, #top .hero-actions, #top .hero-title, #top .hero-card {
+        #top .hero-logo, #top .hero-nav, #top .hero-actions,
+        #top .hero-title, #top .hero-sub, #top .hero-cta-row, #top .hero-more {
             opacity: 0; transform: translateY(24px);
             transition: opacity .8s ease, transform .9s cubic-bezier(.16,1,.3,1);
         }
@@ -218,7 +198,9 @@
         #top.is-born .hero-nav     { opacity: 1; transform: none; transition-delay: .14s; }
         #top.is-born .hero-actions { opacity: 1; transform: none; transition-delay: .20s; }
         #top.is-born .hero-title   { opacity: 1; transform: none; transition-delay: .28s; }
-        #top.is-born .hero-card    { opacity: 1; transform: none; transition-delay: .40s; }
+        #top.is-born .hero-sub     { opacity: 1; transform: none; transition-delay: .36s; }
+        #top.is-born .hero-cta-row { opacity: 1; transform: none; transition-delay: .44s; }
+        #top.is-born .hero-more    { opacity: 1; transform: none; transition-delay: .52s; }
 
         /* Header invisible tant que le hero (qui porte sa propre nav) est à l'écran ;
            une fois le hero dépassé il ne montre que le logo (les liens et bulles du hero
@@ -344,141 +326,91 @@
         .zone-light .hover\:text-white:hover { color: #131313; }
         .zone-light .decoration-white\/40 { text-decoration-color: rgba(19,19,19,.4); }
         .zone-light .decoration-white\/30 { text-decoration-color: rgba(19,19,19,.3); }
-        .zone-light .bg-\[\#1d1d1d\] { background-color: #ececec; }
-        .zone-light .speed-btn.is-active { background: #131313; color: #ffffff; border-color: #131313; }
         .zone-light .bg-white { background-color: #131313; color: #ffffff; }
         .zone-light .hover\:bg-white:hover { background-color: #131313; color: #ffffff; }
-        .zone-light input[type="range"] { accent-color: #131313; }
-        .zone-light input[type="checkbox"].est-check { border-color: rgba(19,19,19,.42); }
-        .zone-light input[type="checkbox"].est-check:checked { border-color: #131313; }
 
-        /* ═══ BENTO GRID — design system « apple-bento-grid » (thème clair, adapté web) ═══
-           Règles zero-gap du skill : gap de 6px exactement, jamais align-items:start (les cartes
-           remplissent leur cellule), aucune cellule vide. Tokens : fond #f5f5f7, cartes #ffffff,
-           texte #1d1d1f/#86868b/#aeaeb2, pills #f0f0f2. Accents (3 max) : #FF4D00 (marque),
-           #00b4d8, #34d399. Typo cartes : Sora (titres, nombres) · DM Sans (corps). */
-        .bento-section { background: #f5f5f7; }
-        .bento-outer { max-width: 1280px; margin: 0 auto; padding: 76px 24px; }
-        .bento {
-            display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            grid-auto-rows: minmax(190px, auto);
-            gap: 6px;                                  /* 6px — jamais 8px */
+        /* ═══ SECTIONS MINIMALES — une idée par écran, parfaitement centrée ═══
+           À partir de « Soyons honnêtes, » : un titre court, une ou deux phrases en dessous,
+           un petit visuel qui résume. Typographie Inter médium à chasse serrée — l'espace
+           blanc fait le reste (esthétique portée de tekiyo.eu). */
+        .mini-section {
+            min-height: 82vh;
+            background: #ffffff; color: #131313;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            text-align: center; padding: 110px 24px;
         }
-        .bento .card {
-            background: #ffffff; border-radius: 18px;
-            box-shadow: 0 1px 8px rgba(0,0,0,.05);
-            padding: 20px 22px;
-            display: flex; flex-direction: column; justify-content: center;
-            position: relative; overflow: hidden; min-width: 0; text-align: left;
+        .mini-title {
+            font-family: 'Inter', sans-serif; font-weight: 500;
+            font-size: clamp(21px, 2.4vw, 30px);
+            line-height: 1.3; letter-spacing: -0.045em;
+            color: rgba(19,19,19,.92);
+            text-wrap: balance;
         }
-        a.card { color: inherit; text-decoration: none; }
-        a.card:hover { box-shadow: 0 8px 24px rgba(0,0,0,.09); }
-        /* Occupation de la grille : aucune cellule vide */
-        .bento .c2 { grid-column: span 2; }
-        .bento .c3 { grid-column: span 3; }
-        .bento .c4 { grid-column: 1 / -1; }
-        .bento .r2 { grid-row: span 2; }
-        /* Typo des cartes */
-        .bento .num   { font-family:'Sora',sans-serif; font-weight:800; letter-spacing:-.03em; line-height:1; }
-        .bento .label { font-family:'DM Sans',sans-serif; font-weight:500; color:#86868b; line-height:1.3; }
-        .bento .label strong { color:#1d1d1f; font-weight:600; }
-        /* HERO — bordure dégradée 4px en haut */
-        .bento .b-hero { padding: 26px; }
-        .b-hero::before {
-            content:''; position:absolute; top:0; left:0; right:0; height:4px;
-            background: linear-gradient(90deg, #FF4D00, #ff9a6b, #FF4D00);
-            border-radius: 18px 18px 0 0;
+        .mini-desc {
+            margin: 12px auto 0;
+            font-family: 'Inter', sans-serif; font-weight: 400;
+            font-size: clamp(13.5px, 1.05vw, 15px);
+            line-height: 1.7; letter-spacing: -0.02em;
+            color: rgba(19,19,19,.45);
+            max-width: 46ch;
+            text-wrap: balance;
         }
-        .b-eyebrow { font-family:'DM Sans',sans-serif; font-size:12px; font-weight:600; color:#FF4D00; text-transform:uppercase; letter-spacing:.09em; margin-bottom:12px; }
-        .b-tagline, .b-subtag { font-family:'Sora',sans-serif; font-weight:700; letter-spacing:-.03em; line-height:1.14; font-size:clamp(23px,2.3vw,33px); color:#1d1d1f; }
-        .b-subtag { color:#86868b; }
-        .b-desc { font-family:'DM Sans',sans-serif; font-size:14px; color:#86868b; line-height:1.55; margin-top:12px; max-width:48ch; }
-        .b-date { font-family:'DM Sans',sans-serif; font-size:12px; font-weight:500; color:#aeaeb2; margin-top:14px; }
-        .b-date .arr { color:#FF4D00; }
-        /* CATEGORY — nom + focus + pills */
-        .b-cat-num { font-family:'DM Sans',sans-serif; font-size:11px; font-weight:600; color:#aeaeb2; margin-bottom:8px; }
-        .category-name { font-family:'Sora',sans-serif; font-size:15px; font-weight:700; letter-spacing:-.01em; margin-bottom:4px; color:#1d1d1f; }
-        .category-focus { font-family:'DM Sans',sans-serif; font-size:12px; font-weight:500; color:#86868b; margin-bottom:10px; }
-        .pills-wrap { display:flex; flex-wrap:wrap; }
-        .pill { display:inline-block; font-family:'DM Sans',sans-serif; font-size:10px; font-weight:600; color:#6e6e73; background:#f0f0f2; border-radius:100px; padding:3px 9px; margin:2px 2px 2px 0; white-space:nowrap; }
-        /* BADGE — pill + gros chiffre */
-        .badge-pill { display:inline-flex; align-items:center; gap:6px; background:#f0f0f2; border-radius:100px; padding:4px 12px; margin-bottom:10px; width:fit-content; }
-        .badge-pill span { font-family:'DM Sans',sans-serif; font-size:11px; font-weight:600; color:#6e6e73; }
-        .badge-num { font-family:'Sora',sans-serif; font-size:32px; font-weight:800; letter-spacing:-.03em; color:#FF4D00; }
-        .badge-lbl { font-family:'DM Sans',sans-serif; font-size:11px; color:#86868b; margin-top:4px; }
-        /* QUOTE — fond sombre, emphase cyan */
-        .bento .b-quote { background:#1d1d1f; padding:24px 28px; }
-        .quote-text { font-family:'Sora',sans-serif; font-size:clamp(16px,1.6vw,21px); font-weight:600; color:#fff; letter-spacing:-.01em; line-height:1.4; }
-        .quote-text em { color:#00b4d8; font-style:normal; }
-        /* HIGHLIGHT — fond dégradé plein, chiffre blanc */
-        .bento .b-hl { background:linear-gradient(145deg,#059669 0%,#34d399 60%,#a7f3d0 100%); align-items:center; text-align:center; padding:26px; }
-        .b-hl .num { font-size:clamp(44px,4.4vw,64px); color:#fff; margin-bottom:6px; }
-        .b-hl .label { font-size:16px; font-weight:600; color:rgba(255,255,255,.92); }
-        .b-hl .sub { font-family:'DM Sans',sans-serif; font-size:12.5px; color:rgba(255,255,255,.72); margin-top:8px; }
-        /* IMAGE — photo plein cadre + légende en dégradé */
-        .bento .b-img { padding:0; }
-        .b-img-fill { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:transform .6s cubic-bezier(.16,1,.3,1); }
-        .b-img::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg,rgba(8,8,10,0) 46%,rgba(8,8,10,.74) 100%); }
-        .b-img-cap { position:absolute; z-index:2; left:20px; right:20px; bottom:16px; display:flex; flex-direction:column; gap:3px; }
-        .b-cap-title { font-family:'Sora',sans-serif; font-size:15px; font-weight:600; color:#fff; letter-spacing:-.01em; }
-        .b-cap-link { font-family:'DM Sans',sans-serif; font-size:12px; font-weight:600; color:rgba(255,255,255,.85); }
-        .b-cap-link .arr { color:#FF4D00; }
-        a.b-img:hover .b-img-fill { transform:scale(1.045); }
-        /* FAQ — accordéon dans une carte */
-        .b-faq { padding:18px 22px; gap:0; }
-        .b-faq-btn { display:flex; align-items:center; justify-content:space-between; gap:16px; width:100%; background:none; border:0; padding:0; cursor:pointer; text-align:left; font-family:'DM Sans',sans-serif; font-size:15px; font-weight:600; color:#1d1d1f; }
-        .b-faq .faq-icon { font-family:'Sora',sans-serif; font-size:20px; color:#aeaeb2; flex:none; transition:transform .3s ease; }
-        .b-faq.open .faq-icon { transform:rotate(45deg); }
-        .b-faq .faq-panel > div p { font-family:'DM Sans',sans-serif; font-size:13px; color:#86868b; line-height:1.6; padding-top:10px; max-width:64ch; }
-        .b-faq .link-btn { background:none; border:0; padding:0; cursor:pointer; color:#FF4D00; font-weight:600; text-decoration:underline; text-underline-offset:3px; }
-        /* ESTIMATEUR — contrôles en pills */
-        .b-step { font-family:'DM Sans',sans-serif; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:#1d1d1f; margin-bottom:12px; }
-        .b-checks { display:flex; flex-direction:column; gap:8px; }
-        .b-check-row { display:flex; align-items:center; gap:10px; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; color:#3a3a3c; background:#f5f5f7; border:1px solid transparent; border-radius:100px; padding:10px 16px; transition:border-color .2s ease, background .2s ease; }
-        .b-check-row:hover { border-color:#d2d2d7; }
-        .b-check-row:has(input:checked) { border-color:#1d1d1f; background:#ececf0; }
-        .b-range-row { display:flex; align-items:center; gap:14px; }
-        .b-range-val { font-family:'Sora',sans-serif; font-size:20px; font-weight:800; color:#FF4D00; min-width:36px; }
-        .b-speeds { display:flex; flex-direction:column; gap:8px; }
-        .speed-btn { display:flex; flex-direction:column; align-items:flex-start; gap:2px; background:#f5f5f7; border:1px solid transparent; border-radius:14px; padding:9px 14px; cursor:pointer; text-align:left; font-family:'DM Sans',sans-serif; font-size:12.5px; font-weight:600; color:#1d1d1f; transition:border-color .2s ease, background .2s ease, color .2s ease; }
-        .speed-btn span { font-size:11px; font-weight:500; color:#86868b; }
-        .speed-btn:hover { border-color:#d2d2d7; }
-        .speed-btn.is-active { background:#1d1d1f; color:#ffffff; border-color:#1d1d1f; }
-        .speed-btn.is-active span { color:rgba(255,255,255,.62); }
-        /* RECEIPT — carte sombre du reçu */
-        .bento .b-receipt { background:#1d1d1f; padding:22px 26px; justify-content:space-between; gap:16px; }
-        .b-rc-head { display:flex; justify-content:space-between; align-items:center; font-family:'DM Sans',sans-serif; font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.55); border-bottom:1px solid rgba(255,255,255,.1); padding-bottom:12px; }
-        .b-rc-head .b-star { color:#FF4D00; }
-        .b-rc-rows { display:flex; flex-direction:column; gap:8px; font-family:'DM Sans',sans-serif; font-size:12.5px; color:rgba(255,255,255,.75); }
-        .b-rc-row { display:flex; justify-content:space-between; }
-        .b-rc-total { border-top:1px solid rgba(255,255,255,.1); padding-top:14px; }
-        .b-rc-cap { font-family:'DM Sans',sans-serif; font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.5); }
-        .bento .b-total { font-size:clamp(30px,3vw,42px); color:#fff; display:block; margin-top:2px; }
-        /* Boutons pilule */
-        .b-btn { display:inline-flex; justify-content:center; align-items:center; gap:8px; background:#1d1d1f; color:#fff; border:0; border-radius:100px; padding:12px 22px; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:700; text-decoration:none; margin-top:16px; width:fit-content; transition:transform .2s ease, box-shadow .2s ease; }
-        .b-btn:hover { transform:translateY(-1px); box-shadow:0 8px 20px rgba(0,0,0,.18); }
-        .b-cta { margin-top:16px; width:100%; display:inline-flex; justify-content:center; align-items:center; gap:8px; background:#fff; color:#1d1d1f; border:0; border-radius:100px; padding:12px 22px; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:700; transition:transform .2s ease, box-shadow .2s ease; }
-        .b-cta:hover { transform:translateY(-1px); box-shadow:0 8px 20px rgba(0,0,0,.3); }
-        .bento .b-btn .arr { display:inline-block; }
-        /* Ancres pilule dans une carte hero */
-        .b-anchors { display:flex; flex-wrap:wrap; margin-top:14px; }
-        .b-anchor { display:inline-block; font-family:'DM Sans',sans-serif; font-size:11px; font-weight:600; color:#6e6e73; background:#f0f0f2; border-radius:100px; padding:6px 14px; margin:3px 4px 0 0; transition:background .2s ease, color .2s ease; }
-        a.b-anchor:hover { background:#1d1d1f; color:#fff; }
-        /* Grille projets : rangées plus basses, tuiles image */
-        .bento-projects { grid-auto-rows:226px; }
-        /* Grille FAQ : rangées denses (une question par carte) */
-        .bento-faq { grid-auto-rows:minmax(150px, auto); }
-        @media (max-width:1023px) {
-            .bento { grid-template-columns:repeat(2, minmax(0,1fr)); }
-            .bento .c3, .bento .c4 { grid-column:span 2; }
-            .bento-outer { padding:60px 20px; }
+        .mini-visual {
+            margin-top: 46px;
+            width: min(440px, 80vw); border: 0; padding: 0;
+            border-radius: 26px; overflow: hidden;
+            background: none;
+            box-shadow: 0 30px 70px -35px rgba(19,19,19,.4);
+            transition: transform .55s cubic-bezier(.16,1,.3,1);
         }
-        @media (max-width:639px) {
-            .bento { grid-auto-rows:minmax(168px,auto); }
-            .bento .c2 { grid-column:span 2; }
-            .bento-outer { padding:52px 14px; }
-            .bento-projects { grid-auto-rows:180px; }
+        .mini-visual img { display: block; width: 100%; height: auto; }
+        a.mini-visual:hover { transform: translateY(-5px); }
+        .mini-visual:focus-visible { outline: 2px solid #FF4D00; outline-offset: 4px; }
+        .mini-pill {
+            margin-top: 42px;
+            display: inline-flex; align-items: center; gap: 8px;
+            background: #131313; color: #ffffff;
+            font-family: 'Inter', sans-serif; font-weight: 500; font-size: 14px;
+            letter-spacing: -0.28px;
+            border-radius: 999px; padding: 9px 20px;
+            text-decoration: none;
+            box-shadow: inset 0 4px 4px rgba(255,255,255,.4);
+            transition: transform .2s ease;
+        }
+        .mini-pill:active { transform: scale(.96); }
+        .mini-pill:focus-visible { outline: 2px solid #FF4D00; outline-offset: 3px; }
+        @media (max-width: 639px) {
+            .mini-section { min-height: 0; padding: 96px 20px; }
+            .mini-visual { margin-top: 38px; }
+            .mini-pill { margin-top: 34px; }
+        }
+
+        /* ═══ FAQ — liste numérotée épurée, réponses visibles (port de tekiyo.eu) ═══
+           Colonne unique de 520px centrée ; numéro gris pâle 12px, question médium 15px,
+           réponse grise 13px / interligne 20px — tailles, opacités et chasses négatives
+           calquées sur l'original, sans accordéon. */
+        .faq-section { background: #ffffff; color: #131313; padding: 130px 24px 150px; }
+        .faq-col { max-width: 520px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px; }
+        .faq-num {
+            font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500;
+            color: rgba(0,0,0,.30); letter-spacing: -0.48px;
+        }
+        .faq-q {
+            font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 500;
+            color: rgba(0,0,0,.85); letter-spacing: -0.6px;
+            margin-top: 8px;
+        }
+        .faq-a {
+            font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 400;
+            color: rgba(0,0,0,.45); letter-spacing: -0.26px; line-height: 20px;
+            margin-top: 12px;
+        }
+        .faq-a .link-btn {
+            background: none; border: 0; padding: 0; cursor: pointer;
+            font: inherit; letter-spacing: inherit; line-height: inherit;
+            color: #FF4D00; font-weight: 500;
+            text-decoration: underline; text-underline-offset: 3px;
         }
 
         /* ═══ HEADER en zone claire : logo noir (crossfade) + liens et boutons sombres ═══ */
@@ -583,28 +515,6 @@
         .reveal { opacity: 0; transform: translateY(48px); transition: opacity .9s ease, transform .9s cubic-bezier(.16,1,.3,1); }
         .reveal.visible { opacity: 1; transform: none; }
 
-        /* Accordéon FAQ */
-        .faq-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .45s cubic-bezier(.16,1,.3,1); }
-        .faq-item.open .faq-panel { grid-template-rows: 1fr; }
-        .faq-panel > div { overflow: hidden; min-height: 0; }
-        .faq-icon { transition: transform .3s ease; }
-        .faq-item.open .faq-icon { transform: rotate(45deg); }
-
-        /* Estimateur */
-        input[type="checkbox"].est-check {
-            appearance: none; width: 1rem; height: 1rem; margin: 0;
-            border: 1px solid rgba(255,255,255,.4); display: inline-grid; place-content: center;
-            cursor: pointer; flex: none; border-radius: 0;
-        }
-        input[type="checkbox"].est-check::before {
-            content: ""; width: .55rem; height: .55rem; background: #FF4D00;
-            transform: scale(0); transition: transform .15s ease;
-        }
-        input[type="checkbox"].est-check:checked { border-color: #fff; }
-        input[type="checkbox"].est-check:checked::before { transform: scale(1); }
-        input[type="range"] { accent-color: #ffffff; }
-        .speed-btn.is-active { background: #fff; color: #131313; border-color: #fff; }
-
         /* ═══ OVERLAY MENU (bouton MENU du hero) ═══ */
         #menu-overlay {
             position: fixed; inset: 0; z-index: 90;
@@ -652,7 +562,8 @@
             .letter { transform: none; }
             #site-header { animation: none; }
             .arr { transition: none; }
-            #top .hero-logo, #top .hero-nav, #top .hero-actions, #top .hero-title, #top .hero-card { opacity: 1 !important; transform: none !important; }
+            #top .hero-logo, #top .hero-nav, #top .hero-actions,
+            #top .hero-title, #top .hero-sub, #top .hero-cta-row, #top .hero-more { opacity: 1 !important; transform: none !important; }
             .intro-section .intro-flood { display: none !important; }
         }
     </style>
@@ -707,18 +618,19 @@
                 <div class="hero-body">
                     <h1 class="hero-title">Là où votre<br>image prend vie.</h1>
 
-                    <div class="hero-cards">
-                        <a class="hero-card" href="services.html">
-                            <img src="btn_services.jpg" alt="" draggable="false" loading="lazy">
-                            <b>Nos Services</b>
-                            <span class="go" aria-hidden="true">→</span>
-                        </a>
+                    <p class="hero-sub">Création de contenu &amp; communication digitale<br>pour les marques, les lieux et les événements.</p>
+
+                    <div class="hero-cta-row">
+                        <a class="hero-pill" href="services.html">Nos services</a>
+                        <a class="hero-pill" href="portfolio.html">Portfolio</a>
                     </div>
+
+                    <a class="hero-more" href="#soyons-honnetes">Découvrir le studio <span class="arr">→</span></a>
                 </div>
 
             </div>
         </section>
-        <noscript><style>#top .hero-logo, #top .hero-nav, #top .hero-actions, #top .hero-title, #top .hero-card { opacity: 1 !important; transform: none !important; }</style></noscript>
+        <noscript><style>#top .hero-logo, #top .hero-nav, #top .hero-actions, #top .hero-title, #top .hero-sub, #top .hero-cta-row, #top .hero-more { opacity: 1 !important; transform: none !important; }</style></noscript>
 
         <!-- ═══════════════ SECTION 01 — TUNNEL IMMERSIF (galerie 3D pilotée au scroll) ═══════════════ -->
         <section id="tunnel" class="tunnel-section">
@@ -788,246 +700,67 @@
             .intro-flood { display: none !important; }
         </style></noscript>
 
-        <!-- ═══════════════ SECTION 03 — SERVICES (grille bento → page Services) ═══════════════ -->
-        <section id="services" class="zone-light bento-section scroll-mt-24">
-            <div class="bento-outer">
-                <div class="bento">
-
-                    <!-- HERO — 2×2 -->
-                    <a href="services.html" class="card b-hero c2 r2 reveal">
-                        <div class="b-eyebrow">Ce que nous faisons</div>
-                        <div class="b-tagline">Trois expertises,</div>
-                        <div class="b-subtag">une seule exigence.</div>
-                        <p class="b-desc">Création de contenu, gestion des réseaux sociaux, photoshoots &amp; événements — une production haute fréquence pour maintenir votre audience en haleine.</p>
-                        <div class="b-date">Tous les services <span class="arr">↗</span></div>
-                    </a>
-
-                    <!-- CATEGORY / 01 -->
-                    <a href="services.html#creation-contenu" class="card b-cat reveal" style="transition-delay:.08s">
-                        <div class="b-cat-num">/ 01</div>
-                        <div class="category-name" style="color:#FF4D00">Création de contenu</div>
-                        <div class="category-focus">Formats courts &amp; contenus de marque</div>
-                        <div class="pills-wrap">
-                            <span class="pill">Reels</span><span class="pill">TikTok</span><span class="pill">Photographie</span><span class="pill">Brand assets</span>
-                        </div>
-                    </a>
-
-                    <!-- CATEGORY / 02 -->
-                    <a href="services.html#reseaux-sociaux" class="card b-cat reveal" style="transition-delay:.16s">
-                        <div class="b-cat-num">/ 02</div>
-                        <div class="category-name" style="color:#00b4d8">Réseaux sociaux</div>
-                        <div class="category-focus">Présence digitale pilotée de A à Z</div>
-                        <div class="pills-wrap">
-                            <span class="pill">Stratégie</span><span class="pill">Copywriting</span><span class="pill">Planning</span><span class="pill">Reporting</span>
-                        </div>
-                    </a>
-
-                    <!-- CATEGORY / 03 -->
-                    <a href="services.html#photoshoots" class="card b-cat reveal" style="transition-delay:.08s">
-                        <div class="b-cat-num">/ 03</div>
-                        <div class="category-name" style="color:#34d399">Photoshoots &amp; événements</div>
-                        <div class="category-focus">Images qui racontent, couvertures live</div>
-                        <div class="pills-wrap">
-                            <span class="pill">Éditorial</span><span class="pill">Direction artistique</span><span class="pill">Galas</span><span class="pill">Aftermovie</span>
-                        </div>
-                    </a>
-
-                    <!-- STAT -->
-                    <div class="card reveal" style="transition-delay:.16s">
-                        <div class="num" style="font-size:44px;color:#FF4D00;margin-bottom:4px">48h</div>
-                        <div class="label" style="font-size:13px">Livraison <strong>express</strong> possible sur chaque projet</div>
-                    </div>
-
-                </div>
-            </div>
+        <!-- ═══════════════ SECTION 03 — SERVICES : une idée par écran (titre + 2 phrases + petit visuel) ═══════════════ -->
+        <section id="services" class="mini-section scroll-mt-24">
+            <h2 class="mini-title reveal">Trois expertises,<br>une seule exigence.</h2>
+            <p class="mini-desc reveal" style="transition-delay:.08s">Création de contenu, réseaux sociaux, photoshoots &amp; événements. Une production haute fréquence qui garde votre audience en haleine.</p>
+            <a class="mini-visual reveal" style="transition-delay:.16s" href="services.html" aria-label="Découvrir nos services">
+                <img src="btn_services.jpg" alt="Collage des expertises du studio — contenu, réseaux, photoshoots" draggable="false" loading="lazy">
+            </a>
+            <a class="mini-pill reveal" style="transition-delay:.24s" href="services.html">Découvrir nos services</a>
         </section>
 
-        <!-- ═══════════════ SECTION 04 — PROJETS (grille bento image → page Portfolio) ═══════════════ -->
-        <section id="projets" class="zone-light bento-section scroll-mt-24">
-            <div class="bento-outer">
-                <div class="bento">
-
-                    <!-- IMAGE HERO — 2×2 -->
-                    <a href="portfolio.html" class="card b-img c2 r2 reveal">
-                        <img class="b-img-fill" src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1200&q=80" alt="Lookbook éditorial — Genève" loading="lazy">
-                        <div class="b-img-cap">
-                            <span class="b-cap-title">Lookbook éditorial — Genève</span>
-                            <span class="b-cap-link">Tout le portfolio <span class="arr">↗</span></span>
-                        </div>
-                    </a>
-
-                    <!-- IMAGE 1×1 -->
-                    <a href="portfolio.html" class="card b-img reveal" style="transition-delay:.08s">
-                        <img class="b-img-fill" src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80" alt="Curation Instagram — Lausanne" loading="lazy">
-                        <div class="b-img-cap"><span class="b-cap-title">Curation Instagram — Lausanne</span></div>
-                    </a>
-
-                    <!-- IMAGE 1×1 -->
-                    <a href="portfolio.html" class="card b-img reveal" style="transition-delay:.16s">
-                        <img class="b-img-fill" src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=800&q=80" alt="Gala privé — Zurich" loading="lazy">
-                        <div class="b-img-cap"><span class="b-cap-title">Gala privé — Zurich</span></div>
-                    </a>
-
-                    <!-- STAT -->
-                    <div class="card reveal" style="transition-delay:.08s">
-                        <div class="num" style="font-size:44px;color:#00b4d8;margin-bottom:4px">4</div>
-                        <div class="label" style="font-size:13px">Univers couverts — <strong>mode, gastronomie, événementiel, digital</strong></div>
-                    </div>
-
-                    <!-- BADGE -->
-                    <a href="https://instagram.com/anima.studio.ch" target="_blank" rel="noopener noreferrer" class="card reveal" style="transition-delay:.16s">
-                        <div class="badge-pill"><span>© @anima.studio.ch</span></div>
-                        <div class="badge-num">2026</div>
-                        <div class="badge-lbl">Une année de collaborations en Suisse</div>
-                    </a>
-
-                </div>
-            </div>
+        <!-- ═══════════════ SECTION 04 — PROJETS : une idée par écran (titre + 2 phrases + petit visuel) ═══════════════ -->
+        <section id="projets" class="mini-section scroll-mt-24">
+            <h2 class="mini-title reveal">Des images qui marquent.</h2>
+            <p class="mini-desc reveal" style="transition-delay:.08s">Mode, gastronomie, événementiel, digital. Chaque projet est construit sur-mesure, de la direction artistique à la diffusion.</p>
+            <a class="mini-visual reveal" style="transition-delay:.16s" href="portfolio.html" aria-label="Voir le portfolio">
+                <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=880&h=620&q=80" alt="Lookbook éditorial — Genève" draggable="false" loading="lazy">
+            </a>
+            <a class="mini-pill reveal" style="transition-delay:.24s" href="portfolio.html">Voir le portfolio</a>
         </section>
 
-        <!-- ═══════════════ SECTION 05 — ESTIMATEUR (grille bento interactive) ═══════════════ -->
-        <section id="estimateur" class="zone-light bento-section scroll-mt-24">
-            <div class="bento-outer">
-                <div class="bento">
+        <!-- ═══════════════ SECTION 05 — FAQ : liste numérotée épurée (port de tekiyo.eu) ═══════════════
+           Colonne de 520px centrée, réponses visibles sans accordéon, typo Inter calquée sur l'original. -->
+        <section id="faq" class="faq-section scroll-mt-24">
+            <h2 class="sr-only">Questions fréquentes</h2>
+            <div class="faq-col">
 
-                    <!-- HERO -->
-                    <div class="card b-hero c2 reveal">
-                        <div class="b-eyebrow">Estimateur</div>
-                        <div class="b-tagline">Calculez votre devis</div>
-                        <div class="b-subtag">en direct.</div>
-                        <div class="b-date">Estimation indicative — devis ferme après brief</div>
-                    </div>
-
-                    <!-- PRESTATIONS -->
-                    <div class="card c2 reveal" style="transition-delay:.08s">
-                        <div class="b-step">1 — Sélectionnez vos prestations</div>
-                        <div class="b-checks">
-                            <label class="b-check-row">
-                                <input type="checkbox" value="1500" onchange="calculateTotal()" class="est-check">
-                                <span>Photoshoot éditorial — 1&#8239;500&#8239;CHF</span>
-                            </label>
-                            <label class="b-check-row">
-                                <input type="checkbox" value="2200" onchange="calculateTotal()" class="est-check">
-                                <span>Gestion réseaux (mensuel) — 2&#8239;200&#8239;CHF</span>
-                            </label>
-                            <label class="b-check-row">
-                                <input type="checkbox" value="1800" onchange="calculateTotal()" class="est-check">
-                                <span>Pack Reels / vidéos — 1&#8239;800&#8239;CHF</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- VOLUME -->
-                    <div class="card reveal" style="transition-delay:.16s">
-                        <div class="b-step">2 — Volume / livrables</div>
-                        <div class="b-range-row">
-                            <span class="b-range-val" id="volume-val">×1</span>
-                            <input type="range" id="volume-range" min="1" max="5" value="1" oninput="calculateTotal()" class="w-full h-1 cursor-pointer">
-                        </div>
-                        <div class="b-date" style="margin-top:10px">1× campagne → 5× campagne</div>
-                    </div>
-
-                    <!-- DÉLAI -->
-                    <div class="card reveal" style="transition-delay:.24s">
-                        <div class="b-step">3 — Délai de livraison</div>
-                        <div class="b-speeds">
-                            <button type="button" onclick="setSpeed(1, this)" class="speed-btn is-active">Standard<span>10–14 jours · ×1.0</span></button>
-                            <button type="button" onclick="setSpeed(1.25, this)" class="speed-btn">Fast-track<span>5 jours · ×1.25</span></button>
-                            <button type="button" onclick="setSpeed(1.5, this)" class="speed-btn">Express<span>48h · ×1.5</span></button>
-                        </div>
-                    </div>
-
-                    <!-- REÇU (carte sombre) -->
-                    <div class="card b-receipt c2 reveal" style="transition-delay:.16s">
-                        <div>
-                            <div class="b-rc-head"><span>Reçu d'estimation</span><span class="b-star">✦</span></div>
-                            <div class="b-rc-rows" style="margin-top:12px">
-                                <div class="b-rc-row"><span>Base prestations</span><span id="summary-base">0 CHF</span></div>
-                                <div class="b-rc-row"><span>Multiplicateur volume</span><span id="summary-vol">×1</span></div>
-                                <div class="b-rc-row"><span>Option délai</span><span id="summary-speed">×1</span></div>
-                            </div>
-                        </div>
-                        <div class="b-rc-total">
-                            <span class="b-rc-cap">Estimation indicative</span>
-                            <span id="summary-total" class="b-total num">0 CHF</span>
-                            <button type="button" onclick="openDrawer()" class="b-cta">Valider &amp; réserver <span class="arr">↗</span></button>
-                        </div>
-                    </div>
-
+                <div class="reveal">
+                    <p class="faq-num">01.</p>
+                    <p class="faq-q">Combien coûte une collaboration ?</p>
+                    <p class="faq-a">Chaque projet fait l'objet d'une proposition personnalisée après un premier échange.
+                    Le tarif dépend du format, du volume et des délais — sans engagement, sans surprise.</p>
                 </div>
-            </div>
-        </section>
 
-        <!-- ═══════════════ SECTION 06 — FAQ (grille bento accordéon) ═══════════════ -->
-        <section id="faq" class="zone-light bento-section scroll-mt-24">
-            <div class="bento-outer">
-                <div class="bento bento-faq">
-
-                    <!-- HERO -->
-                    <div class="card b-hero c2 reveal">
-                        <div class="b-eyebrow">FAQ</div>
-                        <div class="b-tagline">Questions</div>
-                        <div class="b-subtag">fréquentes.</div>
-                        <div class="b-date">Tout ce qu'il faut savoir avant de démarrer</div>
-                    </div>
-
-                    <!-- HIGHLIGHT -->
-                    <a href="mailto:contact@anima.studio.ch" class="card b-hl c2 reveal" style="transition-delay:.08s">
-                        <div class="num">24h</div>
-                        <div class="label">délai de réponse garanti</div>
-                        <div class="sub">Une question directe ? contact@anima.studio.ch</div>
-                    </a>
-
-                    <!-- FAQ 1 -->
-                    <div class="card b-faq c2 faq-item reveal" style="transition-delay:.16s">
-                        <button class="faq-btn b-faq-btn" aria-expanded="false">
-                            <span>Comment réserver un shooting ?</span>
-                            <span class="faq-icon" aria-hidden="true">+</span>
-                        </button>
-                        <div class="faq-panel"><div>
-                            <p>Un premier échange via le <button type="button" onclick="openDrawer()" class="link-btn">formulaire de réservation</button>,
-                            un brief détaillé sous 24h, puis une proposition de calendrier et de devis.
-                            Tout se valide en ligne, sans engagement.</p>
-                        </div></div>
-                    </div>
-
-                    <!-- FAQ 2 -->
-                    <div class="card b-faq c2 faq-item reveal" style="transition-delay:.24s">
-                        <button class="faq-btn b-faq-btn" aria-expanded="false">
-                            <span>Quels sont les délais de livraison ?</span>
-                            <span class="faq-icon" aria-hidden="true">+</span>
-                        </button>
-                        <div class="faq-panel"><div>
-                            <p>Standard 10 à 14 jours, Fast-track 5 jours, Express 48h — l'option se choisit dans
-                            l'estimateur et ajuste le tarif en conséquence.</p>
-                        </div></div>
-                    </div>
-
-                    <!-- FAQ 3 -->
-                    <div class="card b-faq c2 faq-item reveal" style="transition-delay:.16s">
-                        <button class="faq-btn b-faq-btn" aria-expanded="false">
-                            <span>Intervenez-vous en dehors de la Suisse ?</span>
-                            <span class="faq-icon" aria-hidden="true">+</span>
-                        </button>
-                        <div class="faq-panel"><div>
-                            <p>Basés entre Lausanne et Genève, nous couvrons toute la Suisse romande et alémanique,
-                            ainsi que l'international sur demande pour les projets d'envergure.</p>
-                        </div></div>
-                    </div>
-
-                    <!-- FAQ 4 -->
-                    <div class="card b-faq c2 faq-item reveal" style="transition-delay:.24s">
-                        <button class="faq-btn b-faq-btn" aria-expanded="false">
-                            <span>Comment se déroule un projet ?</span>
-                            <span class="faq-icon" aria-hidden="true">+</span>
-                        </button>
-                        <div class="faq-panel"><div>
-                            <p>Direction artistique, production, retouche puis diffusion — chaque étape est construite
-                            sur-mesure, avec des points de validation à chaque jalon.</p>
-                        </div></div>
-                    </div>
-
+                <div class="reveal" style="transition-delay:.06s">
+                    <p class="faq-num">02.</p>
+                    <p class="faq-q">Quels sont les délais de livraison ?</p>
+                    <p class="faq-a">Standard 10 à 14 jours, Fast-track 5 jours, Express 48h selon l'ampleur du projet.<br>
+                    Si votre deadline est impérative, mentionnez-la dès le premier échange : nous vous répondrons honnêtement avant de nous engager.</p>
                 </div>
+
+                <div class="reveal" style="transition-delay:.12s">
+                    <p class="faq-num">03.</p>
+                    <p class="faq-q">Intervenez-vous en dehors de la Suisse ?</p>
+                    <p class="faq-a">Basés entre Lausanne et Genève, nous couvrons toute la Suisse romande et alémanique,
+                    ainsi que l'international sur demande pour les projets d'envergure.</p>
+                </div>
+
+                <div class="reveal" style="transition-delay:.18s">
+                    <p class="faq-num">04.</p>
+                    <p class="faq-q">Comment se déroule un projet ?</p>
+                    <p class="faq-a">Direction artistique, production, retouche puis diffusion.
+                    Chaque étape est construite sur-mesure, avec des points de validation à chaque jalon.</p>
+                </div>
+
+                <div class="reveal" style="transition-delay:.24s">
+                    <p class="faq-num">05.</p>
+                    <p class="faq-q">Comment réserver ?</p>
+                    <p class="faq-a">Un premier échange via le <button type="button" onclick="openDrawer()" class="link-btn">formulaire de réservation</button>,
+                    un brief détaillé sous 24h, puis une proposition de calendrier et de devis. Tout se valide en ligne.</p>
+                </div>
+
             </div>
         </section>
 
@@ -1528,31 +1261,6 @@
             updateHeaderZone();
         })();
 
-        // ── Estimateur ────────────────────────────────────────────────────
-        let speedMultiplier = 1;
-
-        function setSpeed(multiplier, btn) {
-            speedMultiplier = multiplier;
-            document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('is-active'));
-            btn.classList.add('is-active');
-            calculateTotal();
-        }
-
-        function calculateTotal() {
-            let base = 0;
-            document.querySelectorAll('.est-check:checked').forEach(chk => { base += parseInt(chk.value, 10); });
-
-            const volume = parseInt(document.getElementById('volume-range').value, 10);
-            const total = Math.round(base * volume * speedMultiplier);
-
-            document.getElementById('volume-val').textContent = '×' + volume;
-            document.getElementById('summary-base').textContent = base.toLocaleString('fr-CH') + ' CHF';
-            document.getElementById('summary-vol').textContent = '×' + volume;
-            document.getElementById('summary-speed').textContent = '×' + speedMultiplier;
-            document.getElementById('summary-total').textContent = total.toLocaleString('fr-CH') + ' CHF';
-        }
-        calculateTotal();
-
         // ── Drawer réservation ───────────────────────────────────────────
         const drawer = document.getElementById('booking-drawer');
         const drawerPanel = document.getElementById('drawer-panel');
@@ -1610,7 +1318,6 @@
         const SEARCH_INDEX = [
             { t: 'Accueil',              d: 'Là où votre image prend vie',                 u: 'index.html' },
             { t: 'Galerie immersive',    d: 'Traversez nos univers en 3D',                 u: 'index.html#tunnel' },
-            { t: 'Estimateur de devis',  d: 'Calculez votre devis en direct',              u: 'index.html#estimateur' },
             { t: 'FAQ',                  d: 'Questions fréquentes',                        u: 'index.html#faq' },
             { t: 'Création de Contenu',  d: 'Vidéos, photos, formats courts',              u: 'services.html#creation-contenu' },
             { t: 'Gestion des Réseaux Sociaux', d: 'Stratégie & présence digitale',        u: 'services.html#reseaux-sociaux' },
@@ -1674,22 +1381,6 @@
                 const tag = (document.activeElement && document.activeElement.tagName) || '';
                 if (!/INPUT|TEXTAREA|SELECT/.test(tag)) { e.preventDefault(); toggleSearch(true); }
             }
-        });
-
-        // ── FAQ accordéon ────────────────────────────────────────────────
-        document.querySelectorAll('.faq-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const item = btn.closest('.faq-item');
-                const wasOpen = item.classList.contains('open');
-                document.querySelectorAll('.faq-item.open').forEach(i => {
-                    i.classList.remove('open');
-                    i.querySelector('.faq-btn').setAttribute('aria-expanded', 'false');
-                });
-                if (!wasOpen) {
-                    item.classList.add('open');
-                    btn.setAttribute('aria-expanded', 'true');
-                }
-            });
         });
 
         // ── Formulaire : succès inline ──────────────────────────────────
