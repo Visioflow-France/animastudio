@@ -215,12 +215,9 @@
 
     <!-- ═══════════════ HEADER (fond clair : logo noir) ═══════════════ -->
     <header id="site-header" class="sticky top-0 z-50 w-full">
-        <div class="max-w-[1560px] mx-auto flex items-center justify-between gap-4 px-[18px] pt-4 pb-2 md:px-10 md:pt-6 md:pb-3">
-            <a href="index.html" class="flex items-center group" aria-label="ANIMA Studio — Accueil">
-                <img src="logo_noir_web.png" alt="ANIMA Studio" class="h-[60px] w-auto md:h-[84px]" draggable="false">
-            </a>
-
-            <nav class="pill-nav hidden md:flex items-center gap-1" aria-label="Navigation principale">
+        <!-- Grille 1fr auto 1fr : logo toujours exactement centré (nav à gauche, actions à droite) -->
+        <div class="max-w-[1560px] mx-auto grid grid-cols-[1fr_auto_1fr] items-center gap-4 px-[18px] pt-4 pb-2 md:px-10 md:pt-6 md:pb-3">
+            <nav class="pill-nav hidden md:flex items-center gap-1 justify-self-start col-start-1" aria-label="Navigation principale">
                 <a href="index.html">Accueil</a>
                 <span class="sep" aria-hidden="true"></span>
                 <a href="services.html" aria-current="page">Services</a>
@@ -228,7 +225,11 @@
                 <a href="portfolio.html">Portfolio</a>
             </nav>
 
-            <div class="header-actions flex items-center gap-3">
+            <a href="index.html" class="flex items-center group justify-self-center col-start-2" aria-label="ANIMA Studio — Accueil">
+                <img src="logo_noir_web.png" alt="ANIMA Studio" class="h-[40px] w-auto md:h-[56px]" draggable="false">
+            </a>
+
+            <div class="header-actions flex items-center gap-3 justify-self-end col-start-3">
                 <button onclick="toggleSearch()" aria-label="Rechercher sur le site" class="header-search-btn w-10 h-10 rounded-full border transition-colors grid place-items-center">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
                         <circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.5" y2="16.5"></line>
